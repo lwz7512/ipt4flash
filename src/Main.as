@@ -9,6 +9,7 @@ package{
 	import com.pintu.api.PintuImpl;
 	import com.pintu.config.InitParams;
 	import com.pintu.controller.GlobalNavigator;
+	import com.pintu.controller.VisualFactory;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.widgets.FooterBar;
 	import com.pintu.widgets.HeaderBar;
@@ -24,6 +25,7 @@ package{
 		
 		private var isLogged:Boolean = false;
 		private var navigator:GlobalNavigator;
+		private var factory:VisualFactory;
 		
 		private var header:HeaderBar;
 		private var footer:FooterBar;
@@ -40,26 +42,26 @@ package{
 			InitParams.appWidth = stage.width;
 			InitParams.appHeight = stage.height;			
 			
-			//TODO, is logged in?
-			checkLogonStatus();	
-			
-			//TODO, construct skelecton
 			buildHeaderMenu(isLogged);			
 			buildFooterContent();
 			
 			model = new PintuImpl();
-			navigator = new GlobalNavigator(this);		
+			factory = new VisualFactory(this,model);
+			navigator = new GlobalNavigator(this,factory);					
+			
+			checkLogonStatus();	
 			//display home page
 			if(isLogged){
-				navigator.switchTo(GlobalNavigator.HOMPAGE,model);				
+				navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
-				navigator.switchTo(GlobalNavigator.UNLOGGED,model);		
+				navigator.switchTo(GlobalNavigator.UNLOGGED);		
 			}
 			
 		}
 		
 		
 		private function checkLogonStatus():void{
+			//TODO, is logged in?
 			
 			InitParams.isLogged = isLogged;
 		}
@@ -72,7 +74,7 @@ package{
 		}
 		
 		private function navigateTo(event:PintuEvent):void{
-			navigator.switchTo(event.data,model);
+			navigator.switchTo(event.data);
 		}
 		
 		private function buildFooterContent():void{
