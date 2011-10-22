@@ -33,11 +33,11 @@ package{
 		
 		public function Main(){
 			super();
-			addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			addEventListener(Event.ADDED_TO_STAGE, buildApp);
 		}
 		
-		protected function onAddedToStage(event:Event):void{
-			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+		protected function buildApp(event:Event):void{
+			removeEventListener(Event.ADDED_TO_STAGE, buildApp);
 			//init stage size
 			InitParams.appWidth = stage.width;
 			InitParams.appHeight = stage.height;			
