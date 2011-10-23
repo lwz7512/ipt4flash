@@ -13,13 +13,20 @@ package{
 	import com.pintu.events.PintuEvent;
 	import com.pintu.widgets.FooterBar;
 	import com.pintu.widgets.HeaderBar;
+	import com.pintu.utils.Logger;
 	
 	import flash.display.Sprite;
-	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
+	import flash.display.StageAlign;
 	import flash.events.Event;
-
+	import flash.utils.clearInterval;
+	import flash.utils.setInterval;
+	
+	[swf('width=1024','height=620')]
 	public class Main extends Sprite{
+		
+		
+		private var delayIntervalID:int;
 		
 		private var model:IPintu;
 		
@@ -33,14 +40,25 @@ package{
 		
 		public function Main(){
 			super();
-			addEventListener(Event.ADDED_TO_STAGE, buildApp);
+			//不允许图形缩放
+			this.stage.scaleMode =StageScaleMode.NO_SCALE;
+			//从左上角开始绘制
+			this.stage.align = StageAlign.TOP_LEFT;
+			//舞台准备好后创建应用
+			addEventListener(Event.ADDED_TO_STAGE, buildApp);	
+			
 		}
+		
 		
 		protected function buildApp(event:Event):void{
 			removeEventListener(Event.ADDED_TO_STAGE, buildApp);
+			//listen navigate event
+			//may be from login to homepage...
+			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
+			
 			//init stage size
-			InitParams.appWidth = stage.width;
-			InitParams.appHeight = stage.height;			
+			InitParams.appWidth = this.stage.stageWidth;
+			InitParams.appHeight = this.stage.stageHeight;			
 			
 			buildHeaderMenu(isLogged);			
 			buildFooterContent();
@@ -55,10 +73,13 @@ package{
 				navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
 				navigator.switchTo(GlobalNavigator.UNLOGGED);		
-			}
+			}						
 			
 		}
 		
+		private function navigateTo(event:PintuEvent):void{
+			navigator.switchTo(event.data);
+		}		
 		
 		private function checkLogonStatus():void{
 			//TODO, is logged in?
@@ -69,20 +90,16 @@ package{
 		
 		private function buildHeaderMenu(isLogged:Boolean):void{
 			header = new HeaderBar(isLogged);
-			this.addChild(header);
-			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
+			this.addChild(header);			
 		}
 		
-		private function navigateTo(event:PintuEvent):void{
-			navigator.switchTo(event.data);
-		}
 		
 		private function buildFooterContent():void{
 			footer = new FooterBar();
 			this.addChild(footer);
 		}
 		
-	
+
 		
 	} //end of class
 }
