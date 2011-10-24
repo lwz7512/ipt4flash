@@ -18,7 +18,7 @@ package com.pintu.config
 		
 		//App section gap
 		public static const TOP_BOTTOM_GAP:Number = 6;
-		public static const STANDARD_GAP:Number = 4;
+		public static const DEFAULT_GAP:Number = 4;
 		
 		//Header footer height
 		public static const HEADERFOOTER_HEIGHT:Number = 32;
@@ -55,6 +55,10 @@ package com.pintu.config
 				startX = (appWidth-MINAPP_WIDTH)/2;
 			}
 			return startX;
+		}
+		
+		public static function isStretchHeight():Boolean{
+			return InitParams.MINAPP_HEIGHT<InitParams.appHeight?true:false;
 		}
 		
 	} //end of class

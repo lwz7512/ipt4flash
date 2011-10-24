@@ -11,18 +11,17 @@ package{
 	import com.pintu.controller.GlobalNavigator;
 	import com.pintu.controller.VisualFactory;
 	import com.pintu.events.PintuEvent;
+	import com.pintu.utils.Logger;
 	import com.pintu.widgets.FooterBar;
 	import com.pintu.widgets.HeaderBar;
-	import com.pintu.utils.Logger;
 	
 	import flash.display.Sprite;
-	import flash.display.StageScaleMode;
 	import flash.display.StageAlign;
+	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
-	
-	[swf('width=1024','height=620')]
+		
 	public class Main extends Sprite{
 		
 		
@@ -46,11 +45,10 @@ package{
 			this.stage.align = StageAlign.TOP_LEFT;
 			//舞台准备好后创建应用
 			addEventListener(Event.ADDED_TO_STAGE, buildApp);	
-			
 		}
 		
 		
-		protected function buildApp(event:Event):void{
+		protected function buildApp(event:Event):void{			
 			removeEventListener(Event.ADDED_TO_STAGE, buildApp);
 			//listen navigate event
 			//may be from login to homepage...
@@ -58,7 +56,12 @@ package{
 			
 			//init stage size
 			InitParams.appWidth = this.stage.stageWidth;
-			InitParams.appHeight = this.stage.stageHeight;			
+			InitParams.appHeight = this.stage.stageHeight;	
+			
+			if(!checkStageValidity()) {
+				Logger.warn("Stage is unavailable, stop to build app!");
+				return;
+			}
 			
 			buildHeaderMenu(isLogged);			
 			buildFooterContent();
@@ -75,6 +78,10 @@ package{
 				navigator.switchTo(GlobalNavigator.UNLOGGED);		
 			}						
 			
+		}
+		
+		private function checkStageValidity():Boolean{
+			return InitParams.appWidth>0?true:false;
 		}
 		
 		private function navigateTo(event:PintuEvent):void{

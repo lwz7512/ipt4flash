@@ -1,12 +1,18 @@
 package com.pintu.widgets
 {
-	import flash.display.Sprite;
+	import com.pintu.config.InitParams;
+	import com.pintu.config.StyleParams;
 	
-	public class SlideToolBar extends Sprite
-	{
-		public function SlideToolBar()
-		{
+	import flash.display.Sprite;
+	import flash.display.GradientType;
+	import flash.geom.Matrix;
+	
+	public class SlideToolBar extends Sprite{
+		public function SlideToolBar(){
 			super();
 		}
+		
+		
+		
 	}
 }

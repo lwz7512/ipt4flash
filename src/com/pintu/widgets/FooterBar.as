@@ -19,10 +19,11 @@ package com.pintu.widgets
 			var footerY:Number = InitParams.HEADERFOOTER_HEIGHT												
 												+InitParams.TOP_BOTTOM_GAP
 												+InitParams.MAINMENUBAR_HEIGHT
-												+InitParams.STANDARD_GAP
+												+InitParams.DEFAULT_GAP
 												+InitParams.LEFTCOLUMN_HEIGHT
-												+InitParams.STANDARD_GAP;
-			var isSnapBottom:Boolean = (footerY+InitParams.HEADERFOOTER_HEIGHT)<InitParams.appHeight?false:true;
+												+InitParams.DEFAULT_GAP;
+			//如果舞台大小大于默认应用大小，就贴到底部绘制
+			var isSnapBottom:Boolean = InitParams.MINAPP_HEIGHT<InitParams.appHeight?false:true;
 			if(!isSnapBottom){
 				footerY = InitParams.appHeight - InitParams.HEADERFOOTER_HEIGHT;
 			}

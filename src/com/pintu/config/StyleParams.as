@@ -3,9 +3,10 @@ package com.pintu.config
 	public class StyleParams{
 		public function StyleParams(){}		
 		
-		//全局的边框颜色
-		public static const BORDER_COLOR:uint = 0xCCCCCC;
-		
+		//全局的边框颜色，花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
+		public static const DEFAULT_BORDER_COLOR:uint = 0xC2CCD0;
+		//默认背景色，荼白：如荼之白色
+		public static const DEFAULT_FILL_COLOR:uint = 0xF3F9F1;
 		
 		/**
 		 * Header bar LIGHT GREEN style

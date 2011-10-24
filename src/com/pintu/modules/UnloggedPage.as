@@ -1,50 +1,47 @@
 package com.pintu.modules
 {
 	import com.pintu.api.IPintu;
+	import com.pintu.config.InitParams;
+	import com.pintu.config.StyleParams;
 	import com.pintu.widgets.ActiveUserBlock;
+	import com.pintu.widgets.CategoryTree;
 	import com.pintu.widgets.LoginBlock;
+	import com.pintu.widgets.MainDisplayArea;
+	import com.pintu.widgets.MainToolBar;
+	import com.pintu.widgets.SlideToolBar;
 	
 	import flash.display.Sprite;
 	
-	public class UnloggedPage extends Sprite
-	{
+	public class UnloggedPage extends Sprite{
 		
 		private var model:IPintu;
 		
-		public function UnloggedPage(model:IPintu)
-		{
+		public function UnloggedPage(model:IPintu){
 			super();
 			this.model = model;
 				
-			buildMainToolBar();
-			buildLeftCategoryTree();
-			buildMainDisplayArea();
-			buildSlideToolBar();
-			buildRightColumns();
-		}
-		
-		private function buildMainToolBar():void{
+			var mainToolBar:MainToolBar = new MainToolBar();
+			this.addChild(mainToolBar);
 			
-		}
-		
-		private function buildLeftCategoryTree():void{
+			var categoryTree:CategoryTree = new CategoryTree();
+			this.addChild(categoryTree);
 			
-		}
-		
-		private function buildMainDisplayArea():void{
+			var mainDisplayArea:MainDisplayArea = new MainDisplayArea();
+			this.addChild(mainDisplayArea);
 			
-		}
-		
-		private function buildSlideToolBar():void{
+			var slideToolBar:SlideToolBar = new SlideToolBar();
+			this.addChild(slideToolBar);
 			
-		}
-		
-		private function buildRightColumns():void{
 			var login:LoginBlock = new LoginBlock();
 			this.addChild(login);
+			
 			var activeUser:ActiveUserBlock = new ActiveUserBlock();
 			this.addChild(activeUser);
+			
 		}
+		
+	
+
 		
 		
 	}
