@@ -62,7 +62,7 @@ package{
 				Logger.warn("Stage is unavailable, stop to build app!");
 				return;
 			}
-			
+			//全局模块固定不变
 			buildHeaderMenu(isLogged);			
 			buildFooterContent();
 			

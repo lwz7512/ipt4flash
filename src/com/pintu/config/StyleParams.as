@@ -46,6 +46,7 @@ package com.pintu.config
 		public static const ICONMENU_SELECTED_TOP:uint = 0x75878A;
 		//霜色：白霜的颜色
 		public static const ICONMENU_SELECTED_BOTTOM:uint = 0xE9F1F6;
+		
 		//蓝灰色：一种近于灰略带蓝的深灰色
 		public static const ICONMENU_MOUSEOVER_TOP:uint = 0xA1AFC9;
 		//月白：淡蓝色

@@ -32,6 +32,10 @@ package com.pintu.controller
 		}
 		
 		public function switchTo(module:String):void{
+			
+			if(_currentModule==_factory.createModuleByName(module))
+				return;
+			
 			switch(module){
 				case HOMPAGE:
 					var homePage:Sprite = _factory.createModuleByName(HOMPAGE);
