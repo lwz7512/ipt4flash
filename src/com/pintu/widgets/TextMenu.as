@@ -179,14 +179,9 @@ package com.pintu.widgets
 			_skin = new Sprite();//create skin
 			this.addChild(_skin);
 			
-			setLabelText(); // creates a new label if necessary
+			setLabelText(); // creates a new label if necessary			
 			
-			if (!_toggle) {
-				// selection only for toggle buttons
-				_selected = false;
-			}
-			
-			showSkin();// show init appearance
+			setState();// show init appearance
 			
 			showIcon();// for subclass to add icon
 			
@@ -197,6 +192,9 @@ package com.pintu.widgets
 		 * Calculates the current state and sets skin, icon and label.
 		 */
 		private function setState() : void {
+			//先校验
+			if (!_initialised) return;
+			
 			var state : String;
 			//从表达式外围开始取值
 			if (_selected) {
@@ -207,12 +205,9 @@ package com.pintu.widgets
 					: STATE_OVER : STATE_UP : STATE_DISABLED;				
 			}
 			
-			if (state == _state) return;
-			
+			if (state == _state) return;			
 			_state = state;
-			
-			if (!_initialised) return;
-			
+						
 			//draw component appearance at runtime...
 			showSkin();			
 		}
@@ -222,7 +217,7 @@ package com.pintu.widgets
 		 * 
 		 * <p>Sub classes may perform additional layout operations.</p>
 		 */
-		protected function showSkin() : void {
+		private function showSkin() : void {
 			switch(_state){
 				case STATE_SELECTED_UP:
 				case STATE_SELECTED_DOWN:
@@ -254,59 +249,35 @@ package com.pintu.widgets
 		}
 		
 		private function drawUpSkin():void{
-			_skin.graphics.clear();
-			var colors:Array = this.upSkinColors;
-			var alphas:Array = [1,1];
-			var ratios:Array = [0,255];
-			var matrix:Matrix = new Matrix();
-			//需要旋转90度，垂直渐变
-			matrix.createGradientBox(this._width,this._height,Math.PI/2);
-			_skin.graphics.beginGradientFill(GradientType.LINEAR,colors,alphas,ratios,matrix);
-			_skin.graphics.drawRect(0,0,this._width,this._height);
-			_skin.graphics.endFill();
-			
+			drawGradientRec(this.upSkinColors,0);
 			updateLabelColor(this.upLabelColor);
 		}
 		private function drawDownSkin():void{
-			_skin.graphics.clear();
-			var colors:Array = this.downSkinColors;
-			var alphas:Array = [1,1];
-			var ratios:Array = [0,255];
-			var matrix:Matrix = new Matrix();
-			//需要旋转90度，垂直渐变
-			matrix.createGradientBox(this._width,this._height,Math.PI/2);
-			_skin.graphics.beginGradientFill(GradientType.LINEAR,colors,alphas,ratios,matrix);
-			_skin.graphics.drawRect(0,0,this._width,this._height);
-			_skin.graphics.endFill();	
-			
+			drawGradientRec(this.downSkinColors);			
 			updateLabelColor(this.downLabelColor);
 		}
 		private function drawOverSkin():void{
-			_skin.graphics.clear();
-			var colors:Array = this.overSkinColors;
-			var alphas:Array = [1,1];
+			drawGradientRec(this.overSkinColors);
+			updateLabelColor(this.overLabelColor);
+		}
+		
+		private function drawDisabledSkin():void{
+			drawGradientRec(this.upSkinColors,0);
+			updateLabelColor(0xCCCCCC);
+		}
+		
+		private function drawGradientRec(colors:Array, alpha:Number=1):void{
+			_skin.graphics.clear();			
+			var alphas:Array = [alpha,alpha];
 			var ratios:Array = [0,255];
 			var matrix:Matrix = new Matrix();
 			//需要旋转90度，垂直渐变
 			matrix.createGradientBox(this._width,this._height,Math.PI/2);
-			_skin.graphics.beginGradientFill(GradientType.LINEAR,colors,alphas,ratios,matrix);
-			_skin.graphics.drawRect(0,0,this._width,this._height);
-			_skin.graphics.endFill();	
-			
-			updateLabelColor(this.overLabelColor);
-		}
-		private function drawDisabledSkin():void{
-			_skin.graphics.clear();
-			var colors:Array = this.upSkinColors;
-			//不可用时半透明
-			var alphas:Array = [0,6,0.6];
-			var ratios:Array = [0,255];
-			var matrix:Matrix = new Matrix();			
-			matrix.createGradientBox(this._width,this._height, Math.PI/2);
 			_skin.graphics.beginGradientFill(GradientType.LINEAR,colors,alphas,ratios,matrix);
 			_skin.graphics.drawRect(0,0,this._width,this._height);
 			_skin.graphics.endFill();			
 		}
+		
 		
 		/**
 		 * Shows the icon depending on the current state.
@@ -400,13 +371,13 @@ package com.pintu.widgets
 		/**
 		 * Sets the label text depending on the current state.
 		 */
-		protected function setLabelText() : void {
+		private function setLabelText() : void {
 			_label = new TextField();
 			_label.autoSize = TextFieldAutoSize.LEFT;
 			_label.selectable = false;
 			_label.mouseEnabled = false;
 			
-			var labelFormat:TextFormat = new TextFormat();
+			var labelFormat:TextFormat = new TextFormat();			
 			labelFormat.size = defaultFontSize;
 			labelFormat.color = upLabelColor;			
 			_label.defaultTextFormat = labelFormat;
@@ -435,8 +406,7 @@ package com.pintu.widgets
 		}
 		
 		//for subclass to call...
-		protected function moveLabel(x:Number, y:Number):void{
-			_label.x = x;
+		protected function moveLabel(y:Number):void{
 			_label.y = y;
 		}
 		
@@ -525,7 +495,7 @@ package com.pintu.widgets
 		 */
 		private function drawBackground() : void {
 			graphics.clear();
-			graphics.beginFill(0, 0.1);
+			graphics.beginFill(0xFFFFFF, 0.01);
 			graphics.drawRect(0, 0, _width, _height);
 		}
 		
@@ -631,12 +601,20 @@ package com.pintu.widgets
 			
 			if(fontSize) this.defaultFontSize = fontSize;
 			
-			if(upColor) this.upLabelColor = upColor;
+			this.upLabelColor = upColor;
 			
-			if(overColor) this.overLabelColor = overColor;
+			this.overLabelColor = overColor;
 			
-			if(downColor) this.downLabelColor = downColor;
+			this.downLabelColor = downColor;
 			
+		}
+		
+		override public function get width():Number{
+			return this._width;
+		}
+		
+		override public function get height():Number{
+			return this._height;
 		}
 		
 	}

@@ -60,7 +60,16 @@ package com.pintu.config
 		public static const FOOTER_SOLID_GRAY:uint = 0xC2CCD0;
 		
 		
-		
+		/**
+		 * Text font style ...
+		 */
+		public static const DEFAULT_TEXT_FONTSIZE:int = 12;
+		public static const HEADER_MENU_FONTSIZE:int = 14;
+		public static const TOOL_MENU_FONTSIZE:int = 12;
+		//黯：深黑色、泛指黑色
+		public static const DEFAULT_TEXT_COLOR:uint = 0x41555D;
+		//精白：纯白、洁白、净白、粉白
+		public static const HEADER_MENU_COLOR:uint = 0xFFFFFF;
 		
 		
 	} //end of color
