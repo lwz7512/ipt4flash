@@ -2,6 +2,10 @@ package com.pintu.widgets
 {
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
+	import com.sibirjak.asdpc.listview.renderer.ListItemContent;
+	import com.sibirjak.asdpc.textfield.Label;
+	import com.sibirjak.asdpc.treeview.TreeView;
+	import com.sibirjak.asdpc.treeview.renderer.TreeNodeRenderer;
 	
 	import flash.display.GradientType;
 	import flash.display.Sprite;
@@ -11,27 +15,69 @@ package com.pintu.widgets
 		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
+		private var leftColumnHeight:Number;
+		
+		private var browseTree:TreeView;
+		private var tagsTree:TreeView;
+		
+		private var browseTreeX:Number;
+		private var browseTreeY:Number;
+		private var browseTreeHeight:Number = 100;
+		private var tagsTreeX:Number;
+		private var tagsTreeY:Number;
+		private var treeVerticalGap:Number = 4;
+		
+		private var browseTreeXML:XML;
+		
+		private const CATEGORY_GALLERY:String = "gallery";
+		private const CATEGORY_HOT:String = "hot";
+		private const CATEGORY_CLASSICAL:String = "classical";
+		private const CATEGORY_FAVORED:String = "favored";
 		
 		public function CategoryTree(){
 			super();
+			initVisualPartsPos();
+			
+			browseTreeXML = new XML(
+				<item name="浏览">
+					<item name="画廊" category="gallery"/>
+					<item name="热点图片" category="hot"/>
+					<item name="经典图片" category="classical"/>
+					<item name="最近被收藏" category="favored"/>
+				</item>
+			);
 			
 			drawLeftCategoryBackground();
-			createCategoryTree();
+			createBrowseTree();
+			
+			//TODO, LOADING TAGS...
+			
+			//TODO, ADD SYSTEM TAG LIST...
+			buildTagsTree();
+		}
+		
+		private function initVisualPartsPos():void{
+			drawStartX = InitParams.startDrawingX();
+			drawStartY = InitParams.HEADERFOOTER_HEIGHT
+				+InitParams.TOP_BOTTOM_GAP
+				+InitParams.MAINMENUBAR_HEIGHT
+				+InitParams.DEFAULT_GAP;
+			
+			browseTreeX = drawStartX+2;
+			browseTreeY = drawStartY+2;
+			tagsTreeX = browseTreeX;
+			tagsTreeY = browseTreeY+browseTreeHeight+treeVerticalGap;
+			
+			leftColumnHeight = InitParams.LEFTCOLUMN_HEIGHT;			
+			if(InitParams.isStretchHeight()){
+				leftColumnHeight = InitParams.appHeight
+					-drawStartY
+					-InitParams.TOP_BOTTOM_GAP
+					-InitParams.HEADERFOOTER_HEIGHT;
+			}
 		}
 		
 		private function drawLeftCategoryBackground():void{
-			drawStartX = InitParams.startDrawingX();
-			drawStartY = InitParams.HEADERFOOTER_HEIGHT
-													+InitParams.TOP_BOTTOM_GAP
-													+InitParams.MAINMENUBAR_HEIGHT
-													+InitParams.DEFAULT_GAP;
-			var leftColumnHeight:Number = InitParams.LEFTCOLUMN_HEIGHT;			
-			if(InitParams.isStretchHeight()){
-				leftColumnHeight = InitParams.appHeight
-												-drawStartY
-												-InitParams.TOP_BOTTOM_GAP
-												-InitParams.HEADERFOOTER_HEIGHT;
-			}
 			this.graphics.clear();
 			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
 			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR);
@@ -39,11 +85,82 @@ package com.pintu.widgets
 				InitParams.LEFTCOLUMN_WIDTH,leftColumnHeight);
 			this.graphics.endFill();
 		}
-		//TODO, Create category tree by data...
-		private function createCategoryTree():void{
+		
+		private function createBrowseTree():void{
+			browseTree = new TreeView();
+			browseTree.dataSource = browseTreeXML;			
+			browseTree.setSize(InitParams.LEFTCOLUMN_WIDTH-2,browseTreeHeight);
+			browseTree.x = browseTreeX;
+			browseTree.y = browseTreeY;
+			browseTree.selectItemAt(1);
+			addStyleForTree(browseTree);
+			this.addChild(browseTree);												
+		}
+		
+		private function addStyleForTree(tree:TreeView):void{
+			tree.setStyle(TreeView.style.showRoot,true);
+			tree.setStyle(TreeView.style.maxExpandAllLevel,2);
+			tree.setStyle(TreeNodeRenderer.style.connectors,false);
+			tree.setStyle(TreeNodeRenderer.style.disclosureButton,false);
+			//文字大小
+			tree.setStyle(ListItemContent.style.labelStyles,[Label.style.size, 12]);
+			//文字颜色
+			tree.setStyle(ListItemContent.style.labelStyles,
+				[Label.style.size, 12,Label.style.color, 0x444444]);
+			tree.setStyle(ListItemContent.style.overLabelStyles,
+				[Label.style.size, 12,Label.style.color, 0x444444]);
+			tree.setStyle(ListItemContent.style.selectedLabelStyles,
+				[Label.style.size, 12,Label.style.color, 0xFFFFFF]);
+			//默认展开第一级
+			tree.expandNodeAt(0);			
+		}
+		
+		private function buildTagsTree():void{
+			var tagData : Node = new Node("分类","");
+			//TODO, ADD DATA AT RUNTIME FROM BACKEND...
+			tagData.addNode(new Node("tag_1","id_1"));
+			tagData.addNode(new Node("tag_2","id_2"));
+			tagData.addNode(new Node("tag_3","id_3"));
 			
+			tagsTree = new TreeView();
+			tagsTree.dataSource = tagData;
+			tagsTree.setSize(InitParams.LEFTCOLUMN_WIDTH-2,
+				InitParams.LEFTCOLUMN_HEIGHT-browseTreeHeight-treeVerticalGap);
+			tagsTree.x = tagsTreeX;
+			tagsTree.y = tagsTreeY;
+			addStyleForTree(tagsTree);
+			this.addChild(tagsTree);	
 		}
 		
 		
+	}
+}
+
+import org.as3commons.collections.framework.IDataProvider;
+
+internal class Node implements IDataProvider {
+	private var _name : String;
+	private var _id:String;
+	private var _childNodes : Array = new Array();
+	
+	public function Node(name : String, id:String) {
+		_name = name;
+		_id = id;
+	}
+	
+	public function addNode(node : Node) : void {
+		_childNodes.push(node);
+	}
+	
+	public function itemAt(index : uint) : * {
+		return _childNodes[index];
+	}
+	
+	public function get size() : uint {
+		return _childNodes.length;
+	}
+	
+	public function get name() : String {
+		return _name;
 	}
 }

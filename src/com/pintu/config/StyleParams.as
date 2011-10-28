@@ -5,6 +5,8 @@ package com.pintu.config
 		
 		//全局的边框颜色，花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
 		public static const DEFAULT_BORDER_COLOR:uint = 0xC2CCD0;
+		//较深的边框色，墨灰：即黑灰
+		public static const DARKER_BORDER_COLOR:uint = 0x758A99;
 		//默认背景色，荼白：如荼之白色
 		public static const DEFAULT_FILL_COLOR:uint = 0xF3F9F1;
 		
@@ -63,9 +65,14 @@ package com.pintu.config
 		/**
 		 * Text font style ...
 		 */
+		public static const DEFAULT_TEXT_FONTNAME:String = "宋体";
 		public static const DEFAULT_TEXT_FONTSIZE:int = 12;
+		
 		public static const HEADER_MENU_FONTSIZE:int = 14;
 		public static const TOOL_MENU_FONTSIZE:int = 12;
+		//xx xx xx xx or xxx xxx xxx, so total is 11;
+		public static const TEXTINPUT_MAXCHARS:int = 11;
+		public static const TEXTINPUT_FONTSIZE:int = 18;
 		//黯：深黑色、泛指黑色
 		public static const DEFAULT_TEXT_COLOR:uint = 0x41555D;
 		//精白：纯白、洁白、净白、粉白

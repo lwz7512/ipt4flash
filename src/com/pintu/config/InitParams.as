@@ -2,15 +2,12 @@ package com.pintu.config
 {
 	public class InitParams{
 		
+		public function InitParams(){}
+		
+		
 		//运行时初始化参数		
 		public static var appWidth:Number = 0;
-		public static var appHeight:Number = 0;
-		
-		public static var isLogged:Boolean;
-		public static var userId:String;
-		
-		
-		public function InitParams(){}
+		public static var appHeight:Number = 0;				
 		
 		//应用缺省宽度和高度
 		public static const MINAPP_WIDTH:Number = 980;
@@ -29,6 +26,8 @@ package com.pintu.config
 		public static const MAINMENUBAR_HEIGHT:Number = 57;
 		//Main menu bar width
 		public static const MAINMENUBAR_WIDTH:Number = 772;
+		//search input width
+		public static const SEARCH_INPUT_WIDTH:Number = 200;
 		
 		//Gallery display section width
 		public static const GALLERY_WIDTH:Number = 597;

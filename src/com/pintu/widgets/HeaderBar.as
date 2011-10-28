@@ -100,7 +100,8 @@ package com.pintu.widgets
 				InitParams.HEADERMENU_BG_WIDTH,
 				InitParams.HEADERFOOTER_HEIGHT);
 			homeMenu.setSkinStyle(upColors,overColors,downColors);
-			homeMenu.setLabelStyle(StyleParams.HEADER_MENU_FONTSIZE,
+			homeMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+				StyleParams.HEADER_MENU_FONTSIZE,
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR);
@@ -114,7 +115,8 @@ package com.pintu.widgets
 				InitParams.HEADERMENU_BG_WIDTH,
 				InitParams.HEADERFOOTER_HEIGHT);
 			communityMenu.setSkinStyle(upColors,overColors,downColors);
-			communityMenu.setLabelStyle(StyleParams.HEADER_MENU_FONTSIZE,
+			communityMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+				StyleParams.HEADER_MENU_FONTSIZE,
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR);
@@ -128,7 +130,8 @@ package com.pintu.widgets
 				InitParams.HEADERMENU_BG_WIDTH,
 				InitParams.HEADERFOOTER_HEIGHT);
 			marketMenu.setSkinStyle(upColors,overColors,downColors);
-			marketMenu.setLabelStyle(StyleParams.HEADER_MENU_FONTSIZE,
+			marketMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+				StyleParams.HEADER_MENU_FONTSIZE,
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR);

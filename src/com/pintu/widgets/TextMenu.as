@@ -134,6 +134,7 @@ package com.pintu.widgets
 		private var downLabelColor:uint = 0xFFFFFF;
 		
 		private var defaultFontSize:int = 12;
+		private var defaultFontName:String;
 		
 		/* children */
 		
@@ -379,9 +380,11 @@ package com.pintu.widgets
 			
 			var labelFormat:TextFormat = new TextFormat();			
 			labelFormat.size = defaultFontSize;
-			labelFormat.color = upLabelColor;			
-			_label.defaultTextFormat = labelFormat;
+			labelFormat.color = upLabelColor;
+			if(defaultFontName) 
+				labelFormat.font = defaultFontName;
 			
+			_label.defaultTextFormat = labelFormat;			
 			_label.text = _labelText;
 			this.addChild(_label);
 			
@@ -399,7 +402,7 @@ package com.pintu.widgets
 		private function updateLabelColor(color:uint):void{
 			var labelFormat:TextFormat = _label.defaultTextFormat;
 			labelFormat.size = defaultFontSize;
-			labelFormat.color = color;			
+			labelFormat.color = color;				
 			_label.defaultTextFormat = labelFormat;	
 			//按照新的样式重新渲染文字
 			_label.text = _labelText;			
@@ -597,8 +600,9 @@ package com.pintu.widgets
 		/**
 		 * set label styles
 		 */
-		public function setLabelStyle(fontSize:int, upColor:uint, overColor:uint, downColor:uint):void{
+		public function setLabelStyle(fontName:String, fontSize:int, upColor:uint, overColor:uint, downColor:uint):void{
 			
+			if(fontName) this.defaultFontName = fontName;
 			if(fontSize) this.defaultFontSize = fontSize;
 			
 			this.upLabelColor = upColor;

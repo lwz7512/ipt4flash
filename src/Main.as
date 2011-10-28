@@ -5,11 +5,9 @@
  */ 
 package{
 	
-	import com.pintu.api.IPintu;
-	import com.pintu.api.PintuImpl;
+	import com.pintu.api.*;
 	import com.pintu.config.InitParams;
-	import com.pintu.controller.GlobalNavigator;
-	import com.pintu.controller.VisualFactory;
+	import com.pintu.controller.*;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
 	import com.pintu.widgets.FooterBar;
@@ -62,15 +60,17 @@ package{
 				Logger.warn("Stage is unavailable, stop to build app!");
 				return;
 			}
-			//全局模块固定不变
-			buildHeaderMenu(isLogged);			
-			buildFooterContent();
+			//检查登录状态			
+			checkLogonStatus();	
 			
 			model = new PintuImpl();
 			factory = new VisualFactory(this,model);
 			navigator = new GlobalNavigator(this,factory);					
 			
-			checkLogonStatus();	
+			//全局模块固定不变
+			buildHeaderMenu(isLogged);			
+			buildFooterContent();
+			
 			//display home page
 			if(isLogged){
 				navigator.switchTo(GlobalNavigator.HOMPAGE);				
@@ -91,7 +91,7 @@ package{
 		private function checkLogonStatus():void{
 			//TODO, is logged in?
 			
-			InitParams.isLogged = isLogged;
+			GlobalController.isLogged = isLogged;
 		}
 		
 		
