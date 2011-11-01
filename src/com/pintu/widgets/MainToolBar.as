@@ -11,6 +11,9 @@ package com.pintu.widgets
 	
 	public class MainToolBar extends Sprite{
 		
+		private const TB_MODE:String = "thumbnail";
+		private const BP_MODE:String = "bigpic";
+		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
 		
@@ -36,12 +39,32 @@ package com.pintu.widgets
 		private var bigPicPath:String = "assets/bigpic_mode.png";
 		private var searchIconPath:String = "assets/system_search.png";
 		
-		public function MainToolBar(){
+		//图片展示模式
+		private var _displayMode:String; 		
+		private var _isLogged:Boolean
+		
+		public function MainToolBar(logged:Boolean){
 			super();
+			_isLogged = logged;
+			
+			initDisplayModeFromCache();
 			
 			initVisualPartsPos();
 			drawTooBarBackground();
 			createMainTools();
+		}
+		
+		private function initDisplayModeFromCache():void{
+			//TODO, get display mode from cache by user...
+			if(_isLogged){
+				
+			}else{
+				_displayMode = TB_MODE;				
+			}
+		}
+		
+		public function get displayMode():String{
+			return _displayMode;
 		}
 		
 		private function initVisualPartsPos():void{
@@ -130,6 +153,7 @@ package com.pintu.widgets
 			
 			//search input
 			searchInput = new TextInput();
+			searchInput.defaultText = "input tag tag ...";
 			searchInput.setStyle(TextInput.style.font, StyleParams.DEFAULT_TEXT_FONTNAME);
 			searchInput.setSize(InitParams.SEARCH_INPUT_WIDTH,32);
 			searchInput.setStyle(TextInput.style.size,StyleParams.TEXTINPUT_FONTSIZE);
@@ -145,7 +169,8 @@ package com.pintu.widgets
 			searchIcon.y = searchInput.y+1;
 			
 			this.addChild(searchIcon);
-						
+			
+			//TODO, ADD REFRESH BUTTON...
 			
 		}
 		

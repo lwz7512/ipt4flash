@@ -14,28 +14,43 @@ package com.pintu.modules
 	
 	public class UnloggedPage extends Sprite{
 		
-		private var model:IPintu;
+		private var _model:IPintu;
+		private var mainToolBar:MainToolBar;
+		private var categoryTree:CategoryTree;
+		private var mainDisplayArea:MainDisplayArea;
+		private var slideToolBar:SlideToolBar;
+		private var login:LoginBlock;
+		private var activeUser:ActiveUserBlock;
+		
 		
 		public function UnloggedPage(model:IPintu){
 			super();
-			this.model = model;
+			this._model = model;
 				
-			var mainToolBar:MainToolBar = new MainToolBar();
+			mainToolBar = new MainToolBar(false);
+			//TODO, ADD BUTTON EVENT LISTENER...
+			
 			this.addChild(mainToolBar);
 			
-			var categoryTree:CategoryTree = new CategoryTree();
+			categoryTree = new CategoryTree();
+			//TODO, ADD CHANGE EVENT LISTENTER...
+			
 			this.addChild(categoryTree);
 			
-			var mainDisplayArea:MainDisplayArea = new MainDisplayArea();
+			mainDisplayArea = new MainDisplayArea(_model);
+			//未登录，默认缩略图
+			mainDisplayArea.displayMode = mainToolBar.displayMode;
+			//未登录，默认画廊
+			mainDisplayArea.browseType = categoryTree.browseType;
 			this.addChild(mainDisplayArea);
 			
-			var slideToolBar:SlideToolBar = new SlideToolBar();
+			slideToolBar = new SlideToolBar();
 			this.addChild(slideToolBar);
 			
-			var login:LoginBlock = new LoginBlock();
+			login = new LoginBlock();
 			this.addChild(login);
 			
-			var activeUser:ActiveUserBlock = new ActiveUserBlock();
+			activeUser = new ActiveUserBlock();
 			this.addChild(activeUser);
 			
 		}

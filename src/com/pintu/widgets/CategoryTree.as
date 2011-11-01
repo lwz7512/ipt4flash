@@ -34,8 +34,12 @@ package com.pintu.widgets
 		private const CATEGORY_CLASSICAL:String = "classical";
 		private const CATEGORY_FAVORED:String = "favored";
 		
+		private var _browseType:String;
+		
 		public function CategoryTree(){
 			super();
+			_browseType = CATEGORY_GALLERY;
+			
 			initVisualPartsPos();
 			
 			browseTreeXML = new XML(
@@ -52,9 +56,14 @@ package com.pintu.widgets
 			
 			//TODO, LOADING TAGS...
 			
-			//TODO, ADD SYSTEM TAG LIST...
-			buildTagsTree();
+			//FIXME ,  应该统一成一颗树
+//			buildTagsTree();
 		}
+		
+		public function get browseType():String{
+			return _browseType;
+		}
+		
 		
 		private function initVisualPartsPos():void{
 			drawStartX = InitParams.startDrawingX();
@@ -94,6 +103,8 @@ package com.pintu.widgets
 			browseTree.y = browseTreeY;
 			browseTree.selectItemAt(1);
 			addStyleForTree(browseTree);
+			//TODO, ADD CHANGE EVENT LISTENER...
+			
 			this.addChild(browseTree);												
 		}
 		
@@ -129,6 +140,8 @@ package com.pintu.widgets
 			tagsTree.x = tagsTreeX;
 			tagsTree.y = tagsTreeY;
 			addStyleForTree(tagsTree);
+			//TODO, ADD CHANGE EVENT LISTENER...
+			
 			this.addChild(tagsTree);	
 		}
 		
