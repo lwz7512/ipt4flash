@@ -9,7 +9,6 @@ package com.pintu.api
 	import flash.events.EventDispatcher;
 	import flash.net.FileReference;
 	
-	import org.as3commons.collections.utils.NullComparator;
 
 	public class PintuImpl extends EventDispatcher implements IPintu{
 		
@@ -23,10 +22,15 @@ package com.pintu.api
 			
 			client = new SimpleHttpClient(getServiceUrl(),GlobalController.userId);
 			
-			client.addEventListener(ApiMethods.GETGALLERYBYTIME,responseHander);
-			client.addEventListener(ApiMethods.GETGALLERYFORWEB,responseHander);
 			client.addEventListener(ApiMethods.LOGON,responseHander);
 			client.addEventListener(ApiMethods.UPLOAD,responseHander);
+			
+			client.addEventListener(ApiMethods.GETGALLERYBYTIME,responseHander);
+			client.addEventListener(ApiMethods.GETGALLERYFORWEB,responseHander);
+			client.addEventListener(ApiMethods.GETHOTPICTURE,responseHander);
+			client.addEventListener(ApiMethods.CLASSICALSTATISTICS,responseHander);
+			client.addEventListener(ApiMethods.COLLECTSTATISTICS,responseHander);
+			client.addEventListener(ApiMethods.GETTHUMBNAILSBYTAG,responseHander);
 			//TODO, ADD OTHER LISTENER...
 			
 		}
@@ -48,6 +52,13 @@ package com.pintu.api
 				return remoteService;
 			}
 			return null;
+		}
+		
+		
+		public function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void{
+			var params:Array = [{name:"tags",value:tags},{name:"description",value:description},
+											{name:"isOriginal",value:isOriginal}];			
+			client.upload(file,params);		
 		}
 		
 		public function composeImgUrlById(imgId:String):String{
@@ -75,11 +86,24 @@ package com.pintu.api
 			client.post(params, ApiMethods.GETGALLERYFORWEB);				
 		}
 		
-		public function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void{
-			var params:Array = [{name:"tags",value:tags},{name:"description",value:description},
-											{name:"isOriginal",value:isOriginal}];			
-			client.upload(file,params);		
+		public function getHotPicture():void{
+			client.post([],ApiMethods.GETHOTPICTURE);
 		}
+		
+		public function getClassicalPics():void{
+			client.post([],ApiMethods.CLASSICALSTATISTICS);
+		}
+		
+		public function getFavoredPics():void{
+			client.post([],ApiMethods.COLLECTSTATISTICS);
+		}
+		
+		public function getThumbnailsByTag(tagId:String,pageNum:String):void{
+			var params:Array = [{name:"tagId",value:tagId},{name:"pageNum",value:pageNum}];
+			client.post(params,ApiMethods.GETTHUMBNAILSBYTAG);
+		}
+		
+		
 		
 		
 	} //end of class

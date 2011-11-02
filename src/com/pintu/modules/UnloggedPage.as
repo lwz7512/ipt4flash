@@ -38,10 +38,8 @@ package com.pintu.modules
 			this.addChild(categoryTree);
 			
 			mainDisplayArea = new MainDisplayArea(_model);
-			//未登录，默认缩略图
-			mainDisplayArea.displayMode = mainToolBar.displayMode;
 			//未登录，默认画廊
-			mainDisplayArea.browseType = categoryTree.browseType;
+			mainDisplayArea.browseType = categoryTree.browseType;			
 			this.addChild(mainDisplayArea);
 			
 			slideToolBar = new SlideToolBar();
@@ -59,5 +57,5 @@ package com.pintu.modules
 
 		
 		
-	}
+	} //end of class
 }

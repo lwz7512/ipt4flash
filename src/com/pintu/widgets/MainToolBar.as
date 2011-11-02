@@ -11,8 +11,8 @@ package com.pintu.widgets
 	
 	public class MainToolBar extends Sprite{
 		
-		private const TB_MODE:String = "thumbnail";
-		private const BP_MODE:String = "bigpic";
+		public static const TB_MODE:String = "thumbnail";
+		public static const BP_MODE:String = "bigpic";
 		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
@@ -54,6 +54,11 @@ package com.pintu.widgets
 			createMainTools();
 		}
 		
+		public function get displayMode():String{
+			return _displayMode;
+		}
+		
+		
 		private function initDisplayModeFromCache():void{
 			//TODO, get display mode from cache by user...
 			if(_isLogged){
@@ -63,9 +68,6 @@ package com.pintu.widgets
 			}
 		}
 		
-		public function get displayMode():String{
-			return _displayMode;
-		}
 		
 		private function initVisualPartsPos():void{
 			
@@ -116,40 +118,40 @@ package com.pintu.widgets
 				StyleParams.ICONMENU_SELECTED_BOTTOM];
 			
 			//thumbnail button
-			thumbnailMode = new IconButton(
-				InitParams.MAINMENUBAR_HEIGHT,
-				InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
-			thumbnailMode.setSkinStyle(upColors,overColors,downColors);
-			thumbnailMode.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
-				StyleParams.DEFAULT_TEXT_FONTSIZE,
-				StyleParams.DEFAULT_TEXT_COLOR,
-				StyleParams.DEFAULT_TEXT_COLOR,
-				StyleParams.DEFAULT_TEXT_COLOR);
-			thumbnailMode.label = "缩略图";
-			thumbnailMode.x = thumbnailButtonX;
-			thumbnailMode.y = drawStartY+buttonGap;
+//			thumbnailMode = new IconButton(
+//				InitParams.MAINMENUBAR_HEIGHT,
+//				InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
+//			thumbnailMode.setSkinStyle(upColors,overColors,downColors);
+//			thumbnailMode.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+//				StyleParams.DEFAULT_TEXT_FONTSIZE,
+//				StyleParams.DEFAULT_TEXT_COLOR,
+//				StyleParams.DEFAULT_TEXT_COLOR,
+//				StyleParams.DEFAULT_TEXT_COLOR);
+//			thumbnailMode.label = "缩略图";
+//			thumbnailMode.x = thumbnailButtonX;
+//			thumbnailMode.y = drawStartY+buttonGap;
 			//默认是缩略图模式
-			thumbnailMode.selected = true;
+//			thumbnailMode.selected = true;
 			//指定图标
-			thumbnailMode.iconPath = thumbnailPath;
-			this.addChild(thumbnailMode);
+//			thumbnailMode.iconPath = thumbnailPath;
+//			this.addChild(thumbnailMode);
 			
 			//big pic button
-			bigPicMode = new IconButton(
-				InitParams.MAINMENUBAR_HEIGHT,
-				InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
-			bigPicMode.setSkinStyle(upColors,overColors,downColors);
-			bigPicMode.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
-				StyleParams.DEFAULT_TEXT_FONTSIZE,
-				StyleParams.DEFAULT_TEXT_COLOR,
-				StyleParams.DEFAULT_TEXT_COLOR,
-				StyleParams.DEFAULT_TEXT_COLOR);
-			bigPicMode.label = "大图";
-			bigPicMode.x =bigPicButtonX;
-			bigPicMode.y = drawStartY+buttonGap;			
+//			bigPicMode = new IconButton(
+//				InitParams.MAINMENUBAR_HEIGHT,
+//				InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
+//			bigPicMode.setSkinStyle(upColors,overColors,downColors);
+//			bigPicMode.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+//				StyleParams.DEFAULT_TEXT_FONTSIZE,
+//				StyleParams.DEFAULT_TEXT_COLOR,
+//				StyleParams.DEFAULT_TEXT_COLOR,
+//				StyleParams.DEFAULT_TEXT_COLOR);
+//			bigPicMode.label = "大图";
+//			bigPicMode.x =bigPicButtonX;
+//			bigPicMode.y = drawStartY+buttonGap;			
 			//指定图标
-			bigPicMode.iconPath = bigPicPath;
-			this.addChild(bigPicMode);
+//			bigPicMode.iconPath = bigPicPath;
+//			this.addChild(bigPicMode);
 			
 			//search input
 			searchInput = new TextInput();

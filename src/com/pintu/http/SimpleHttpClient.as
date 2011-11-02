@@ -52,7 +52,7 @@ package com.pintu.http
 				// For string data
 				var result:String = event.readUTFBytes();
 				var dataEvent:ResponseEvent = new ResponseEvent(method,result);
-				this.dispatchEvent(dataEvent);
+				dispatchEvent(dataEvent);
 			};
 			
 			client.listener.onComplete = function(event:HttpResponseEvent):void {
@@ -65,7 +65,7 @@ package com.pintu.http
 				var errorMessage:String = event.text;
 				Logger.error("Method: "+method+" , error: "+errorMessage);
 				var errorEvent:ErrorEvent = new ErrorEvent(method,errorMessage);
-				this.dispatchEvent(errorEvent);
+				dispatchEvent(errorEvent);
 			};  					
 			
 			client.postFormData(uri, params);			
@@ -98,14 +98,14 @@ package com.pintu.http
 				var response:String = event.response.message;
 				Logger.debug("Method: upload , response: "+response);
 				var completeEvent:ResponseEvent = new ResponseEvent("upload",response);
-				this.dispatchEvent(completeEvent);
+				dispatchEvent(completeEvent);
 			};
 			
 			client.listener.onError = function(event:HttpErrorEvent):void {
 				var errorMessage:String = event.text;
 				Logger.error("Method: upload, error: "+errorMessage);
 				var errorEvent:ErrorEvent = new ErrorEvent("upload",errorMessage);
-				this.dispatchEvent(errorEvent);
+				dispatchEvent(errorEvent);
 			}; 
 			
 			client.postMultipart(uri, multipart);

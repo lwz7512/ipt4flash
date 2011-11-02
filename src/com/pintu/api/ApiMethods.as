@@ -2,8 +2,20 @@ package com.pintu.api
 {
 	public class ApiMethods{
 		
+		//画廊缩略图，按时间分页，每页取32个
 		public static const GETGALLERYBYTIME:String = "getGalleryByTime";
+		//画廊大图，按页码分页，每页取12个
 		public static const GETGALLERYFORWEB:String = "getGalleryForWeb";
+		//热图
+		public static const GETHOTPICTURE:String = "getHotPicture";
+		//经典
+		public static const CLASSICALSTATISTICS:String = "classicalStatistics";
+		//最近被收藏
+		public static const COLLECTSTATISTICS:String = "collectStatistics";
+		//按标签查询
+		public static const GETTHUMBNAILSBYTAG:String = "getThumbnailsByTag";
+		
+		
 		public static const LOGON:String = "logon";
 		public static const UPLOAD:String = "upload";
 		
@@ -11,8 +23,6 @@ package com.pintu.api
 		public static const GETIMAGEBYPATH:String = "getImageByPath";
 		
 		
-		public function ApiMethods()
-		{
-		}
+		public function ApiMethods(){}
 	}
 }

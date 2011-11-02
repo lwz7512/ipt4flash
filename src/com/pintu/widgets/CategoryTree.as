@@ -13,6 +13,14 @@ package com.pintu.widgets
 	
 	public class CategoryTree extends Sprite{
 		
+		//缩略图
+		public static const CATEGORY_GALLERY_TBMODE:String = "gallery_tb";
+		//大图
+		public static const CATEGORY_GALLERY_BPMODE:String = "gallery_bp";
+		public static const CATEGORY_HOT:String = "hot";
+		public static const CATEGORY_CLASSICAL:String = "classical";
+		public static const CATEGORY_FAVORED:String = "favored";
+		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
 		private var leftColumnHeight:Number;
@@ -22,36 +30,34 @@ package com.pintu.widgets
 		
 		private var browseTreeX:Number;
 		private var browseTreeY:Number;
-		private var browseTreeHeight:Number = 100;
+		private var browseTreeHeight:Number = InitParams.LEFTCOLUMN_HEIGHT;
 		private var tagsTreeX:Number;
 		private var tagsTreeY:Number;
 		private var treeVerticalGap:Number = 4;
 		
 		private var browseTreeXML:XML;
 		
-		private const CATEGORY_GALLERY:String = "gallery";
-		private const CATEGORY_HOT:String = "hot";
-		private const CATEGORY_CLASSICAL:String = "classical";
-		private const CATEGORY_FAVORED:String = "favored";
 		
 		private var _browseType:String;
 		
 		public function CategoryTree(){
 			super();
-			_browseType = CATEGORY_GALLERY;
+			_browseType = CATEGORY_GALLERY_TBMODE;
 			
 			initVisualPartsPos();
 			
 			browseTreeXML = new XML(
 				<item name="浏览">
-					<item name="画廊" category="gallery"/>
-					<item name="热点图片" category="hot"/>
-					<item name="经典图片" category="classical"/>
-					<item name="最近被收藏" category="favored"/>
+					<item name="画廊缩略图" type="gallery_tb"/>
+					<item name="画廊大图" type="gallery_bp"/>
+					<item name="热点图片" type="hot"/>
+					<item name="经典图片" type="classical"/>
+					<item name="最近被收藏" type="favored"/>
 				</item>
 			);
 			
 			drawLeftCategoryBackground();
+			
 			createBrowseTree();
 			
 			//TODO, LOADING TAGS...
