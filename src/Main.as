@@ -29,7 +29,7 @@ package{
 		
 		private var isLogged:Boolean = false;
 		private var navigator:GlobalNavigator;
-		private var factory:VisualFactory;
+		private var factory:ModuleFactory;
 		
 		private var header:HeaderBar;
 		private var footer:FooterBar;
@@ -64,7 +64,7 @@ package{
 			checkLogonStatus();	
 			
 			model = new PintuImpl();
-			factory = new VisualFactory(this,model);
+			factory = new ModuleFactory(this,model);
 			navigator = new GlobalNavigator(this,factory);					
 			
 			//全局模块固定不变

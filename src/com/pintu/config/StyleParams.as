@@ -10,6 +10,9 @@ package com.pintu.config
 		//默认背景色，荼白：如荼之白色
 		public static const DEFAULT_FILL_COLOR:uint = 0xF3F9F1;
 		
+		//树组件条目高度
+		public static const TREEITEM_HEIGHT:int = 26;
+		
 		/**
 		 * Header bar LIGHT GREEN style
 		 * 颜色段比例：0~245~255

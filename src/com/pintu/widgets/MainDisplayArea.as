@@ -1,33 +1,40 @@
-package com.pintu.widgets
-{
+package com.pintu.widgets{
+		
 	import com.pintu.api.ApiMethods;
 	import com.pintu.api.IPintu;
 	import com.pintu.api.PintuImpl;
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
-	import com.pintu.events.ErrorEvent;
+	import com.pintu.controller.PicDOBuilder;
+	import com.pintu.events.PTErrorEvent;
 	import com.pintu.events.ResponseEvent;
 	import com.pintu.utils.Logger;
 	
 	import flash.display.GradientType;
+	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	
+	import org.casalib.display.CasaSprite;
+
 	public class MainDisplayArea extends Sprite{
 		
 		
 		private var _model:IPintu;
+		private var _picBuilder:PicDOBuilder;
 		private var _initialized:Boolean;
 		private var _toolBar:MainToolBar;
 		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
+		private var displayAreaHeight:Number;
+		private var displayAreaWidth:Number;
 		
-
+		
 		//浏览类型，是画廊、热图、经典、被收藏、系统分类
-		private var _browseType:String;
-				
+		private var _browseType:String;				
 		//画廊缩略图最后一条记录的时间，作为向后翻页的endTime
 		//有两个设置点：
 		//1. set browseType
@@ -37,11 +44,30 @@ package com.pintu.widgets
 		private var _galleryPageNum:int;
 		//按分类查询，翻页页码
 		private var _tagPageNum:int;
+				
+		// 使用增强的显示对象CasaSprite，以更好的管理子对象		
+		private var _picContainer:CasaSprite;
+		private var _clip:Shape;	
+		
+		//画廊移动速度
+		private var _galleryMoveYSpeed:Number = 0;
 		
 		public function MainDisplayArea(model:IPintu){
-			super();
+			super();					
+			initDrawPoint();
+			
 			this._model = model;
+			this._picContainer = new CasaSprite();
+			addChild(_picContainer);
+			//画廊生成工具
+			this._picBuilder = new PicDOBuilder(_picContainer,_model);
+			this._picBuilder.drawStartX = drawStartX;
+			this._picBuilder.drawStartY = drawStartY;
+			
+			//默认舞台背景色
 			drawMainDisplayBackground();
+			//生成裁剪区域
+			createClipMask();
 			
 			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYBYTIME,thumbnailHandler);
 			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYFORWEB,bigPicHandler);
@@ -49,16 +75,50 @@ package com.pintu.widgets
 			PintuImpl(_model).addEventListener(ApiMethods.CLASSICALSTATISTICS,classicHandler);
 			PintuImpl(_model).addEventListener(ApiMethods.COLLECTSTATISTICS,favoredPicHandler);
 			PintuImpl(_model).addEventListener(ApiMethods.GETTHUMBNAILSBYTAG,tagPicHandler);
-			
-			//TODO, ADD OTHER METHOD HANDLER...
-						
+								
 			//初始化时，按浏览模式查询画廊
 			this.addEventListener(Event.ADDED_TO_STAGE, initDisplayStage);
+			this.addEventListener(MouseEvent.MOUSE_MOVE,scrollPicContainer);
+			this.addEventListener(Event.ENTER_FRAME, moveGallery);
+		}
+		
+		private function initDrawPoint():void{
+			drawStartX = InitParams.startDrawingX()
+				+InitParams.LEFTCOLUMN_WIDTH
+				+InitParams.DEFAULT_GAP;
+			drawStartY = InitParams.HEADER_HEIGHT
+				+InitParams.TOP_BOTTOM_GAP
+				+InitParams.MAINMENUBAR_HEIGHT
+				+InitParams.DEFAULT_GAP;
+			
+			displayAreaHeight = InitParams.CALLERY_HEIGHT;
+			if(InitParams.isStretchHeight()){
+				displayAreaHeight = InitParams.appHeight
+					-drawStartY
+					-InitParams.TOP_BOTTOM_GAP
+					-InitParams.HEADER_HEIGHT;
+			}
+			displayAreaWidth = InitParams.GALLERY_WIDTH;
 		}
 		
 		private function initDisplayStage(event:Event):void{
 			_initialized = true;
 			queryPicByType();
+		}
+		
+		//TODO, 根据_galleryMoveYSpeed移动_picContainer
+		//需要根据画廊的高度与displayAreaHeight相比较
+		//从而决定_picContainer向上走的终点位置...
+		private function moveGallery(event:Event):void{
+			var galleryHeight:Number = _picBuilder.galleryHeight;
+			
+		}
+		
+		//TODO, 根据鼠标在展示区域的上下位置，决定了画廊移动速度
+		private function scrollPicContainer(event:MouseEvent):void{											
+			var relativeMouseY:Number = event.localY - drawStartY;
+			trace(">>> Mouse Y in MainDisplayArea is: "+relativeMouseY);
+			
 		}
 		
 		//根据_displayMode和_browseType来查看图片
@@ -70,6 +130,7 @@ package com.pintu.widgets
 					//缩略图模式					
 					var startTime:String = sixHourAgo(_galleryLastRecordTime);
 					var endTime:String = _galleryLastRecordTime.toString();
+					//查询画廊数据
 					_model.getGalleryByTime(startTime,endTime);
 					break;
 				
@@ -111,12 +172,12 @@ package com.pintu.widgets
 			if(event is ResponseEvent){
 				var galleryData:String = ResponseEvent(event).data;
 				Logger.debug("thumbnail data: \n"+galleryData);
-				//TODO, CREATE THE GALLERY  BY DATA...
-
+				//创建画廊
+				_picBuilder.createScrollableMiniGallery(galleryData);
 				//TODO, CHECK THE LAST GALLERY RECORD TIME...
 				
 			}
-			if(event is ErrorEvent){
+			if(event is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.GETGALLERYBYTIME);
 			}
 		}
@@ -125,7 +186,7 @@ package com.pintu.widgets
 			if(event is ResponseEvent){
 				
 			}
-			if(event is ErrorEvent){
+			if(event is PTErrorEvent){
 				
 			}			
 		}	
@@ -133,7 +194,7 @@ package com.pintu.widgets
 			if(event is ResponseEvent){
 				
 			}
-			if(event is ErrorEvent){
+			if(event is PTErrorEvent){
 				
 			}			
 		}	
@@ -141,7 +202,7 @@ package com.pintu.widgets
 			if(event is ResponseEvent){
 				
 			}
-			if(event is ErrorEvent){
+			if(event is PTErrorEvent){
 				
 			}			
 		}	
@@ -149,7 +210,7 @@ package com.pintu.widgets
 			if(event is ResponseEvent){
 				
 			}
-			if(event is ErrorEvent){
+			if(event is PTErrorEvent){
 				
 			}			
 		}	
@@ -157,7 +218,7 @@ package com.pintu.widgets
 			if(event is ResponseEvent){
 				
 			}
-			if(event is ErrorEvent){
+			if(event is PTErrorEvent){
 				
 			}			
 		}	
@@ -190,27 +251,22 @@ package com.pintu.widgets
 		}				
 
 		
-		private function drawMainDisplayBackground():void{
-			drawStartX = InitParams.startDrawingX()
-													+InitParams.LEFTCOLUMN_WIDTH
-													+InitParams.DEFAULT_GAP;
-			drawStartY = InitParams.HEADERFOOTER_HEIGHT
-													+InitParams.TOP_BOTTOM_GAP
-													+InitParams.MAINMENUBAR_HEIGHT
-													+InitParams.DEFAULT_GAP;
-			var displayAreaHeight:Number = InitParams.CALLERY_HEIGHT;
-			if(InitParams.isStretchHeight()){
-				displayAreaHeight = InitParams.appHeight
-													-drawStartY
-													-InitParams.TOP_BOTTOM_GAP
-													-InitParams.HEADERFOOTER_HEIGHT;
-			}
+		
+		private function drawMainDisplayBackground():void{						
 			this.graphics.clear();
 			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
 			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR);
-			this.graphics.drawRect(drawStartX,drawStartY,
-													InitParams.GALLERY_WIDTH,displayAreaHeight);
+			this.graphics.drawRect(drawStartX,drawStartY,displayAreaWidth,displayAreaHeight);
 			this.graphics.endFill();
+		}
+		
+		private function createClipMask():void{
+			_clip = new Shape();
+			_clip.graphics.beginFill(0x000000);
+			_clip.graphics.drawRect(drawStartX,drawStartY,displayAreaWidth,displayAreaHeight);
+			_clip.graphics.endFill();
+			this.mask = _clip;
+			this.addChild(_clip);
 		}
 		
 		private function invalidate():void{

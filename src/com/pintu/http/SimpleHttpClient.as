@@ -1,10 +1,11 @@
 package com.pintu.http
 {
 	import com.adobe.net.URI;
-	import com.pintu.events.ErrorEvent;
+	import com.pintu.events.PTErrorEvent;
 	import com.pintu.events.ResponseEvent;
 	import com.pintu.utils.Logger;
 	
+	import flash.events.ErrorEvent;
 	import flash.events.EventDispatcher;
 	import flash.net.FileReference;
 	import flash.utils.ByteArray;
@@ -61,10 +62,10 @@ package com.pintu.http
 				Logger.debug("Method: "+method+" , response: "+response);				
 			};
 			
-			client.listener.onError = function(event:HttpErrorEvent):void {
+			client.listener.onError = function(event:ErrorEvent):void {
 				var errorMessage:String = event.text;
 				Logger.error("Method: "+method+" , error: "+errorMessage);
-				var errorEvent:ErrorEvent = new ErrorEvent(method,errorMessage);
+				var errorEvent:PTErrorEvent = new PTErrorEvent(method,errorMessage);
 				dispatchEvent(errorEvent);
 			};  					
 			
@@ -101,10 +102,10 @@ package com.pintu.http
 				dispatchEvent(completeEvent);
 			};
 			
-			client.listener.onError = function(event:HttpErrorEvent):void {
+			client.listener.onError = function(event:ErrorEvent):void {
 				var errorMessage:String = event.text;
 				Logger.error("Method: upload, error: "+errorMessage);
-				var errorEvent:ErrorEvent = new ErrorEvent("upload",errorMessage);
+				var errorEvent:PTErrorEvent = new PTErrorEvent("upload",errorMessage);
 				dispatchEvent(errorEvent);
 			}; 
 			

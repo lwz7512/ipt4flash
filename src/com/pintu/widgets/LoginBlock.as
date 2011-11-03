@@ -23,7 +23,7 @@ package com.pintu.widgets
 			drawStartX = InitParams.startDrawingX()
 								+InitParams.MAINMENUBAR_WIDTH
 								+InitParams.DEFAULT_GAP;
-			drawStartY = InitParams.HEADERFOOTER_HEIGHT+InitParams.TOP_BOTTOM_GAP;
+			drawStartY = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;
 			this.graphics.clear();
 			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
 			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR);

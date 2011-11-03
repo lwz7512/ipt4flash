@@ -81,9 +81,9 @@ package com.pintu.widgets
 			var ratios:Array = [0,245,255];
 			var matrix:Matrix = new Matrix();
 			//需要旋转90度，垂直渐变
-			matrix.createGradientBox(InitParams.appWidth,InitParams.HEADERFOOTER_HEIGHT,Math.PI/2);
+			matrix.createGradientBox(InitParams.appWidth,InitParams.HEADER_HEIGHT,Math.PI/2);
 			this.graphics.beginGradientFill(GradientType.LINEAR,colors,alphas,ratios,matrix);
-			this.graphics.drawRect(0,0,InitParams.appWidth,InitParams.HEADERFOOTER_HEIGHT);
+			this.graphics.drawRect(0,0,InitParams.appWidth,InitParams.HEADER_HEIGHT);
 			this.graphics.endFill();
 
 		}
@@ -98,7 +98,7 @@ package com.pintu.widgets
 			
 			homeMenu = new TextMenu(
 				InitParams.HEADERMENU_BG_WIDTH,
-				InitParams.HEADERFOOTER_HEIGHT);
+				InitParams.HEADER_HEIGHT);
 			homeMenu.setSkinStyle(upColors,overColors,downColors);
 			homeMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
 				StyleParams.HEADER_MENU_FONTSIZE,
@@ -113,7 +113,7 @@ package com.pintu.widgets
 			
 			communityMenu = new TextMenu(
 				InitParams.HEADERMENU_BG_WIDTH,
-				InitParams.HEADERFOOTER_HEIGHT);
+				InitParams.HEADER_HEIGHT);
 			communityMenu.setSkinStyle(upColors,overColors,downColors);
 			communityMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
 				StyleParams.HEADER_MENU_FONTSIZE,
@@ -128,7 +128,7 @@ package com.pintu.widgets
 			
 			marketMenu = new TextMenu(
 				InitParams.HEADERMENU_BG_WIDTH,
-				InitParams.HEADERFOOTER_HEIGHT);
+				InitParams.HEADER_HEIGHT);
 			marketMenu.setSkinStyle(upColors,overColors,downColors);
 			marketMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
 				StyleParams.HEADER_MENU_FONTSIZE,

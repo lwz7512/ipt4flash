@@ -19,10 +19,10 @@ package com.pintu.controller
 		private var _currentModule:Sprite;
 		//top level sprite
 		private var _canvas:Sprite;
-		private var _factory:VisualFactory;
+		private var _factory:ModuleFactory;
 		
 		
-		public function GlobalNavigator(canvas:Sprite, factory:VisualFactory){
+		public function GlobalNavigator(canvas:Sprite, factory:ModuleFactory){
 			this._canvas = canvas;
 			this._factory = factory;
 		}

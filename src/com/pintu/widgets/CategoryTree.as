@@ -2,6 +2,9 @@ package com.pintu.widgets
 {
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
+	import com.pintu.api.IPintu;
+	import com.pintu.api.PintuImpl;
+	
 	import com.sibirjak.asdpc.listview.renderer.ListItemContent;
 	import com.sibirjak.asdpc.textfield.Label;
 	import com.sibirjak.asdpc.treeview.TreeView;
@@ -36,12 +39,14 @@ package com.pintu.widgets
 		private var treeVerticalGap:Number = 4;
 		
 		private var browseTreeXML:XML;
-		
-		
+				
 		private var _browseType:String;
 		
-		public function CategoryTree(){
+		private var _model:IPintu;
+		
+		public function CategoryTree(model:IPintu){
 			super();
+			this._model = model;
 			_browseType = CATEGORY_GALLERY_TBMODE;
 			
 			initVisualPartsPos();
@@ -73,7 +78,7 @@ package com.pintu.widgets
 		
 		private function initVisualPartsPos():void{
 			drawStartX = InitParams.startDrawingX();
-			drawStartY = InitParams.HEADERFOOTER_HEIGHT
+			drawStartY = InitParams.HEADER_HEIGHT
 				+InitParams.TOP_BOTTOM_GAP
 				+InitParams.MAINMENUBAR_HEIGHT
 				+InitParams.DEFAULT_GAP;
@@ -88,7 +93,7 @@ package com.pintu.widgets
 				leftColumnHeight = InitParams.appHeight
 					-drawStartY
 					-InitParams.TOP_BOTTOM_GAP
-					-InitParams.HEADERFOOTER_HEIGHT;
+					-InitParams.FOOTER_HEIGHT;
 			}
 		}
 		
@@ -105,6 +110,7 @@ package com.pintu.widgets
 			browseTree = new TreeView();
 			browseTree.dataSource = browseTreeXML;			
 			browseTree.setSize(InitParams.LEFTCOLUMN_WIDTH-2,browseTreeHeight);
+			browseTree.setStyle(TreeView.style.itemSize, StyleParams.TREEITEM_HEIGHT);
 			browseTree.x = browseTreeX;
 			browseTree.y = browseTreeY;
 			browseTree.selectItemAt(1);

@@ -72,7 +72,7 @@ package com.pintu.widgets
 		private function initVisualPartsPos():void{
 			
 			drawStartX = InitParams.startDrawingX();
-			drawStartY = InitParams.HEADERFOOTER_HEIGHT+InitParams.TOP_BOTTOM_GAP;
+			drawStartY = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;
 			
 			postButtonX = drawStartX+buttonGap;
 			

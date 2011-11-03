@@ -26,7 +26,7 @@ package com.pintu.widgets
 			drawStartX = InitParams.startDrawingX()
 								+InitParams.MAINMENUBAR_WIDTH
 								+InitParams.DEFAULT_GAP;
-			drawStartY = InitParams.HEADERFOOTER_HEIGHT
+			drawStartY = InitParams.HEADER_HEIGHT
 								+InitParams.TOP_BOTTOM_GAP
 								+InitParams.LOGIN_FORM_HEIGHT
 								+InitParams.DEFAULT_GAP;			
@@ -34,7 +34,7 @@ package com.pintu.widgets
 			blockHeight = InitParams.appHeight
 								-drawStartY
 								-InitParams.TOP_BOTTOM_GAP
-								-InitParams.HEADERFOOTER_HEIGHT;
+								-InitParams.FOOTER_HEIGHT;
 			this.graphics.clear();
 			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
 			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR);

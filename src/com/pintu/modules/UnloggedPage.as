@@ -32,7 +32,7 @@ package com.pintu.modules
 			
 			this.addChild(mainToolBar);
 			
-			categoryTree = new CategoryTree();
+			categoryTree = new CategoryTree(_model);
 			//TODO, ADD CHANGE EVENT LISTENTER...
 			
 			this.addChild(categoryTree);

@@ -8,8 +8,10 @@ package com.pintu.controller
 	
 	import org.as3commons.collections.Map;
 	
-	
-	public class VisualFactory{
+	/**
+	 * 应用主模块创建工厂
+	 */ 
+	public class ModuleFactory{
 		
 		//cache the displayed module
 		private var modules:Map = new Map();
@@ -19,7 +21,7 @@ package com.pintu.controller
 		
 		private var _model:IPintu;
 
-		public function VisualFactory(canvas:Sprite, model:IPintu){
+		public function ModuleFactory(canvas:Sprite, model:IPintu){
 			this._canvas = canvas;
 			this._model = model;
 		}

@@ -18,7 +18,8 @@ package com.pintu.config
 		public static const DEFAULT_GAP:Number = 4;
 		
 		//Header footer height
-		public static const HEADERFOOTER_HEIGHT:Number = 32;
+		public static const HEADER_HEIGHT:Number = 32;
+		public static const FOOTER_HEIGHT:Number = 26;
 		//Header menu background width
 		public static const HEADERMENU_BG_WIDTH:Number = 60;
 		
