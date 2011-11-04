@@ -22,7 +22,15 @@ package com.pintu.controller
 		private var _model:IPintu;
 		private var _drawStartX:Number;
 		private var _drawStartY:Number;
-		
+		private var _displayAreaHeight:Number;
+		//用于滚动计算位置
+		private var _currentGalleryHeight:Number;
+		//缩略图大小
+		private var _thumbnailSize:int = 100;
+		//MINI画廊列数
+		private var _miniGalleryColumnNum:int = 5;
+		//画廊边距
+		private var _margin:int = 10;
 		
 		public function PicDOBuilder(displayArea:CasaSprite, model:IPintu){
 			_displayArea = displayArea;
@@ -36,45 +44,55 @@ package com.pintu.controller
 			_drawStartY = sy;
 		}
 		
+		
 		public function createScrollableMiniGallery(json:String):void{
 			_displayArea.removeChildren(true,true);
 			
 			var thumnails:Array = JSON.decode(json) as Array;
 			if(!thumnails) return;
 			
-			var tpics:Array = objToTPicDescArray(thumnails);
+			//画廊剩余宽度减去左右边距，然后按列数平分
+			var columnGap:Number = (InitParams.GALLERY_WIDTH-
+				_miniGalleryColumnNum*_thumbnailSize-2*_margin)/(_miniGalleryColumnNum-1);
+			
+			var rowNum:int = Math.floor(thumnails.length/_miniGalleryColumnNum)+1;
+			//需要计算新的画廊高度
+			//高度就是行数*(缩略图高度+2倍行距)
+			//保存实际的画廊高度，供滚动计算需要
+			_currentGalleryHeight = rowNum*(_thumbnailSize+columnGap);					
 			
 			var grid : HLayout = new HLayout();
-			grid.maxItemsPerRow = 5;
+			//每行最多放5个
+			grid.maxItemsPerRow = _miniGalleryColumnNum;
 			grid.minWidth = InitParams.GALLERY_WIDTH;
-			grid.minHeight = InitParams.CALLERY_HEIGHT;
-			var xOffset:Number = 10;
-			var yOffset:Number = 10;	
+			grid.minHeight = _currentGalleryHeight;
+			var xOffset:Number = _margin;
+			var yOffset:Number = _margin;	
 			grid.marginX = _drawStartX +xOffset;
-			grid.marginY = _drawStartY +yOffset;
-			//左右各空10个像素，5个缩略图中间有4个间隔
-			grid.hGap =  (InitParams.GALLERY_WIDTH-520)/4;
-			grid.vGap = (InitParams.GALLERY_WIDTH-520)/4;
+			grid.marginY = _drawStartY +yOffset;			
+			grid.vGap = columnGap;
+			grid.hGap = columnGap;
 			
 			var cellConfig:CellConfig = new CellConfig();			
-			cellConfig.width = 100;
-			cellConfig.height = 100;
+			cellConfig.width = _thumbnailSize;
+			cellConfig.height = _thumbnailSize;
 			grid.setCellConfig(cellConfig);
 			
-			for(var i:int=0; i<32; i++){
-				var thumbnail:Thumbnail = new Thumbnail(null);
+			var tpics:Array = objToTPicDescArray(thumnails);	
+			for(var i:int=0; i<tpics.length; i++){
+				var thumbnail:Thumbnail = new Thumbnail(TPicDesc(tpics[i]));
 				grid.add(thumbnail);
 			}
-			
+			//展示画廊
 			grid.layout(_displayArea);
 			
 		}
 		
-		public function get galleryHeight():Number{
-			//如果是32个缩略图，高度就是7行*(100+10)
-			return 7*110;
+		public function get galleryHeight():Number{			
+			return _currentGalleryHeight;
 		}
 		
+		//TODO, 创建列表式大图画廊...
 		public function createScrollableBigGallery(json:String):void{
 			_displayArea.removeChildren(true,true);
 			
@@ -83,6 +101,7 @@ package com.pintu.controller
 		private function objToTPicDescArray(thumnails:Array):Array{
 			var tpics:Array = [];
 			for each(var thumbnail:Object in thumnails){
+				if(!thumbnail) continue;				
 				var tpic:TPicDesc = new TPicDesc();
 				tpic.tpId = thumbnail["tpId"];
 				tpic.thumbnailId = thumbnail["thumbnailId"];

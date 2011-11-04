@@ -19,6 +19,8 @@ package{
 	import flash.events.Event;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
+	
+	import org.libspark.ui.SWFWheel;
 		
 	public class Main extends Sprite{
 		
@@ -51,6 +53,11 @@ package{
 			//listen navigate event
 			//may be from login to homepage...
 			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
+			//阻止浏览器滚动条
+			SWFWheel.initialize(stage);
+			SWFWheel.browserScroll = false;
+			//隐藏所有默认右键菜单
+			stage.showDefaultContextMenu = false;
 			
 			//init stage size
 			InitParams.appWidth = this.stage.stageWidth;
