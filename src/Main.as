@@ -43,6 +43,11 @@ package{
 			this.stage.scaleMode =StageScaleMode.NO_SCALE;
 			//从左上角开始绘制
 			this.stage.align = StageAlign.TOP_LEFT;
+			//隐藏所有默认右键菜单
+			this.stage.showDefaultContextMenu = false;
+			//阻止浏览器滚动条
+			SWFWheel.initialize(stage);
+			SWFWheel.browserScroll = false;
 			//舞台准备好后创建应用
 			addEventListener(Event.ADDED_TO_STAGE, buildApp);	
 		}
@@ -53,11 +58,6 @@ package{
 			//listen navigate event
 			//may be from login to homepage...
 			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
-			//阻止浏览器滚动条
-			SWFWheel.initialize(stage);
-			SWFWheel.browserScroll = false;
-			//隐藏所有默认右键菜单
-			stage.showDefaultContextMenu = false;
 			
 			//init stage size
 			InitParams.appWidth = this.stage.stageWidth;

@@ -16,12 +16,19 @@ package com.pintu.widgets
 		private var _iconLoader:ImageLoad;
 		private var _icon:Bitmap;
 		
-		private var _iconWidth:Number = 30;
-		private var _iconHeight:Number = 30;
+		private var _showUpSkin:Boolean = false;
 		
-		public function SimpleIcon(path:String)
+		private var _iconWidth:Number = 30;
+		//为了跟搜索框底部对齐，高度稍微大点
+		private var _iconHeight:Number = 31;
+		
+		public function SimpleIcon(path:String, showUpSkin:Boolean=false)
 		{
 			_iconPath = path;
+			_showUpSkin = showUpSkin;
+			
+			drawBackground();
+			
 			_iconLoader = new ImageLoad(_iconPath);
 			_iconLoader.addEventListener(LoadEvent.COMPLETE,onLoaded);
 			_iconLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
@@ -31,7 +38,19 @@ package com.pintu.widgets
 			this.addEventListener(MouseEvent.MOUSE_OUT,drawOutSkin);
 			this.addEventListener(MouseEvent.MOUSE_DOWN,drawDownSkin);
 			this.addEventListener(MouseEvent.MOUSE_UP,drawUpSkin);
-		}			
+		}		
+		
+		private function drawBackground():void{
+			if(_showUpSkin){
+				this.graphics.clear();
+				//墨灰：即黑灰
+				this.graphics.lineStyle(1,0x758a99);
+				//银白：带银光的白色
+				this.graphics.beginFill(0xE9E7EF);
+				this.graphics.drawRect(0,0,_iconWidth,_iconHeight);
+				this.graphics.endFill();				
+			}
+		}
 		
 		private function drawOverSkin(event:MouseEvent):void{
 			this.graphics.clear();
@@ -41,7 +60,7 @@ package com.pintu.widgets
 			this.graphics.endFill();
 		}
 		private function drawOutSkin(event:MouseEvent):void{
-			this.graphics.clear();
+			drawBackground();
 		}
 		private function drawDownSkin(event:MouseEvent):void{
 			this.graphics.clear();
