@@ -171,28 +171,25 @@ package com.pintu.widgets{
 						_model.getGalleryForWeb(_galleryPageNum.toString());				
 					break;
 				
-				case CategoryTree.CATEGORY_HOT:
-					//查询热图，禁用展示模式切换按钮
+				case CategoryTree.CATEGORY_HOT:					
 					_model.getHotPicture();
 					
 					break;
 				
-				case CategoryTree.CATEGORY_CLASSICAL:
-					//查询经典，禁用展示模式切换按钮
+				case CategoryTree.CATEGORY_CLASSICAL:					
 					_model.getClassicalPics();
 					
 					break;
 				
-				case CategoryTree.CATEGORY_FAVORED:
-					//查询被收藏，禁用展示模式切换按钮
+				case CategoryTree.CATEGORY_FAVORED:					
 					_model.getFavoredPics();
 					
 					break;
 				
-				default:
-					// 按系统标签查询，禁用展示模式切换按钮
+				default:					
 					_tagPageNum++;
-					_model.getThumbnailsByTag(_browseType,_tagPageNum.toString());
+					//TODO, GET THUMBNIALS BY TAG...
+//					_model.getThumbnailsByTag(_browseType,_tagPageNum.toString());
 					
 					break;
 				

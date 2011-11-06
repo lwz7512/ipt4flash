@@ -5,12 +5,15 @@ package com.pintu.widgets
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
 	import com.pintu.events.PintuEvent;
+	import com.pintu.utils.Logger;
+	
 	import com.sibirjak.asdpc.listview.ListItemEvent;
 	import com.sibirjak.asdpc.listview.ListView;
 	import com.sibirjak.asdpc.listview.renderer.ListItemContent;
 	import com.sibirjak.asdpc.textfield.Label;
 	import com.sibirjak.asdpc.treeview.TreeView;
 	import com.sibirjak.asdpc.treeview.renderer.TreeNodeRenderer;
+	import com.sibirjak.asdpc.core.constants.Visibility;
 	
 	import flash.display.GradientType;
 	import flash.display.Sprite;
@@ -36,7 +39,6 @@ package com.pintu.widgets
 		
 		private var browseTreeX:Number;
 		private var browseTreeY:Number;
-		private var browseTreeHeight:Number = InitParams.LEFTCOLUMN_HEIGHT;
 		
 		private var tagsTreeX:Number;
 		private var tagsTreeY:Number;
@@ -59,6 +61,7 @@ package com.pintu.widgets
 			super();
 			this._model = model;
 			_browseType = CATEGORY_GALLERY_TBMODE;
+						
 			_rootNode = new Node("root","0");
 			
 			initVisualPartsPos();						
@@ -67,31 +70,10 @@ package com.pintu.widgets
 			
 			createBrowseTree();
 			
-			this.addEventListener(MouseEvent.MOUSE_WHEEL, scrollTree);
-			
 			//TODO, LOADING TAGS...
-			
+//			buildTagsTree();
 		}
 		
-		private function scrollTree(event:MouseEvent):void{
-			//如果标签加载完毕，而且有滚动条
-			if(_tagsListRendered && browseTree.maxScrollIndex>0){
-				//滚动一次，改变一次索引
-				_scrolledIndex += event.delta;
-				//不能小于最小
-				if(_scrolledIndex<0){
-					_scrolledIndex = 0;
-					browseTree.scrollToItemAt(0);
-				}
-				//不能超过最大
-				if(_scrolledIndex>browseTree.maxScrollIndex){
-					_scrolledIndex = browseTree.maxScrollIndex;
-					browseTree.scrollToItemAt(browseTree.maxScrollIndex);
-				}
-				//正常滚动
-				browseTree.scrollToItemAt(_scrolledIndex);
-			}
-		}
 		
 		public function get browseType():String{
 			return _browseType;
@@ -106,9 +88,7 @@ package com.pintu.widgets
 				+InitParams.DEFAULT_GAP;
 			
 			browseTreeX = drawStartX+2;
-			browseTreeY = drawStartY+2;
-			tagsTreeX = browseTreeX;
-			tagsTreeY = browseTreeY+browseTreeHeight+treeVerticalGap;
+			browseTreeY = drawStartY+2;			
 			
 			leftColumnHeight = InitParams.LEFTCOLUMN_HEIGHT;			
 			if(InitParams.isStretchHeight()){
@@ -138,10 +118,11 @@ package com.pintu.widgets
 			
 			_rootNode.addNode(_browseNodes);
 			
+			
 			browseTree = new TreeView();
 			browseTree.dataSource = _rootNode;
 			
-			browseTree.setSize(InitParams.LEFTCOLUMN_WIDTH-2,browseTreeHeight);
+			browseTree.setSize(InitParams.LEFTCOLUMN_WIDTH-2,leftColumnHeight);
 			browseTree.setStyle(TreeView.style.itemSize, StyleParams.TREEITEM_HEIGHT);
 			browseTree.x = browseTreeX;
 			browseTree.y = browseTreeY;
@@ -166,11 +147,11 @@ package com.pintu.widgets
 		
 		private function addStyleForTree(tree:TreeView):void{
 			tree.setStyle(TreeView.style.showRoot,false);
-			tree.setStyle(TreeView.style.maxExpandAllLevel,2);
+			tree.setStyle(TreeView.style.maxExpandAllLevel,3);
 			tree.setStyle(TreeNodeRenderer.style.connectors,false);
 			tree.setStyle(TreeNodeRenderer.style.disclosureButton,false);
 			//隐藏滚动条，用滚轮来移动列表
-			tree.setStyle(ListView.style.scrollBarVisibility, false);
+			tree.setStyle(ListView.style.scrollBarVisibility, Visibility.HIDDEN);
 			
 			//文字大小
 			tree.setStyle(ListItemContent.style.labelStyles,[Label.style.size, 12]);
@@ -190,10 +171,26 @@ package com.pintu.widgets
 			tagData.addNode(new Node("tag_1","id_1"));
 			tagData.addNode(new Node("tag_2","id_2"));
 			tagData.addNode(new Node("tag_3","id_3"));
+			tagData.addNode(new Node("tag_1","id_1"));
+			tagData.addNode(new Node("tag_2","id_2"));
+			tagData.addNode(new Node("tag_3","id_3"));
+			tagData.addNode(new Node("tag_1","id_1"));
+			tagData.addNode(new Node("tag_2","id_2"));
+			tagData.addNode(new Node("tag_3","id_3"));
+			tagData.addNode(new Node("tag_1","id_1"));
+			tagData.addNode(new Node("tag_2","id_2"));
+			tagData.addNode(new Node("tag_3","id_3"));
+			tagData.addNode(new Node("tag_1","id_1"));
+			tagData.addNode(new Node("tag_2","id_2"));
+			tagData.addNode(new Node("tag_3","id_3"));
+			tagData.addNode(new Node("tag_1","id_1"));
+			tagData.addNode(new Node("tag_2","id_2"));
+			tagData.addNode(new Node("tag_3","id_3"));
 			
 			_rootNode.addNode(tagData);
-			//用新数据刷新树
-			browseTree.dataSource = _rootNode;
+			//打开该分类
+			browseTree.expandNodeAt(_browseNodes.size+1);
+			
 			_tagsListRendered = true;
 		}
 		
