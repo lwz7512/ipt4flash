@@ -6,6 +6,7 @@ package com.pintu.events
 	{
 		
 		public static const NAVIGATE:String = "navigate";
+		public static const BROWSE_CHANGED:String = "browseChanged";
 
 		public var data:String;		
 		

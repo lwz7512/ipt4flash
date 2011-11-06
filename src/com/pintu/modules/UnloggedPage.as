@@ -3,6 +3,7 @@ package com.pintu.modules
 	import com.pintu.api.IPintu;
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
+	import com.pintu.events.PintuEvent;
 	import com.pintu.widgets.ActiveUserBlock;
 	import com.pintu.widgets.CategoryTree;
 	import com.pintu.widgets.LoginBlock;
@@ -33,7 +34,8 @@ package com.pintu.modules
 			this.addChild(mainToolBar);
 			
 			categoryTree = new CategoryTree(_model);
-			//TODO, ADD CHANGE EVENT LISTENTER...
+			categoryTree.addEventListener(
+				PintuEvent.BROWSE_CHANGED,changeBrowseType);
 			
 			this.addChild(categoryTree);
 			
@@ -53,7 +55,10 @@ package com.pintu.modules
 			
 		}
 		
-	
+		private function changeBrowseType(event:PintuEvent):void{
+			var type:String = event.data;
+			mainDisplayArea.browseType = type;		
+		}
 
 		
 		
