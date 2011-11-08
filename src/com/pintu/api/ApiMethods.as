@@ -15,6 +15,9 @@ package com.pintu.api
 		//按标签查询
 		public static const GETTHUMBNAILSBYTAG:String = "getThumbnailsByTag";
 		
+		//查询图片详情
+		public static const GETPICDETAIL:String = "getPicDetail";
+		
 		
 		public static const LOGON:String = "logon";
 		public static const UPLOAD:String = "upload";

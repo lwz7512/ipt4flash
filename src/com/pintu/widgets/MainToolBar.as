@@ -166,7 +166,8 @@ package com.pintu.widgets
 			
 			this.addChild(searchInput);
 			//search icon
-			searchIcon = new SimpleIcon(searchIconPath,true);
+			searchIcon = new SimpleIcon(searchIconPath);
+			searchIcon.showUpSkin = true;
 			searchIcon.x = searchInput.x+searchInput.width-30;
 			searchIcon.y = searchInput.y;
 			

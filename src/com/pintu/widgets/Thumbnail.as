@@ -1,10 +1,13 @@
 package com.pintu.widgets{
 	
 	import com.greensock.TweenLite;
+	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
 	import com.pintu.vos.TPicDesc;
 	
 	import flash.display.DisplayObject;
+	import flash.display.Loader;
+	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
@@ -21,11 +24,14 @@ package com.pintu.widgets{
 		private var _casaLoader:CasaLoader;
 		private var _data:TPicDesc;
 		private var _initialized:Boolean = false;
+		//得在鼠标滑过时记下来，作为缓动起点
+		private var _x:Number;
+		private var _y:Number;
 		
 		public function Thumbnail(data:TPicDesc){
 			_data = data;
 			//LOAD PIC BY URL...
-			_casaLoader = new CasaLoader(data.url);
+			_casaLoader = new CasaLoader(data.url);			
 			this._casaLoader.addEventListener(LoadEvent.COMPLETE, this._onComplete);
 			this._casaLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,_onError);
 			this._casaLoader.start();
@@ -33,27 +39,26 @@ package com.pintu.widgets{
 			drawLoadingText();
 			drawBackground();
 			
+			this.addEventListener(MouseEvent.CLICK, getDetails);
 			this.addEventListener(MouseEvent.MOUSE_OVER,expandThumbail);
 			this.addEventListener(MouseEvent.MOUSE_OUT,thrinkThumbail);
 		}
 		
-		private function expandThumbail(event:MouseEvent):void{
-			var target:DisplayObject = this;
-			TweenLite.to(target, 0.1,{x:(target.x-2), y:(target.y-2), width:102, height:102, 
-				onComplete:showTooltip});			
-		}
-		private function thrinkThumbail(event:MouseEvent):void{
-			var target:DisplayObject = this;
-			TweenLite.to(target, 0.1,{x:(target.x+2), y:(target.y+2), width:100, height:100,
-				onComplete:destroyTooltip});		
+		private function getDetails(event:MouseEvent):void{
+			dispatchEvent(new PintuEvent(PintuEvent.GETPICDETAILS,_data.tpId));
 		}
 		
-		private function showTooltip():void{
-			Logger.debug("to show tooltip...");
+		private function expandThumbail(event:MouseEvent):void{
+			if(!_x) _x = this.x;
+			if(!_y) _y = this.y;
+			TweenLite.to(this, 0.1,{x:_x-2, y:_y-2, width:104, height:104});	
+						
 		}
-		private function destroyTooltip():void{
-			Logger.debug("to destroy tooltip...");
+		private function thrinkThumbail(event:MouseEvent):void{
+			TweenLite.to(this, 0.1,{x:_x, y:_y, width:100, height:100});		
 		}
+		
+
 		
 		private function drawLoadingText():void{
 			var tf:CasaTextField = new CasaTextField();
@@ -67,7 +72,8 @@ package com.pintu.widgets{
 		}
 		
 		private function _onComplete(e:LoadEvent):void {
-			this.addChild(this._casaLoader.loader);
+			var loader:Loader = this._casaLoader.loader;			
+			this.addChild(loader);
 			_initialized = true;
 		}
 		

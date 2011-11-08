@@ -10,10 +10,9 @@ package com.pintu.widgets
 	import org.casalib.events.LoadEvent;
 	import org.casalib.load.ImageLoad;
 	
-	public class SimpleIcon extends Sprite
+	public class SimpleIcon extends SimpleImage
 	{
-		private var _iconPath:String;
-		private var _iconLoader:ImageLoad;
+		
 		private var _icon:Bitmap;
 		
 		private var _showUpSkin:Boolean = false;
@@ -22,23 +21,22 @@ package com.pintu.widgets
 		//为了跟搜索框底部对齐，高度稍微大点
 		private var _iconHeight:Number = 31;
 		
-		public function SimpleIcon(path:String, showUpSkin:Boolean=false)
-		{
-			_iconPath = path;
-			_showUpSkin = showUpSkin;
+		private var _mouseOn:Boolean = false;
+		
+		public function SimpleIcon(path:String){			
+			super(path);
 			
 			drawBackground();
-			
-			_iconLoader = new ImageLoad(_iconPath);
-			_iconLoader.addEventListener(LoadEvent.COMPLETE,onLoaded);
-			_iconLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
-			_iconLoader.start();	
 			
 			this.addEventListener(MouseEvent.MOUSE_OVER,drawOverSkin);
 			this.addEventListener(MouseEvent.MOUSE_OUT,drawOutSkin);
 			this.addEventListener(MouseEvent.MOUSE_DOWN,drawDownSkin);
 			this.addEventListener(MouseEvent.MOUSE_UP,drawUpSkin);
 		}		
+		
+		public function set showUpSkin(v:Boolean):void{
+			_showUpSkin = v;
+		}
 		
 		private function drawBackground():void{
 			if(_showUpSkin){
@@ -53,6 +51,8 @@ package com.pintu.widgets
 		}
 		
 		private function drawOverSkin(event:MouseEvent):void{
+			_mouseOn = true;
+			
 			this.graphics.clear();
 			//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白。
 			this.graphics.beginFill(0xc2ccd0);
@@ -60,6 +60,7 @@ package com.pintu.widgets
 			this.graphics.endFill();
 		}
 		private function drawOutSkin(event:MouseEvent):void{
+			_mouseOn = false;
 			drawBackground();
 		}
 		private function drawDownSkin(event:MouseEvent):void{
@@ -67,24 +68,20 @@ package com.pintu.widgets
 			this.graphics.beginFill(0xc2ccd0);
 			this.graphics.drawRect(0,0,_iconWidth,_iconHeight);
 			this.graphics.endFill();
-			_icon.x = _icon.x+1;
-			_icon.y = _icon.y+1;
+			
+			if(_mouseOn){
+				_imgLoader.contentAsBitmap.x ++;
+				_imgLoader.contentAsBitmap.y ++;			
+			}
 		}
 		private function drawUpSkin(event:MouseEvent):void{
-			_icon.x = _icon.x-1;
-			_icon.y = _icon.y-1;
+			if(_mouseOn){
+				_imgLoader.contentAsBitmap.x --;
+				_imgLoader.contentAsBitmap.y --;				
+			}
 		}
 		
-		private function onLoaded(e:LoadEvent):void {
-			_icon = this._iconLoader.contentAsBitmap;
-			_icon.x = 2;
-			_icon.y = 2;
-			this.addChild(_icon);					
-		}
-		
-		private function onError(event:IOErrorEvent):void{
-			Logger.error("load icon error: "+_iconPath);
-		}
+
 		
 	}
 }

@@ -72,6 +72,7 @@ package com.pintu.widgets{
 			this._picBuilder = new PicDOBuilder(_picsContainer,_model);
 			this._picBuilder.drawStartX = drawStartX;
 			this._picBuilder.drawStartY = drawStartY;
+			this._picBuilder.owner = this;
 			
 			//默认舞台背景色
 			drawMainDisplayBackground();
@@ -90,9 +91,17 @@ package com.pintu.widgets{
 			//滚轮处理画廊移动
 			this.addEventListener(MouseEvent.MOUSE_WHEEL,scrollGallery);
 			
-			//鼠标移动滚动画廊体验不好，不用了
-//			this.addEventListener(Event.ENTER_FRAME, moveGallery);
-//			this.addEventListener(MouseEvent.MOUSE_MOVE,calculateMoveSpeed);
+		}
+		
+		
+		//展示图片详情时也可以用
+		public function showMiddleLoading():void{
+			var middleX:Number = drawStartX+displayAreaWidth/2;
+			var middleY:Number = drawStartY+displayAreaHeight/2;
+			var loading:BusyIndicator = new BusyIndicator(32);
+			loading.x = middleX-16;
+			loading.y = middleY-16;			
+			_picsContainer.addChild(loading);
 		}
 		
 		private function initDrawPoint():void{
@@ -279,7 +288,6 @@ package com.pintu.widgets{
 		}				
 
 		
-		
 		private function drawMainDisplayBackground():void{						
 			this.graphics.clear();
 			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
@@ -311,14 +319,6 @@ package com.pintu.widgets{
 			return (endTime-6*60*60*1000).toString();			 
 		}
 		
-		private function showMiddleLoading():void{
-			var middleX:Number = drawStartX+displayAreaWidth/2;
-			var middleY:Number = drawStartY+displayAreaHeight/2;
-			var loading:BusyIndicator = new BusyIndicator(32);
-			loading.x = middleX-16;
-			loading.y = middleY-16;			
-			_picsContainer.addChild(loading);
-		}
 		
 		/**
 		 * @deprecated

@@ -28,7 +28,7 @@ package com.pintu.config
 		//Main menu bar width
 		public static const MAINMENUBAR_WIDTH:Number = 772;
 		//search input width
-		public static const SEARCH_INPUT_WIDTH:Number = 200;
+		public static const SEARCH_INPUT_WIDTH:Number = 240;
 		
 		//Gallery display section width
 		public static const GALLERY_WIDTH:Number = 597;

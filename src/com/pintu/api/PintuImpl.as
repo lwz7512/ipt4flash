@@ -9,6 +9,8 @@ package com.pintu.api
 	import flash.events.EventDispatcher;
 	import flash.net.FileReference;
 	
+	import org.httpclient.HttpClient;
+	
 
 	public class PintuImpl extends EventDispatcher implements IPintu{
 		
@@ -31,6 +33,7 @@ package com.pintu.api
 			client.addEventListener(ApiMethods.CLASSICALSTATISTICS,responseHander);
 			client.addEventListener(ApiMethods.COLLECTSTATISTICS,responseHander);
 			client.addEventListener(ApiMethods.GETTHUMBNAILSBYTAG,responseHander);
+			client.addEventListener(ApiMethods.GETPICDETAIL,responseHander);
 			//TODO, ADD OTHER LISTENER...
 			
 		}
@@ -54,6 +57,9 @@ package com.pintu.api
 			return null;
 		}
 		
+		public function cancelRequest():void{
+			client.cancel();
+		}
 		
 		public function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void{
 			var params:Array = [{name:"tags",value:tags},{name:"description",value:description},
@@ -103,7 +109,10 @@ package com.pintu.api
 			client.post(params,ApiMethods.GETTHUMBNAILSBYTAG);
 		}
 		
-		
+		public function getPicDetail(tpId:String):void{
+			var params:Array = [{name:"tpId",value:tpId}];
+			client.post(params,ApiMethods.GETPICDETAIL);
+		}
 		
 		
 	} //end of class

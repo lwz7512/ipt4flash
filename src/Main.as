@@ -54,7 +54,7 @@ package{
 		
 		
 		protected function buildApp(event:Event):void{			
-			removeEventListener(Event.ADDED_TO_STAGE, buildApp);
+			this.removeEventListener(Event.ADDED_TO_STAGE, buildApp);
 			//listen navigate event
 			//may be from login to homepage...
 			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
@@ -83,8 +83,9 @@ package{
 				navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
 				navigator.switchTo(GlobalNavigator.UNLOGGED);		
-			}						
+			}	
 			
+		
 		}
 		
 		private function checkStageValidity():Boolean{
