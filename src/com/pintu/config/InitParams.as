@@ -30,6 +30,9 @@ package com.pintu.config
 		//search input width
 		public static const SEARCH_INPUT_WIDTH:Number = 240;
 		
+		//树组件条目高度
+		public static const TREEITEM_HEIGHT:int = 26;
+		
 		//Gallery display section width
 		public static const GALLERY_WIDTH:Number = 597;
 		//Gallery display section height

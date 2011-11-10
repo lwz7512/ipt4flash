@@ -10,6 +10,9 @@ package com.pintu.widgets
 	import org.casalib.events.LoadEvent;
 	import org.casalib.load.ImageLoad;
 	
+	/**
+	 * 只有图片没有文字的，可交互按钮
+	 */ 
 	public class SimpleIcon extends SimpleImage
 	{
 		

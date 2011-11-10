@@ -29,14 +29,13 @@ package com.pintu.modules
 			this._model = model;
 				
 			mainToolBar = new MainToolBar(false);
+			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
 			//TODO, ADD BUTTON EVENT LISTENER...
 			
 			this.addChild(mainToolBar);
 			
 			categoryTree = new CategoryTree(_model);
-			categoryTree.addEventListener(
-				PintuEvent.BROWSE_CHANGED,changeBrowseType);
-			
+			categoryTree.addEventListener(PintuEvent.BROWSE_CHANGED,changeBrowseType);			
 			this.addChild(categoryTree);
 			
 			mainDisplayArea = new MainDisplayArea(_model);
@@ -60,7 +59,9 @@ package com.pintu.modules
 			mainDisplayArea.browseType = type;		
 		}
 
-		
+		private function refreshGallery(evt:PintuEvent):void{
+			mainDisplayArea.browseType = categoryTree.browseType;
+		}
 		
 	} //end of class
 }

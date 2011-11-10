@@ -2,7 +2,7 @@ package com.pintu.controller
 {
 	import com.adobe.serialization.json.JSON;
 	import com.pintu.api.*;
-	import com.pintu.config.InitParams;
+	import com.pintu.config.*;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.events.ResponseEvent;
 	import com.pintu.utils.Logger;
@@ -10,7 +10,7 @@ package com.pintu.controller
 	import com.pintu.vos.TPicDesc;
 	import com.pintu.widgets.IconButton;
 	import com.pintu.widgets.MainDisplayArea;
-	import com.pintu.widgets.PicDetails;
+	import com.pintu.widgets.PicDetailView;
 	import com.pintu.widgets.Thumbnail;
 	
 	import flash.display.DisplayObject;
@@ -45,9 +45,9 @@ package com.pintu.controller
 		//MINI画廊列数
 		private var _miniGalleryColumnNum:int = 5;
 		//画廊边距
-		private var _margin:int = 10;
+		private var _margin:int = 10;		
 		
-
+		
 		
 		public function PicDOBuilder(displayArea:CasaSprite, model:IPintu){
 			_displayArea = displayArea;
@@ -66,48 +66,37 @@ package com.pintu.controller
 			_owner = o;
 		}
 		
-		private function detailPicHandler(event:ResponseEvent):void{
-			Logger.debug(" Detail is: \n"+event.data);
-			
+		private function detailPicHandler(event:ResponseEvent):void{			
+			//展示详情前，先清理
 			cleanUp();					
-			
-			//TODO, CREATE PIC DETAILS...
+			Logger.debug("pic details: \n"+event.data);
+			//CREATE PIC DETAILS...
 			var details:Object =  JSON.decode(event.data) as Object;
-			var picDetails:PicDetails = new PicDetails(objToTPicData(details));
+			var picDetails:PicDetailView = new PicDetailView(objToTPicData(details));
 			picDetails.x = _drawStartX;
-			picDetails.y = _drawStartY;			
+			picDetails.y = _drawStartY;
+			//工具栏左侧给返回按钮让位
+			picDetails.showBackBtn = true;
 			_displayArea.addChild(picDetails);
 			
 			//BACK BUTTON
-			var back:IconButton = new IconButton(32,32);
+			var back:IconButton = new IconButton(26,26);
 			back.iconPath = "assets/back.png";
 			back.addEventListener(MouseEvent.CLICK, restoreGallery);
 			back.x = _drawStartX;
 			back.y = _drawStartY;
+			back.textOnRight = true;
+			back.label = "返回";
 			_displayArea.addChild(back);
 		}
 		
-		private function objToTPicData(details:Object):TPicData{
-			var pic:TPicData = new TPicData();
-			pic.id = details["id"];
-			pic.owner = details["owner"];
-			pic.author = details["author"];
-			pic.avatarUrl = _model.composeImgUrlByPath(details["avatarImgPath"]);
-			pic.score = details["score"];
-			pic.level = details["level"];
-			pic.publishTime = details["publishTime"];
-			pic.tags = details["tags"];
-			pic.description = details["description"];
-			pic.isOriginal = details["isOriginal"];
-			pic.mobImgUrl =  _model.composeImgUrlById(details["mobImgId"]);
-			pic.commentsNum = details["storiesNum"];
-			return pic;
-		}
+
 		
 		private function restoreGallery(evt:MouseEvent):void{
 			cleanUp();
 			layoutThumbnails();
 		}
+
 		
 		//给MainDisplayArea调用
 		public function createScrollableMiniGallery(json:String):void{
@@ -120,6 +109,9 @@ package com.pintu.controller
 			
 			//解析Json字符串为对象
 			tpics = objToTPicDescArray(thumnails);	
+			//颠倒下顺序，好让最近的放在最前面
+			tpics = tpics.reverse();
+			
 			//布局缩略图
 			layoutThumbnails();
 			
@@ -178,12 +170,14 @@ package com.pintu.controller
 		}
 		
 		//TODO, 创建列表式大图画廊...
+		//创建多个PicDetailView
 		public function createScrollableBigGallery(json:String):void{
 			
 			
 		}
 		
 		private function cleanUp():void{
+			_displayArea.graphics.clear();
 			_displayArea.removeChildren(true,true);
 		}
 		
@@ -203,6 +197,23 @@ package com.pintu.controller
 		}
 		
 		
+		private function objToTPicData(details:Object):TPicData{
+			var pic:TPicData = new TPicData();
+			pic.id = details["id"];
+			pic.owner = details["owner"];
+			pic.author = details["author"];
+			pic.avatarUrl = _model.composeImgUrlByPath(details["avatarImgPath"]);
+			pic.score = details["score"];
+			pic.level = details["level"];
+			pic.publishTime = details["publishTime"];
+			pic.browseCount = details["browseCount"];
+			pic.tags = details["tags"];
+			pic.description = details["description"];
+			pic.isOriginal = details["isOriginal"];
+			pic.mobImgUrl =  _model.composeImgUrlById(details["mobImgId"]);
+			pic.commentsNum = details["storiesNum"];
+			return pic;
+		}
 		
 		
 	}

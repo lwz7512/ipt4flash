@@ -12,6 +12,9 @@ package com.pintu.widgets
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	
+	/**
+	 * 文字按钮，可作为主菜单项
+	 */ 
 	public class TextMenu extends Sprite
 	{
 		
@@ -409,8 +412,12 @@ package com.pintu.widgets
 		}
 		
 		//for subclass to call...
-		protected function moveLabel(y:Number):void{
-			_label.y = y;
+		protected function moveLabelY(y:Number):void{
+			_label.y += y;
+		}
+		//for subclass to call...
+		protected function moveLabelX(x:Number):void{
+			_label.x += x;
 		}
 		
 		/**

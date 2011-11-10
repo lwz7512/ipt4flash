@@ -5,6 +5,7 @@ package com.pintu.widgets{
 	import com.pintu.utils.Logger;
 	import com.pintu.vos.TPicDesc;
 	
+	import flash.display.Bitmap;
 	import flash.display.DisplayObject;
 	import flash.display.Loader;
 	import flash.events.Event;
@@ -17,11 +18,13 @@ package com.pintu.widgets{
 	import org.casalib.display.CasaSprite;
 	import org.casalib.display.CasaTextField;
 	import org.casalib.events.LoadEvent;
-	import org.casalib.load.CasaLoader;
+	import org.casalib.load.ImageLoad;
 	
 	public class Thumbnail extends CasaSprite{
 		
-		private var _casaLoader:CasaLoader;
+		protected var _imgLoader:ImageLoad;
+		private var tf:CasaTextField;
+		
 		private var _data:TPicDesc;
 		private var _initialized:Boolean = false;
 		//得在鼠标滑过时记下来，作为缓动起点
@@ -31,10 +34,10 @@ package com.pintu.widgets{
 		public function Thumbnail(data:TPicDesc){
 			_data = data;
 			//LOAD PIC BY URL...
-			_casaLoader = new CasaLoader(data.url);			
-			this._casaLoader.addEventListener(LoadEvent.COMPLETE, this._onComplete);
-			this._casaLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,_onError);
-			this._casaLoader.start();
+			_imgLoader = new ImageLoad(data.url);			
+			this._imgLoader.addEventListener(LoadEvent.COMPLETE, this._onComplete);
+			this._imgLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,_onError);
+			this._imgLoader.start();
 			
 			drawLoadingText();
 			drawBackground();
@@ -49,6 +52,7 @@ package com.pintu.widgets{
 		}
 		
 		private function expandThumbail(event:MouseEvent):void{
+			//这个位置必须存下来使用
 			if(!_x) _x = this.x;
 			if(!_y) _y = this.y;
 			TweenLite.to(this, 0.1,{x:_x-2, y:_y-2, width:104, height:104});	
@@ -61,7 +65,7 @@ package com.pintu.widgets{
 
 		
 		private function drawLoadingText():void{
-			var tf:CasaTextField = new CasaTextField();
+			tf = new CasaTextField();
 			tf.x = 30;
 			tf.y = 40;
 			tf.autoSize = "left";
@@ -72,9 +76,18 @@ package com.pintu.widgets{
 		}
 		
 		private function _onComplete(e:LoadEvent):void {
-			var loader:Loader = this._casaLoader.loader;			
-			this.addChild(loader);
+			var bitmap:Bitmap = this._imgLoader.contentAsBitmap;			
+			this.addChild(bitmap);
+			
+			//如果比缩略图默认尺寸大，就按默认尺寸设置
+			//这样防止缓动效果出问题
+			if(bitmap.width>100)
+				bitmap.width = 100;
+			if(bitmap.height>100)
+				bitmap.height = 100;			
+			
 			_initialized = true;
+			this.removeChild(tf);
 		}
 		
 		private function _onError(event:IOErrorEvent):void{

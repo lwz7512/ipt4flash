@@ -9,6 +9,10 @@ package com.pintu.widgets
 	import org.casalib.events.LoadEvent;
 	import org.casalib.load.ImageLoad;
 	
+	/**
+	 * 带图标和文字的按钮
+	 * 文字默认在图标的下方，设置textOnRight时文字在右侧
+	 */ 
 	public class IconButton extends TextMenu
 	{
 		
@@ -16,7 +20,11 @@ package com.pintu.widgets
 		private var _iconLoader:ImageLoad;
 		
 		private var margin:Number = 4;
-		private var iconTextGap:Number = 0;
+		
+		private var iconTextVGap:Number = 2;
+		private var iconTextHGap:Number = 4;
+		
+		private var _textOnRight:Boolean = false;
 		
 		public function IconButton(w:Number, h:Number)
 		{
@@ -27,6 +35,10 @@ package com.pintu.widgets
 			_iconPath = path;
 		}
 		
+		public function set textOnRight(value:Boolean):void{
+			_textOnRight = value;
+		}
+				
 		override protected function showIcon():void{
 			if(_iconPath==null) return;
 			
@@ -41,9 +53,21 @@ package com.pintu.widgets
 			this.addChild(icon);
 			
 			icon.x = this._width/2 - icon.width/2;
-			icon.y = margin;
-			//repositon icon label
-			this.moveLabel(icon.y+icon.height+iconTextGap);
+			
+			if(_textOnRight){
+				icon.y = margin/2;
+				this.moveLabelX(icon.x+icon.width+iconTextHGap);
+				this.moveLabelY(iconTextVGap);
+			}else{//IN BOTTOM
+				icon.y = margin;
+				//repositon icon label
+				this.moveLabelY(icon.height/2);
+			}
+			
+			if(!this.enabled){
+				icon.alpha = 0.6;
+			}
+						
 		}
 		
 		private function onError(event:IOErrorEvent):void{

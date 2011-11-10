@@ -123,7 +123,7 @@ package com.pintu.widgets
 			browseTree.dataSource = _rootNode;
 			
 			browseTree.setSize(InitParams.LEFTCOLUMN_WIDTH-2,leftColumnHeight);
-			browseTree.setStyle(TreeView.style.itemSize, StyleParams.TREEITEM_HEIGHT);
+			browseTree.setStyle(TreeView.style.itemSize, InitParams.TREEITEM_HEIGHT);
 			browseTree.x = browseTreeX;
 			browseTree.y = browseTreeY;
 			browseTree.selectItemAt(1);

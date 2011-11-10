@@ -13,8 +13,8 @@ package com.pintu.vos{
 		public var avatarImgPath:String;
 		//用户图像url
 		public var avatarUrl:String;
-		
-		
+		//浏览次数
+		public var browseCount:String;
 		//用户积分
 		public var score:String;	
 		//用户等级

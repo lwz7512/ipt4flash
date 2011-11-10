@@ -10,8 +10,12 @@ package com.pintu.config
 		//默认背景色，荼白：如荼之白色
 		public static const DEFAULT_FILL_COLOR:uint = 0xF3F9F1;
 		
-		//树组件条目高度
-		public static const TREEITEM_HEIGHT:int = 26;
+		
+		//迷你工具栏，图片详情时操作
+		public static const MINI_TOOLBAR_FILLCOLOR:uint = 0x50616D;
+		
+		//黑色背景，漆黑：非常黑的
+		public static const DEFAULT_BLACK_COLOR:uint = 0x161823;
 		
 		/**
 		 * Header bar LIGHT GREEN style
@@ -31,6 +35,8 @@ package com.pintu.config
 		public static const HEADER_MENU_SELECTED:uint = 0x057748;
 		//豆绿：浅黄绿色
 		public static const HEADER_MENU_MOUSEOVER:uint = 0x9ED048;
+		//精白：纯白、洁白、净白、粉白
+		public static const HEADER_MENU_COLOR:uint = 0xFFFFFF;
 						
 		/**
 		 * Main Menu bar ICE style
@@ -77,10 +83,12 @@ package com.pintu.config
 		public static const TEXTINPUT_MAXCHARS:int = 12;
 		public static const TEXTINPUT_FONTSIZE:int = 18;
 		//黯：深黑色、泛指黑色
-		public static const DEFAULT_TEXT_COLOR:uint = 0x41555D;
-		//精白：纯白、洁白、净白、粉白
-		public static const HEADER_MENU_COLOR:uint = 0xFFFFFF;
-		
+		public static const DEFAULT_TEXT_COLOR:uint = 0x41555D;		
+		//黑色背景上使用的文字颜色：油绿：光润而浓绿的颜色
+		public static const GREEN_TEXT_COLOR:uint = 0x00BC12;
+			
+			
+			
 		
 	} //end of color
 }

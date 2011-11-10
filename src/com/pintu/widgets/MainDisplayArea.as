@@ -18,15 +18,19 @@ package com.pintu.widgets{
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
+	import flash.utils.Timer;
 	
 	import org.casalib.display.CasaSprite;
 
+	/**
+	 * 主工作类，用来生成和展示图片及相关信息
+	 */ 
 	public class MainDisplayArea extends Sprite{
-		
-		
+				
 		private var _model:IPintu;
-		private var _picBuilder:PicDOBuilder;
+		
 		private var _initialized:Boolean;
+		private var _picBuilder:PicDOBuilder;
 		private var _toolBar:MainToolBar;
 		
 		private var drawStartX:Number;
@@ -48,7 +52,7 @@ package com.pintu.widgets{
 		private var _tagPageNum:int;
 				
 		// 使用增强的显示对象CasaSprite，以更好的管理子对象	
-		//画廊图片容器
+		//画廊图片容器，也是被滚动对象
 		private var _picsContainer:CasaSprite;
 		private var _clip:Shape;	
 		
@@ -61,6 +65,10 @@ package com.pintu.widgets{
 		//保留上次鼠标位置以判断移动方向
 		private var _lastMouseY:Number = 0;
 		
+		//查询保护装置，2秒内不允许重复查询
+		private var queryAvailableTimer:Timer;
+		
+		
 		public function MainDisplayArea(model:IPintu){
 			super();					
 			initDrawPoint();
@@ -68,7 +76,7 @@ package com.pintu.widgets{
 			this._model = model;
 			this._picsContainer = new CasaSprite();
 			addChild(_picsContainer);
-			//画廊生成工具
+			//画廊内容生成工具
 			this._picBuilder = new PicDOBuilder(_picsContainer,_model);
 			this._picBuilder.drawStartX = drawStartX;
 			this._picBuilder.drawStartY = drawStartY;
@@ -91,10 +99,12 @@ package com.pintu.widgets{
 			//滚轮处理画廊移动
 			this.addEventListener(MouseEvent.MOUSE_WHEEL,scrollGallery);
 			
+			//2秒内运行检查，类型设置时启动
+			queryAvailableTimer = new Timer(2000,1);
 		}
 		
 		
-		//展示图片详情时也可以用
+		//点击缩略图，展示图片详情时也用
 		public function showMiddleLoading():void{
 			var middleX:Number = drawStartX+displayAreaWidth/2;
 			var middleY:Number = drawStartY+displayAreaHeight/2;
@@ -163,6 +173,15 @@ package com.pintu.widgets{
 		//根据_displayMode和_browseType来查看图片
 		private function queryPicByType():void{
 			
+			if(queryAvailableTimer.running){
+				//定时器已启动，查询正在进行，不能再次查询
+				Logger.warn("Can not excute query in 2 seconds...");
+				return;
+			}else{
+				queryAvailableTimer.start();
+				Logger.debug("Start to query for type:"+_browseType);
+			}
+			
 			switch(_browseType)
 			{
 				case CategoryTree.CATEGORY_GALLERY_TBMODE:					
@@ -208,7 +227,7 @@ package com.pintu.widgets{
 		private function thumbnailHandler(event:Event):void{
 			if(event is ResponseEvent){
 				var galleryData:String = ResponseEvent(event).data;
-				Logger.debug("thumbnail data: \n"+galleryData);
+//				Logger.debug("thumbnail data: \n"+galleryData);
 				//创建画廊
 				_picBuilder.createScrollableMiniGallery(galleryData);
 				//TODO, CHECK THE LAST GALLERY RECORD TIME...
@@ -265,7 +284,8 @@ package com.pintu.widgets{
 		
 		//浏览类型，或者是标签id
 		public function set browseType(type:String):void{
-			if(type == _browseType) return;
+			//FIXME, 先不拦截同类请求了，方便刷新按钮
+//			if(type == _browseType) return;
 			
 			this._browseType = type;
 			Logger.debug("browseType: "+_browseType);

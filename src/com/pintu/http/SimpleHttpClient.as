@@ -51,7 +51,7 @@ package com.pintu.http
 			_client.listener.onStatus = function(event:HttpStatusEvent):void {
 				// Notified of response (with headers but not content)
 				var statusCode:String = event.code;
-				Logger.debug("Method: "+method+" , status: "+statusCode);
+//				Logger.debug("Method: "+method+" , status: "+statusCode);
 			};
 			
 			_client.listener.onData = function(event:HttpDataEvent):void {
@@ -64,7 +64,7 @@ package com.pintu.http
 			_client.listener.onComplete = function(event:HttpResponseEvent):void {
 				// Notified when complete (after status and data)
 				var response:String = event.response.message;
-				Logger.debug("Method: "+method+" , response: "+response);				
+//				Logger.debug("Method: "+method+" , response: "+response);				
 			};
 			
 			_client.listener.onError = function(event:ErrorEvent):void {
@@ -81,8 +81,7 @@ package com.pintu.http
 		/**		 
 		 * 
 		 */ 
-		public function upload(file:FileReference, params:Array):void{
-			var client:HttpClient = new HttpClient();
+		public function upload(file:FileReference, params:Array):void{			
 			var uri:URI = new URI(_serviceUrl);
 			var contentType:String = "text/plain";
 			

@@ -3,10 +3,12 @@ package com.pintu.widgets
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
 	import com.pintu.controller.GlobalController;
+	import com.pintu.events.PintuEvent;
 	import com.sibirjak.asdpc.textfield.TextInput;
 	
 	import flash.display.GradientType;
 	import flash.display.Sprite;
+	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	
 	public class MainToolBar extends Sprite{
@@ -21,8 +23,8 @@ package com.pintu.widgets
 		
 		
 		private var postPic:IconButton;
-		private var thumbnailMode:IconButton;
-		private var bigPicMode:IconButton;
+		private var refresh:IconButton;
+		
 		
 		private var postButtonX:Number;
 		private var thumbnailButtonX:Number;
@@ -35,7 +37,7 @@ package com.pintu.widgets
 		private var loading:BusyIndicator;
 		
 		private var postPicPath:String = "assets/post_pic.png";
-		private var thumbnailPath:String = "assets/thumbnail_mode.png";
+		private var refreshPath:String = "assets/refresh.png";
 		private var bigPicPath:String = "assets/bigpic_mode.png";
 		private var searchIconPath:String = "assets/system_search.png";
 		
@@ -117,41 +119,26 @@ package com.pintu.widgets
 			var downColors:Array = [StyleParams.ICONMENU_SELECTED_TOP,
 				StyleParams.ICONMENU_SELECTED_BOTTOM];
 			
-			//thumbnail button
-//			thumbnailMode = new IconButton(
-//				InitParams.MAINMENUBAR_HEIGHT,
-//				InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
-//			thumbnailMode.setSkinStyle(upColors,overColors,downColors);
-//			thumbnailMode.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
-//				StyleParams.DEFAULT_TEXT_FONTSIZE,
-//				StyleParams.DEFAULT_TEXT_COLOR,
-//				StyleParams.DEFAULT_TEXT_COLOR,
-//				StyleParams.DEFAULT_TEXT_COLOR);
-//			thumbnailMode.label = "缩略图";
-//			thumbnailMode.x = thumbnailButtonX;
-//			thumbnailMode.y = drawStartY+buttonGap;
-			//默认是缩略图模式
-//			thumbnailMode.selected = true;
-			//指定图标
-//			thumbnailMode.iconPath = thumbnailPath;
-//			this.addChild(thumbnailMode);
+			//refresh button
+			refresh = new IconButton(
+				InitParams.MAINMENUBAR_HEIGHT,
+				InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
+			refresh.setSkinStyle(upColors,overColors,downColors);
+			refresh.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+				StyleParams.DEFAULT_TEXT_FONTSIZE,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				StyleParams.DEFAULT_TEXT_COLOR);
+			refresh.label = "刷新";
+			refresh.x = thumbnailButtonX;
+			refresh.y = drawStartY+buttonGap;			
+			refresh.iconPath = refreshPath;
+			refresh.addEventListener(MouseEvent.CLICK, function():void{				
+				dispatchEvent(new PintuEvent(PintuEvent.REFRESH_GALLERY,null));
+			});
+			this.addChild(refresh);
 			
-			//big pic button
-//			bigPicMode = new IconButton(
-//				InitParams.MAINMENUBAR_HEIGHT,
-//				InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
-//			bigPicMode.setSkinStyle(upColors,overColors,downColors);
-//			bigPicMode.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
-//				StyleParams.DEFAULT_TEXT_FONTSIZE,
-//				StyleParams.DEFAULT_TEXT_COLOR,
-//				StyleParams.DEFAULT_TEXT_COLOR,
-//				StyleParams.DEFAULT_TEXT_COLOR);
-//			bigPicMode.label = "大图";
-//			bigPicMode.x =bigPicButtonX;
-//			bigPicMode.y = drawStartY+buttonGap;			
-			//指定图标
-//			bigPicMode.iconPath = bigPicPath;
-//			this.addChild(bigPicMode);
+	
 			
 			//search input
 			searchInput = new TextInput();
@@ -172,8 +159,7 @@ package com.pintu.widgets
 			searchIcon.y = searchInput.y;
 			
 			this.addChild(searchIcon);
-			
-			//TODO, ADD REFRESH BUTTON...
+						
 			
 		}
 		
