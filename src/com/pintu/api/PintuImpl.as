@@ -64,7 +64,7 @@ package com.pintu.api
 		public function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void{
 			var params:Array = [{name:"tags",value:tags},{name:"description",value:description},
 											{name:"isOriginal",value:isOriginal}];			
-			client.upload(file,params);		
+			client.uploadImage(file,params);		
 		}
 		
 		public function composeImgUrlById(imgId:String):String{

@@ -79,25 +79,32 @@ package com.pintu.http
 		}
 		
 		/**		 
-		 * 
+		 * params format:
+		 * [{name:"key1", value:"FirstName1"}, {name:"key2", value: "LastName1"}];
 		 */ 
-		public function upload(file:FileReference, params:Array):void{			
-			var uri:URI = new URI(_serviceUrl);
-			var contentType:String = "text/plain";
+		public function uploadImage(file:FileReference, params:Array):void{						
 			
 			var fileName:String = file.name;
+			var contentType:String = "image/jpeg";
+			if(fileName.substr(fileName.length-2,3)=="png"){
+				contentType = "image/png";
+			}
+			var sended:ByteArray = new ByteArray();
+			//文件转为字节码data
+			file.data.readBytes(sended,0,file.data.length);
 			
-			var data:ByteArray = new ByteArray();
-			file.data.readBytes(data,0,file.data.length);
+			var parts:Array = [];
+			//将参数解析封装
+			for each(var param:Object in params){
+				parts.push(new Part(param.name, param.value));
+			}
+			var user:Part = new Part("userId", _userId);
+			var source:Part = new Part("source", "desktop");			
+			var image:Part = new Part("file", sended, contentType, [{name:"filename", value:fileName}]);
 			
-			//添加参数filename，作为文件上传时指定文件名
-			params = params.concat([ { name:"filename", value:fileName } ]);
-			params = params.concat([ {name:"userId", value: _userId}]);
-			params = params.concat([ {name:"source", value: "desktop"}]);
-			
-			var multipart:Multipart = new Multipart([ 				
-				new Part("file", data, contentType, params)
-			]);
+			parts.push(user);
+			parts.push(source);
+			parts.push(image);
 						
 			_client.listener.onComplete = function(event:HttpResponseEvent):void {
 				// Notified when complete (after status and data)
@@ -114,7 +121,7 @@ package com.pintu.http
 				dispatchEvent(errorEvent);
 			}; 
 			
-			_client.postMultipart(uri, multipart);
+			_client.postMultipart(new URI(_serviceUrl), new Multipart(parts));
 			
 		}
 		
