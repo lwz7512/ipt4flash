@@ -122,7 +122,7 @@ package com.pintu.widgets{
 			if(imgDescText){	
 				//向上走，并长高
 				TweenLite.to(imgDescText, 0.3,
-					{y: _mobImgHeight-defaultDescTextHeight, scaleY:1, 
+					{y: _yStartOffset+_mobImgHeight-defaultDescTextHeight, scaleY:1, 
 						onComplete: showDescTxt });
 			}
 		}
@@ -140,7 +140,7 @@ package com.pintu.widgets{
 			//隐藏图片描述
 			if(imgDescText){
 				//向下走，并缩小
-				TweenLite.to(imgDescText, 0.3, {y: (_mobImgHeight), scaleY:0,
+				TweenLite.to(imgDescText, 0.3, {y: (_yStartOffset+_mobImgHeight), scaleY:0,
 					onStart: hideDescTxt });
 			}
 		}	
@@ -317,7 +317,7 @@ package com.pintu.widgets{
 			
 			imgDescText.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
 			imgDescText.graphics.drawRect(0,0,
-				InitParams.GALLERY_WIDTH-2, defaultDescTextHeight+2);
+				InitParams.GALLERY_WIDTH-2, defaultDescTextHeight);
 			imgDescText.graphics.endFill();
 			//先放在图片底部
 			imgDescText.y = _yStartOffset+_mobImgHeight;
