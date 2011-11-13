@@ -16,6 +16,9 @@ package com.pintu.widgets{
 	import org.casalib.display.CasaSprite;
 	import org.casalib.display.CasaTextField;
 	import org.casalib.load.ImageLoad;
+	import com.pintu.common.IconButton;
+	import com.pintu.common.SimpleImage;
+	import com.pintu.common.SimpleText;
 	
 	/**
 	 * 包括内容：

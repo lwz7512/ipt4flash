@@ -1,4 +1,4 @@
-package com.pintu.widgets
+package com.pintu.common
 {
 	import flash.display.CapsStyle;
 	import flash.display.Graphics;

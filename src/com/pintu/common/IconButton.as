@@ -1,4 +1,4 @@
-package com.pintu.widgets
+package com.pintu.common
 {
 	import com.pintu.utils.Logger;
 	

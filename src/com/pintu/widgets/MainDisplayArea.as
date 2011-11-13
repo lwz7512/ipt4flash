@@ -21,6 +21,7 @@ package com.pintu.widgets{
 	import flash.utils.Timer;
 	
 	import org.casalib.display.CasaSprite;
+	import com.pintu.common.BusyIndicator;
 
 	/**
 	 * 主工作类，用来生成和展示图片及相关信息

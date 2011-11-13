@@ -10,6 +10,9 @@ package com.pintu.widgets
 	import flash.display.Sprite;
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
+	import com.pintu.common.IconButton;
+	import com.pintu.common.SimpleIcon;
+	import com.pintu.common.BusyIndicator;
 	
 	public class MainToolBar extends Sprite{
 		

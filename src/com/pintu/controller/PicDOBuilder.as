@@ -8,7 +8,7 @@ package com.pintu.controller
 	import com.pintu.utils.Logger;
 	import com.pintu.vos.TPicData;
 	import com.pintu.vos.TPicDesc;
-	import com.pintu.widgets.IconButton;
+	import com.pintu.common.IconButton;
 	import com.pintu.widgets.MainDisplayArea;
 	import com.pintu.widgets.PicDetailView;
 	import com.pintu.widgets.Thumbnail;

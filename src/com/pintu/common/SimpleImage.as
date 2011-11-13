@@ -1,4 +1,4 @@
-package com.pintu.widgets{
+package com.pintu.common{
 	
 	import com.greensock.TweenLite;
 	import com.pintu.events.PintuEvent;

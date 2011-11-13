@@ -37,6 +37,7 @@ package{
 		private var footer:FooterBar;
 		private var currentModule:Sprite;
 		
+//		[Frame(factoryClass="Preloader")]
 		public function Main(){
 			super();
 			//不允许图形缩放

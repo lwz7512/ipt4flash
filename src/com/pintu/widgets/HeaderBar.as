@@ -14,6 +14,7 @@ package com.pintu.widgets
 	
 	import org.casalib.events.LoadEvent;
 	import org.casalib.load.ImageLoad;
+	import com.pintu.common.TextMenu;
 	
 	public class HeaderBar extends Sprite{
 		
