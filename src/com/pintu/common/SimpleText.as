@@ -7,10 +7,10 @@ package com.pintu.common{
 	
 	public class SimpleText extends CasaTextField{
 		
-		public function SimpleText(text:String, color:uint=0, fontSize:int=12, bold:Boolean=false){
+		public function SimpleText(text:String, color:uint=0, fontSize:int=12, bold:Boolean=false, wrap:Boolean=true){
 			this.autoSize = "left";
+			this.wordWrap = wrap;
 			this.multiline = true;			
-			this.wordWrap = true;
 			
 			var format:TextFormat = new TextFormat(null, fontSize,color,bold);
 			this.defaultTextFormat = format;

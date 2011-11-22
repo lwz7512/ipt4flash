@@ -98,10 +98,12 @@ package com.pintu.http
 			for each(var param:Object in params){
 				parts.push(new Part(param.name, param.value));
 			}
+			//方法参数必须传，后台用来区分上传图片的操作类型
+			var method:Part = new Part("method", "upload");
 			var user:Part = new Part("userId", _userId);
 			var source:Part = new Part("source", "desktop");			
 			var image:Part = new Part("file", sended, contentType, [{name:"filename", value:fileName}]);
-			
+			parts.push(method);
 			parts.push(user);
 			parts.push(source);
 			parts.push(image);

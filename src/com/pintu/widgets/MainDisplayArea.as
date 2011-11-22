@@ -5,6 +5,8 @@ package com.pintu.widgets{
 	import com.pintu.api.ApiMethods;
 	import com.pintu.api.IPintu;
 	import com.pintu.api.PintuImpl;
+	import com.pintu.common.BusyIndicator;
+	import com.pintu.common.Toast;
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
 	import com.pintu.controller.PicDOBuilder;
@@ -12,16 +14,13 @@ package com.pintu.widgets{
 	import com.pintu.events.ResponseEvent;
 	import com.pintu.utils.Logger;
 	
-	import flash.display.GradientType;
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.geom.Matrix;
 	import flash.utils.Timer;
 	
 	import org.casalib.display.CasaSprite;
-	import com.pintu.common.BusyIndicator;
 
 	/**
 	 * 主工作类，用来生成和展示图片及相关信息
@@ -68,6 +67,8 @@ package com.pintu.widgets{
 		
 		//查询保护装置，2秒内不允许重复查询
 		private var queryAvailableTimer:Timer;
+		//查询状态开关
+		private var isRunning:Boolean;
 		
 		
 		public function MainDisplayArea(model:IPintu){
@@ -77,6 +78,7 @@ package com.pintu.widgets{
 			this._model = model;
 			this._picsContainer = new CasaSprite();
 			addChild(_picsContainer);
+			
 			//画廊内容生成工具
 			this._picBuilder = new PicDOBuilder(_picsContainer,_model);
 			this._picBuilder.drawStartX = drawStartX;
@@ -105,14 +107,21 @@ package com.pintu.widgets{
 		}
 		
 		
-		//点击缩略图，展示图片详情时也用
+		/**
+		 * 显示进度条，并打开查询开关
+		 * public 是因为：
+		 * 点击缩略图，展示图片详情时也用该方法
+		 */ 
 		public function showMiddleLoading():void{
 			var middleX:Number = drawStartX+displayAreaWidth/2;
 			var middleY:Number = drawStartY+displayAreaHeight/2;
+			//图片查到后回删掉所有，包括这个进度条
 			var loading:BusyIndicator = new BusyIndicator(32);
 			loading.x = middleX-16;
 			loading.y = middleY-16;			
 			_picsContainer.addChild(loading);
+			//打开查询开关，防止重复查询
+			isRunning = true;
 		}
 		
 		private function initDrawPoint():void{
@@ -173,24 +182,27 @@ package com.pintu.widgets{
 
 		//根据_displayMode和_browseType来查看图片
 		private function queryPicByType():void{
-			
-			if(queryAvailableTimer.running){
+			//定时器运行期间或者正在查询期间，不能重新查询
+			if(queryAvailableTimer.running || isRunning){
 				//定时器已启动，查询正在进行，不能再次查询
-				Logger.warn("Can not excute query in 2 seconds...");
+//				Logger.warn("Can not excute query in 2 seconds...");
+				hintToUser("Can not excute query in 2 seconds...");
 				return;
 			}else{
 				queryAvailableTimer.start();
-				Logger.debug("Start to query for type:"+_browseType);
+				Logger.debug("Start to query for type:"+_browseType);				
 			}
 			
-			switch(_browseType)
-			{
+			//按类型查询数据
+			switch(_browseType){
+				
 				case CategoryTree.CATEGORY_GALLERY_TBMODE:					
 					//缩略图模式					
 					var startTime:String = sixHourAgo(_galleryLastRecordTime);
 					var endTime:String = _galleryLastRecordTime.toString();
 					//查询画廊数据
 					_model.getGalleryByTime(startTime,endTime);
+					//显示进度条
 					showMiddleLoading();
 					break;
 				
@@ -215,6 +227,12 @@ package com.pintu.widgets{
 					
 					break;
 				
+				case CategoryTree.CATEGORY_RANDOM_TBMODE:
+					//TODO, QUERY RANDOM MODE GALLERY...
+					hintToUser("随机画廊查询...");
+					
+					break;
+				
 				default:					
 					_tagPageNum++;
 					//TODO, GET THUMBNIALS BY TAG...
@@ -223,7 +241,15 @@ package com.pintu.widgets{
 					break;
 				
 			}
-		}		
+		}
+		
+		private function hintToUser(hint:String):void{
+			var middleX:Number = drawStartX+displayAreaWidth/2;
+			var middleY:Number = drawStartY+displayAreaHeight/2;
+			Toast.getInstance(_picsContainer).show(hint,middleX,middleY);
+		}
+		
+		
 		//--------------------------------  handler start --------------------------------------------		
 		private function thumbnailHandler(event:Event):void{
 			if(event is ResponseEvent){
@@ -231,8 +257,12 @@ package com.pintu.widgets{
 //				Logger.debug("thumbnail data: \n"+galleryData);
 				//创建画廊
 				_picBuilder.createScrollableMiniGallery(galleryData);
-				//TODO, CHECK THE LAST GALLERY RECORD TIME...
 				
+				//TODO, CHECK THE LAST GALLERY RECORD TIME...
+				//SO, GET THE NEWEST...
+				
+				//重置查询状态到初始状态
+				isRunning = false;
 			}
 			if(event is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.GETGALLERYBYTIME);
@@ -242,6 +272,8 @@ package com.pintu.widgets{
 		private function bigPicHandler(event:Event):void{
 			if(event is ResponseEvent){
 				
+				//重置查询状态到初始状态
+				isRunning = false;
 			}
 			if(event is PTErrorEvent){
 				
@@ -250,6 +282,8 @@ package com.pintu.widgets{
 		private function hotPicHandler(event:Event):void{
 			if(event is ResponseEvent){
 				
+				//重置查询状态到初始状态
+				isRunning = false;
 			}
 			if(event is PTErrorEvent){
 				
@@ -258,6 +292,8 @@ package com.pintu.widgets{
 		private function classicHandler(event:Event):void{
 			if(event is ResponseEvent){
 				
+				//重置查询状态到初始状态
+				isRunning = false;
 			}
 			if(event is PTErrorEvent){
 				
@@ -266,6 +302,8 @@ package com.pintu.widgets{
 		private function favoredPicHandler(event:Event):void{
 			if(event is ResponseEvent){
 				
+				//重置查询状态到初始状态
+				isRunning = false;
 			}
 			if(event is PTErrorEvent){
 				
@@ -274,6 +312,8 @@ package com.pintu.widgets{
 		private function tagPicHandler(event:Event):void{
 			if(event is ResponseEvent){
 				
+				//重置查询状态到初始状态
+				isRunning = false;
 			}
 			if(event is PTErrorEvent){
 				
@@ -342,7 +382,7 @@ package com.pintu.widgets{
 		
 		
 		/**
-		 * @deprecated
+		 * @deprecated 先留着，后面用得着
 		 * 首先判断画廊的位置，
 		 * 如果画廊在起点0，则鼠标在画廊中部以下时开始滚动画廊，
 		 * 如果画廊在终点，则鼠标在画廊中部以上时开始滚动画廊，

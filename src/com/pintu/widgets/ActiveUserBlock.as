@@ -1,5 +1,6 @@
 package com.pintu.widgets
 {
+	import com.pintu.api.IPintu;
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
 	
@@ -9,14 +10,17 @@ package com.pintu.widgets
 	
 	public class ActiveUserBlock extends Sprite{
 		
+		private var _model:IPintu;
+		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
 		
 		private var blockWidth:Number;
 		private var blockHeight:Number;
 		
-		public function ActiveUserBlock(){
+		public function ActiveUserBlock(model:IPintu){
 			super();
+			_model = model;
 			
 			drawActiveUserBackground();
 			

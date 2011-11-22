@@ -13,6 +13,9 @@ package com.pintu.modules
 	
 	import flash.display.Sprite;
 	
+	/**
+	 * 只负责初始化对象，以及对象间交互
+	 */
 	public class UnloggedPage extends Sprite{
 		
 		private var _model:IPintu;
@@ -23,13 +26,14 @@ package com.pintu.modules
 		private var login:LoginBlock;
 		private var activeUser:ActiveUserBlock;
 		
-		
+ 
 		public function UnloggedPage(model:IPintu){
 			super();
 			this._model = model;
 				
 			mainToolBar = new MainToolBar(false);
 			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
+			mainToolBar.addEventListener(PintuEvent.RANDOM_GALLERY, randomGallery);
 			//TODO, ADD BUTTON EVENT LISTENER...
 			
 			this.addChild(mainToolBar);
@@ -46,10 +50,10 @@ package com.pintu.modules
 			slideToolBar = new SlideToolBar();
 			this.addChild(slideToolBar);
 			
-			login = new LoginBlock();
+			login = new LoginBlock(_model);
 			this.addChild(login);
 			
-			activeUser = new ActiveUserBlock();
+			activeUser = new ActiveUserBlock(_model);
 			this.addChild(activeUser);
 			
 		}
@@ -61,6 +65,12 @@ package com.pintu.modules
 
 		private function refreshGallery(evt:PintuEvent):void{
 			mainDisplayArea.browseType = categoryTree.browseType;
+		}
+		private function randomGallery(evt:PintuEvent):void{
+			//选中画廊模式节点
+			categoryTree.browseType = CategoryTree.CATEGORY_GALLERY_TBMODE;
+			//告诉显示区，按照随机模式查询
+			mainDisplayArea.browseType = CategoryTree.CATEGORY_RANDOM_TBMODE;
 		}
 		
 	} //end of class

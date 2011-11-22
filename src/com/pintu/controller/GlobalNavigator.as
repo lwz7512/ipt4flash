@@ -59,11 +59,15 @@ package com.pintu.controller
 		private function transition(prev:Sprite, next:Sprite):void{
 			//校验
 			if(!next) return;
-			//直接显示下一个
+			//如果不是运行时切换，就直接显示下一个
+			//比如一上来显示未登录状态，或者登录状态
 			if(!prev) {
 				next.alpha = 1;
 				return;
 			}
+			
+			//从未登录状态进入登录状态，或者反过来
+			
 			//初始状态
 			prev.alpha = 1;
 			next.alpha = 0;

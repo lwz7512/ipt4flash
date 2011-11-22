@@ -81,14 +81,17 @@ package com.pintu.config
 		public static const TOOL_MENU_FONTSIZE:int = 12;
 		//xx xx xx xx or xxx xxx xxx, so total is 12;
 		public static const TEXTINPUT_MAXCHARS:int = 12;
-		public static const TEXTINPUT_FONTSIZE:int = 18;
+		
+		public static const SEARCHINPUT_FONTSIZE:int = 18;
+		public static const TEXTINPUT_FONTSIZE:int = 14;
 		//黯：深黑色、泛指黑色
 		public static const DEFAULT_TEXT_COLOR:uint = 0x41555D;		
 		//黑色背景上使用的文字颜色：油绿：光润而浓绿的颜色
 		public static const GREEN_TEXT_COLOR:uint = 0x00BC12;
 			
 			
-			
+		//标准红色，大红：正红色，三原色中的红，传统的中国红，又称绛色
+		public static const DEFAULT_ERROR_RED:uint = 0xFF2121;
 		
 	} //end of color
 }

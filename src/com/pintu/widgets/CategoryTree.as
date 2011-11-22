@@ -6,14 +6,13 @@ package com.pintu.widgets
 	import com.pintu.config.StyleParams;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
-	
+	import com.sibirjak.asdpc.core.constants.Visibility;
 	import com.sibirjak.asdpc.listview.ListItemEvent;
 	import com.sibirjak.asdpc.listview.ListView;
 	import com.sibirjak.asdpc.listview.renderer.ListItemContent;
 	import com.sibirjak.asdpc.textfield.Label;
 	import com.sibirjak.asdpc.treeview.TreeView;
 	import com.sibirjak.asdpc.treeview.renderer.TreeNodeRenderer;
-	import com.sibirjak.asdpc.core.constants.Visibility;
 	
 	import flash.display.GradientType;
 	import flash.display.Sprite;
@@ -23,12 +22,29 @@ package com.pintu.widgets
 	[Event(name="browseChanged", type="com.pintu.events.PintuEvent")]
 	public class CategoryTree extends Sprite{
 		
-		//缩略图
+		/**
+		 * 缩略图模式
+		 */
 		public static const CATEGORY_GALLERY_TBMODE:String = "gallery_tb";
-		//大图
+		/**
+		 * 随机画廊模式
+		 */ 
+		public static const CATEGORY_RANDOM_TBMODE:String = "gallery_rd";
+		/**
+		 * 大图模式
+		 */ 
 		public static const CATEGORY_GALLERY_BPMODE:String = "gallery_bp";
+		/**
+		 * 热图模式
+		 */ 
 		public static const CATEGORY_HOT:String = "hot";
+		/**
+		 * 经典图片模式
+		 */ 
 		public static const CATEGORY_CLASSICAL:String = "classical";
+		/**
+		 * 最近的收藏模式
+		 */ 
 		public static const CATEGORY_FAVORED:String = "favored";
 		
 		private var drawStartX:Number;
@@ -78,6 +94,13 @@ package com.pintu.widgets
 		public function get browseType():String{
 			return _browseType;
 		}
+		public function set browseType(type:String):void{
+			_browseType = type;
+			//选中树节点，目前只发生在点击“随便看看”按钮
+			//选中画廊缩略图节点
+			if(type==CATEGORY_GALLERY_TBMODE)
+				browseTree.selectItemAt(1);
+		}
 		
 		
 		private function initVisualPartsPos():void{
@@ -126,12 +149,13 @@ package com.pintu.widgets
 			browseTree.setStyle(TreeView.style.itemSize, InitParams.TREEITEM_HEIGHT);
 			browseTree.x = browseTreeX;
 			browseTree.y = browseTreeY;
+			//默认选中画廊节点
 			browseTree.selectItemAt(1);
 			//默认展开第一级
 			browseTree.expandNodeAt(0);	
 			
 			addStyleForTree(browseTree);
-			
+			//只用点击事件，这样好控制
 			browseTree.addEventListener(ListItemEvent.CLICK, switchBrowseType);
 			
 			this.addChild(browseTree);												

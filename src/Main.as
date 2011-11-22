@@ -67,9 +67,7 @@ package{
 			if(!checkStageValidity()) {
 				Logger.warn("Stage is unavailable, stop to build app!");
 				return;
-			}
-			//检查登录状态			
-			checkLogonStatus();	
+			}			
 			
 			model = new PintuImpl();
 			factory = new ModuleFactory(this,model);
@@ -79,14 +77,15 @@ package{
 			buildHeaderMenu(isLogged);			
 			buildFooterContent();
 			
+			//检查登录状态			
+			checkLogonStatus();	
 			//display home page
 			if(isLogged){
 				navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
 				navigator.switchTo(GlobalNavigator.UNLOGGED);		
 			}	
-			
-		
+					
 		}
 		
 		private function checkStageValidity():Boolean{
@@ -94,6 +93,7 @@ package{
 		}
 		
 		private function navigateTo(event:PintuEvent):void{
+			Logger.debug("To navigating ... "+event.data);
 			navigator.switchTo(event.data);
 		}		
 		

@@ -22,7 +22,7 @@ package com.pintu.api
 		
 		public function PintuImpl(){
 			
-			client = new SimpleHttpClient(getServiceUrl(),GlobalController.userId);
+			client = new SimpleHttpClient(getServiceUrl(),GlobalController.user);
 			
 			client.addEventListener(ApiMethods.LOGON,responseHander);
 			client.addEventListener(ApiMethods.UPLOAD,responseHander);

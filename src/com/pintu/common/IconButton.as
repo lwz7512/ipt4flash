@@ -61,7 +61,7 @@ package com.pintu.common
 			}else{//IN BOTTOM
 				icon.y = margin;
 				//repositon icon label
-				this.moveLabelY(icon.height/2);
+				this.moveLabelY(icon.height/2+2);
 			}
 			
 			if(!this.enabled){
