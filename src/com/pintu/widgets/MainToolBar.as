@@ -15,7 +15,9 @@ package com.pintu.widgets
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	
-	public class MainToolBar extends Sprite{
+	import org.casalib.display.CasaSprite;
+	
+	public class MainToolBar extends CasaSprite{
 		
 		public static const TB_MODE:String = "thumbnail";
 		public static const BP_MODE:String = "bigpic";

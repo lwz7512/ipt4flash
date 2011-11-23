@@ -2,7 +2,9 @@ package com.pintu.modules
 {
 	import flash.display.Sprite;
 	
-	public class CommunityPage extends Sprite
+	import org.casalib.display.CasaSprite;
+	
+	public class CommunityPage extends CasaSprite
 	{
 		public function CommunityPage()
 		{

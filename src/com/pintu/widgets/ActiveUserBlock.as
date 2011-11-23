@@ -8,7 +8,9 @@ package com.pintu.widgets
 	import flash.display.Sprite;
 	import flash.geom.Matrix;
 	
-	public class ActiveUserBlock extends Sprite{
+	import org.casalib.display.CasaSprite;
+	
+	public class ActiveUserBlock extends CasaSprite{
 		
 		private var _model:IPintu;
 		

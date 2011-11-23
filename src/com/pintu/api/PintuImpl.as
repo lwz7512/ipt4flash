@@ -4,6 +4,7 @@ package com.pintu.api
 	import com.pintu.controller.GlobalController;
 	import com.pintu.events.ResponseEvent;
 	import com.pintu.http.SimpleHttpClient;
+	import com.pintu.utils.Logger;
 	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;

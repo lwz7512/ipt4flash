@@ -2,15 +2,10 @@ package com.pintu.widgets
 {
 	import com.pintu.api.*;
 	import com.pintu.common.*;
-	import com.pintu.config.InitParams;
-	import com.pintu.config.StyleParams;
+	import com.pintu.config.*;
 	import com.pintu.controller.*;
-	import com.pintu.events.PTErrorEvent;
-	import com.pintu.events.PintuEvent;
-	import com.pintu.events.ResponseEvent;
+	import com.pintu.events.*;
 	import com.pintu.utils.Logger;
-		
-	
 	import com.sibirjak.asdpc.button.Button;
 	import com.sibirjak.asdpc.button.ButtonEvent;
 	import com.sibirjak.asdpc.button.skins.ButtonSkin;
@@ -23,9 +18,10 @@ package com.pintu.widgets
 	import flash.events.Event;
 	import flash.geom.Matrix;
 	
+	import org.casalib.display.CasaSprite;
 	import org.casalib.util.StringUtil;
 	
-	public class LoginBlock extends Sprite{
+	public class LoginBlock extends CasaSprite{
 		
 		// permissive, will allow quite a few non matching email addresses
 		private static const EMAIL_REGEX : RegExp = /^[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}$/i;
@@ -43,13 +39,13 @@ package com.pintu.widgets
 
 		private var inputHint:SimpleText;
 		private var loading:BusyIndicator;
-		
+		//邮箱验证结果
 		private var emailValid:Boolean = false;
 		
 		public function LoginBlock(model:IPintu){
 			super();
 			_model = model;
-			PintuImpl(_model).addEventListener(ApiMethods.LOGON, logonSuccess);
+			PintuImpl(_model).addEventListener(ApiMethods.LOGON, logonHandler);
 			
 			drawLoginBackGround();
 			
@@ -57,7 +53,7 @@ package com.pintu.widgets
 						
 		}
 		
-		private function logonSuccess(event:ResponseEvent):void{
+		private function logonHandler(event:ResponseEvent):void{
 			if(event is ResponseEvent){
 				var result:String = ResponseEvent(event).data;
 				//去除尾部的换行符号
@@ -85,11 +81,13 @@ package com.pintu.widgets
 			}
 			
 			if(event is PTErrorEvent){
-				inputHint.text = "登录失败!";
+				inputHint.text = "服务异常!";
 			}
 			
 			//移除进度条
 			this.removeChild(loading);
+			//不管怎样都该恢复提交按钮状态
+			submit.enabled = true;
 		}
 		
 		private function createFormInputs():void{			
@@ -110,14 +108,16 @@ package com.pintu.widgets
 			account.setStyle(TextInput.style.borderDarkColor,StyleParams.DARKER_BORDER_COLOR);			
 			account.x = drawStartX+padding;
 			account.y = actField.y+actField.height+verticalGap;
-			account.addEventListener(TextInputEvent.FOCUS_OUT, checkEmail);
+			account.addEventListener(TextInputEvent.FOCUS_OUT, checkEmailFormat);
 			this.addChild(account);
+			//FIXME, 先写死省的老输入
+			account.text = "lwz7512@gmail.com";
 			
 			//密码名称
 			var pwdField:SimpleText = new SimpleText("密码：", 0, StyleParams.TEXTINPUT_FONTSIZE);
 			pwdField.x = drawStartX+padding;
 			pwdField.y = account.y+account.height+verticalGap;
-			this.addChild(pwdField);
+			this.addChild(pwdField);			
 			
 			//密码输入
 			pswd = new PswdInput();			
@@ -130,6 +130,8 @@ package com.pintu.widgets
 			pswd.addEventListener(TextInputEvent.SUBMIT, checkToLogin);
 			pswd.addEventListener(TextInputEvent.CHANGED, clearInput);
 			this.addChild(pswd);
+			//FIXME, 先写死省的老输入
+			pswd.text = "123";
 			
 			//提交
 			submit = new Button();
@@ -169,12 +171,19 @@ package com.pintu.widgets
 		}
 		
 		private function checkToLogin(evt:Event):void{
+			//禁用
+			submit.enabled = false;
+			
 			var email:String = account.text;
 			var password:String = pswd.text;
 			if(email.length==0 || password.length==0){
 				inputHint.text = "账号和密码不能为空!";
 				return;
 			}
+			//测试时账号和密码直接填进去了
+			//输入框不能触发失去焦点事件
+			//所以，这里再检查一次
+			checkEmailFormat(null);
 			
 			if(emailValid){
 				//logon to server...
@@ -194,7 +203,7 @@ package com.pintu.widgets
 			this.addChild(loading);
 		}
 		
-		private function checkEmail(evt:TextInputEvent):void{
+		private function checkEmailFormat(evt:TextInputEvent):void{
 			if(account.text.length>0){
 				if(isValidEmail(account.text)){
 					emailValid = true;
@@ -225,6 +234,13 @@ package com.pintu.widgets
 		
 		private function isValidEmail(email : String) : Boolean{
 			return Boolean(email.match(EMAIL_REGEX));
+		}
+		
+		//重写销毁函数
+		//凡是在本类中，对_model加过事件监听的都要在这里置空
+		override public  function destroy():void{
+			super.destroy();
+			_model = null;			
 		}
 		
 	} //end of class

@@ -48,6 +48,15 @@ package com.pintu.config
 		//Log in form height
 		public static const LOGIN_FORM_HEIGHT:Number = 160;
 		
+		//user details width
+		public static const USER_DETAIL_WIDTH:Number = 200;
+		//user details height
+		public static const USER_DETAIL_HEIGHT:Number = 160;
+		
+		//andi assets width
+		public static const ANDI_ASSETS_WIDTH:Number = 200;
+		//andi assets height
+		public static const ANDI_ASSETS_HEIGHT:Number = 120;
 		
 		
 		public static function startDrawingX():Number{

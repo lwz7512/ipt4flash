@@ -19,8 +19,10 @@ package com.pintu.widgets
 	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	
+	import org.casalib.display.CasaSprite;
+	
 	[Event(name="browseChanged", type="com.pintu.events.PintuEvent")]
-	public class CategoryTree extends Sprite{
+	public class CategoryTree extends CasaSprite{
 		
 		/**
 		 * 缩略图模式

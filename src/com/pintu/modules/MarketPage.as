@@ -2,7 +2,9 @@ package com.pintu.modules
 {
 	import flash.display.Sprite;
 	
-	public class MarketPage extends Sprite
+	import org.casalib.display.CasaSprite;
+	
+	public class MarketPage extends CasaSprite
 	{
 		public function MarketPage()
 		{

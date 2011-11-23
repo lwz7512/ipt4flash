@@ -31,11 +31,14 @@ package com.pintu.controller
 		
 		private var _model:IPintu;
 		
+		//所创建内容的显示容器
 		private var _displayArea:CasaSprite;
-		private var _drawStartX:Number;
-		private var _drawStartY:Number;
+		//拥有本实例的对象，用来调用显示进度条和提示
 		private var _owner:MainDisplayArea;
 		
+		private var _drawStartX:Number;
+		private var _drawStartY:Number;
+		//画廊行数
 		private var rowNum:int;
 		private var tpics:Array;
 		//用于滚动计算位置
@@ -49,8 +52,8 @@ package com.pintu.controller
 		
 		
 		
-		public function PicDOBuilder(displayArea:CasaSprite, model:IPintu){
-			_displayArea = displayArea;
+		public function PicDOBuilder(container:CasaSprite, model:IPintu){
+			_displayArea = container;
 			_model = model;
 			//缩略图详情响应
 			PintuImpl(_model).addEventListener(ApiMethods.GETPICDETAIL,detailPicHandler);
@@ -99,12 +102,21 @@ package com.pintu.controller
 
 		
 		//给MainDisplayArea调用
-		public function createScrollableMiniGallery(json:String):void{
-			cleanUp();
+		public function createScrollableMiniGallery(json:String):void{			
 			
 			var thumnails:Array = JSON.decode(json) as Array;
 			if(!thumnails) return;
 			
+			//画廊没新图片
+			if(thumnails.length==0){
+				_owner.hintToUser("没有最新的图片，不然随便看看？");
+				_owner.hideMiddleLoading();
+				return;
+			}
+			
+			//准备生成画廊
+			cleanUp();
+			//记下画廊行数以计算画廊高度
 			rowNum = Math.floor(thumnails.length/_miniGalleryColumnNum)+1;
 			
 			//解析Json字符串为对象

@@ -13,10 +13,12 @@ package com.pintu.modules
 	
 	import flash.display.Sprite;
 	
+	import org.casalib.display.CasaSprite;
+	
 	/**
 	 * 只负责初始化对象，以及对象间交互
 	 */
-	public class UnloggedPage extends Sprite{
+	public class UnloggedPage extends CasaSprite{
 		
 		private var _model:IPintu;
 		private var mainToolBar:MainToolBar;
@@ -71,6 +73,13 @@ package com.pintu.modules
 			categoryTree.browseType = CategoryTree.CATEGORY_GALLERY_TBMODE;
 			//告诉显示区，按照随机模式查询
 			mainDisplayArea.browseType = CategoryTree.CATEGORY_RANDOM_TBMODE;
+		}
+		
+		//重写销毁函数
+		override public  function destroy():void{
+			super.destroy();
+			_model = null;
+			removeChildren(true,true);			
 		}
 		
 	} //end of class

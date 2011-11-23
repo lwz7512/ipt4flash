@@ -5,6 +5,7 @@ package com.pintu.common{
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
+	import flash.filters.DropShadowFilter;
 	import flash.text.TextFormat;
 	import flash.utils.Timer;
 	
@@ -20,9 +21,9 @@ package com.pintu.common{
 		private static var _timer:Timer;
 		
 		public function Toast(lokr:Locker){			
-			//显示3秒
-			_timer = new Timer(2000,1);
-			//显示结束
+			//显示3秒不长不短
+			_timer = new Timer(3000,1);
+			//时间到了隐藏起来
 			_timer.addEventListener(TimerEvent.TIMER, timeToElapse);
 			//显示时画出背景
 			this.addEventListener(Event.ADDED_TO_STAGE, drawBackground);
@@ -33,7 +34,8 @@ package com.pintu.common{
 			_text.destroy();
 			_text = null;			
 			//移除自己
-			_parent.removeChild(this);			
+			_parent.removeChild(this);
+			_parent = null;
 			//确保定时器停止
 			_timer.stop();
 		}
@@ -49,12 +51,18 @@ package com.pintu.common{
 			this.graphics.beginFill(0x333333,0.8);
 			this.graphics.drawRoundRect(-4, -4, toastWidth, toastHeight, 6, 6);
 			this.graphics.endFill();
+			
+			//加个阴影
+			var shadow:DropShadowFilter = new DropShadowFilter(4,45,0x666666,0.8);
+			this.filters = [shadow];
 		}
+
 		
-		public static function getInstance(context:CasaSprite):Toast{
+		public static function getInstance(context:CasaSprite):Toast{			
 			if(!_instance){
 				_instance = new Toast(new Locker());				
 			}
+				
 			_parent = context;
 			
 			if(_parent){
@@ -83,7 +91,12 @@ package com.pintu.common{
 			//开始显示计时
 			_timer.start();
 			
-			TweenLite.from(this, 0.5, {alpha:0});
+			//FIXME, 我擦，还得必须设定下初始的透明度
+			//否则动画会有问题，第二次就不出来了
+			//2011/11/23
+			this.alpha = 1;
+			
+			TweenLite.from(this, 0.6, {alpha:0});
 		}
 		
 	} //end of class

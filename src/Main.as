@@ -93,7 +93,7 @@ package{
 		}
 		
 		private function navigateTo(event:PintuEvent):void{
-			Logger.debug("To navigating ... "+event.data);
+//			Logger.debug("To navigating ... "+event.data);
 			navigator.switchTo(event.data);
 		}		
 		

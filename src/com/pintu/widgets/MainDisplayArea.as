@@ -25,7 +25,7 @@ package com.pintu.widgets{
 	/**
 	 * 主工作类，用来生成和展示图片及相关信息
 	 */ 
-	public class MainDisplayArea extends Sprite{
+	public class MainDisplayArea extends CasaSprite{
 				
 		private var _model:IPintu;
 		
@@ -54,7 +54,10 @@ package com.pintu.widgets{
 		// 使用增强的显示对象CasaSprite，以更好的管理子对象	
 		//画廊图片容器，也是被滚动对象
 		private var _picsContainer:CasaSprite;
+		//画廊遮罩，别动
 		private var _clip:Shape;	
+		//加载进度条
+		private var loading:BusyIndicator;
 		
 		//画廊移动速度
 		private var _galleryMoveYSpeed:Number = 0;
@@ -70,6 +73,9 @@ package com.pintu.widgets{
 		//查询状态开关
 		private var isRunning:Boolean;
 		
+		//生成画廊开关，以此来解决重复的事件响应
+		private var galleryCreated:Boolean;
+		
 		
 		public function MainDisplayArea(model:IPintu){
 			super();					
@@ -83,6 +89,7 @@ package com.pintu.widgets{
 			this._picBuilder = new PicDOBuilder(_picsContainer,_model);
 			this._picBuilder.drawStartX = drawStartX;
 			this._picBuilder.drawStartY = drawStartY;
+			//为了让他可以调用以展示进度条和提示
 			this._picBuilder.owner = this;
 			
 			//默认舞台背景色
@@ -116,7 +123,8 @@ package com.pintu.widgets{
 			var middleX:Number = drawStartX+displayAreaWidth/2;
 			var middleY:Number = drawStartY+displayAreaHeight/2;
 			//图片查到后回删掉所有，包括这个进度条
-			var loading:BusyIndicator = new BusyIndicator(32);
+			if(!loading)
+				loading = new BusyIndicator(32);
 			loading.x = middleX-16;
 			loading.y = middleY-16;			
 			_picsContainer.addChild(loading);
@@ -124,74 +132,67 @@ package com.pintu.widgets{
 			isRunning = true;
 		}
 		
-		private function initDrawPoint():void{
-			drawStartX = InitParams.startDrawingX()
-				+InitParams.LEFTCOLUMN_WIDTH
-				+InitParams.DEFAULT_GAP;
-			drawStartY = InitParams.HEADER_HEIGHT
-				+InitParams.TOP_BOTTOM_GAP
-				+InitParams.MAINMENUBAR_HEIGHT
-				+InitParams.DEFAULT_GAP;
-			//默认高度，也是最小高度
-			displayAreaHeight = InitParams.CALLERY_HEIGHT;
-			if(InitParams.isStretchHeight()){
-				//拉伸高度
-				displayAreaHeight = InitParams.appHeight
-					-drawStartY
-					-InitParams.TOP_BOTTOM_GAP
-					-InitParams.FOOTER_HEIGHT;
-			}
-			displayAreaWidth = InitParams.GALLERY_WIDTH;
+		public function hideMiddleLoading():void{
+			if(_picsContainer.contains(loading))
+				_picsContainer.removeChild(loading);
 		}
 		
-		private function initDisplayStage(event:Event):void{
-			_initialized = true;
+		/**
+		 * _picBuilder在对无内容返回处理时，要用到
+		 */ 
+		public function hintToUser(hint:String):void{
+			var middleX:Number = drawStartX+displayAreaWidth/2;
+			var middleY:Number = drawStartY+displayAreaHeight/2;
+			Toast.getInstance(_picsContainer).show(hint,middleX,middleY);
+		}
+		
+		//浏览类型，或者是标签id
+		public function set browseType(type:String):void{
+			//FIXME, 先不拦截同类请求了，方便刷新按钮
+			//			if(type == _browseType) return;
+			
+			this._browseType = type;
+//			Logger.debug("browseType: "+_browseType);
+			
+			//每次切换标签选项，就重置分页起始数
+			_tagPageNum = 0;
+			
+			//每次进入画廊缩略图模式，就重置结束时间
+			if(_browseType== CategoryTree.CATEGORY_GALLERY_TBMODE){				
+				_galleryLastRecordTime = new Date().getTime();
+			}
+			//每次进入画廊大图模式，就重置分页起始数
+			if(_browseType== CategoryTree.CATEGORY_GALLERY_BPMODE){				
+				_galleryPageNum = 0;
+			}
+			//初始化时不查询
+			if(!_initialized) return;
+			//delay query..
+			invalidate();
+		}	
+		
+		private function invalidate():void{
+			this.addEventListener(Event.ENTER_FRAME,delayQuery);
+		}
+		
+		private function delayQuery(event:Event):void{
+			this.removeEventListener(Event.ENTER_FRAME,delayQuery);
 			queryPicByType();
 		}
 		
-		private function scrollGallery(event:MouseEvent):void{
-			//向后滚，负值，向前滚，正值
-			var moveDirection:int = event.delta;
-			_galleryMoveYSpeed = moveDirection*_acceleration;
-			moveGallery(null);
-		}
-		
-		private function moveGallery(event:Event):void{	
-			//画廊默认位置
-			var galleryHeight:Number = _picBuilder.galleryHeight;
-			var galleryMoveStartY:Number = 0;			
-			var galleryMoveEndY:Number = displayAreaHeight-galleryHeight;
-			//如果是负数表示超过了展示高度，则滚动，如果不是，则不滚动
-			if(galleryMoveEndY>=0)
-				return;			
-			
-			//按照计算好的速度移动
-			if(_galleryMoveYSpeed!=0)				
-			TweenLite.to(_picsContainer,0.6,{y:(_picsContainer.y + _galleryMoveYSpeed), ease:Strong.easeOut});
-			
-			//位置复原
-			if(_picsContainer.y>galleryMoveStartY){
-				//缓动效果
-				TweenLite.to(_picsContainer,0.4,{y:galleryMoveStartY,ease:Strong.easeOut});				
-			}
-			if(_picsContainer.y<galleryMoveEndY){
-				TweenLite.to(_picsContainer,0.4,{y:galleryMoveEndY,ease:Strong.easeOut});
-			}
-		}
-				
-
 		//根据_displayMode和_browseType来查看图片
 		private function queryPicByType():void{
 			//定时器运行期间或者正在查询期间，不能重新查询
 			if(queryAvailableTimer.running || isRunning){
 				//定时器已启动，查询正在进行，不能再次查询
-//				Logger.warn("Can not excute query in 2 seconds...");
-				hintToUser("Can not excute query in 2 seconds...");
+				hintToUser("不能在2秒内持续查询...");
 				return;
 			}else{
 				queryAvailableTimer.start();
-				Logger.debug("Start to query for type:"+_browseType);				
+//				Logger.debug("Start to query for type:"+_browseType);				
 			}
+			//开启查询开关
+			galleryCreated = false;
 			
 			//按类型查询数据
 			switch(_browseType){
@@ -241,22 +242,24 @@ package com.pintu.widgets{
 					break;
 				
 			}
-		}
-		
-		private function hintToUser(hint:String):void{
-			var middleX:Number = drawStartX+displayAreaWidth/2;
-			var middleY:Number = drawStartY+displayAreaHeight/2;
-			Toast.getInstance(_picsContainer).show(hint,middleX,middleY);
-		}
+		}		
 		
 		
 		//--------------------------------  handler start --------------------------------------------		
 		private function thumbnailHandler(event:Event):void{
-			if(event is ResponseEvent){
+			if(event is ResponseEvent){				
 				var galleryData:String = ResponseEvent(event).data;
 //				Logger.debug("thumbnail data: \n"+galleryData);
-				//创建画廊
-				_picBuilder.createScrollableMiniGallery(galleryData);
+				
+				//FIXME, 从非登陆状态切换到登陆状态时，很奇怪有两次事件响应
+				//用开关值来防止重复创建画廊，数据到达后只生成一次画廊
+				//2011/11/21
+				if(!galleryCreated){
+					Logger.debug("to create mini gallery...");
+					//创建画廊
+					_picBuilder.createScrollableMiniGallery(galleryData);
+					galleryCreated = true;
+				}
 				
 				//TODO, CHECK THE LAST GALLERY RECORD TIME...
 				//SO, GET THE NEWEST...
@@ -269,8 +272,10 @@ package com.pintu.widgets{
 			}
 		}
 		
+		
 		private function bigPicHandler(event:Event):void{
 			if(event is ResponseEvent){
+				Logger.debug("to create big gallery...");
 				
 				//重置查询状态到初始状态
 				isRunning = false;
@@ -281,6 +286,7 @@ package com.pintu.widgets{
 		}	
 		private function hotPicHandler(event:Event):void{
 			if(event is ResponseEvent){
+				Logger.debug("to create hot gallery...");
 				
 				//重置查询状态到初始状态
 				isRunning = false;
@@ -291,6 +297,7 @@ package com.pintu.widgets{
 		}	
 		private function classicHandler(event:Event):void{
 			if(event is ResponseEvent){
+				Logger.debug("to create classic gallery...");
 				
 				//重置查询状态到初始状态
 				isRunning = false;
@@ -301,6 +308,7 @@ package com.pintu.widgets{
 		}	
 		private function favoredPicHandler(event:Event):void{
 			if(event is ResponseEvent){
+				Logger.debug("to create favorite gallery...");
 				
 				//重置查询状态到初始状态
 				isRunning = false;
@@ -320,34 +328,7 @@ package com.pintu.widgets{
 			}			
 		}	
 		
-		//--------------------------------  handler end --------------------------------------------	
-		
-		
-		//浏览类型，或者是标签id
-		public function set browseType(type:String):void{
-			//FIXME, 先不拦截同类请求了，方便刷新按钮
-//			if(type == _browseType) return;
-			
-			this._browseType = type;
-			Logger.debug("browseType: "+_browseType);
-			
-			//每次切换标签选项，就重置分页起始数
-			_tagPageNum = 0;
-			
-			//每次进入画廊缩略图模式，就重置结束时间
-			if(_browseType== CategoryTree.CATEGORY_GALLERY_TBMODE){				
-				_galleryLastRecordTime = new Date().getTime();
-			}
-			//每次进入画廊大图模式，就重置分页起始数
-			if(_browseType== CategoryTree.CATEGORY_GALLERY_BPMODE){				
-				_galleryPageNum = 0;
-			}
-			//初始化时不查询
-			if(!_initialized) return;
-			//delay query..
-			invalidate();
-		}				
-
+		//--------------------------------  handler end --------------------------------------------				
 		
 		private function drawMainDisplayBackground():void{						
 			this.graphics.clear();
@@ -366,19 +347,68 @@ package com.pintu.widgets{
 			this.addChild(_clip);
 		}
 		
-		private function invalidate():void{
-			this.addEventListener(Event.ENTER_FRAME,delayQuery);
-		}
-		
-		private function delayQuery(event:Event):void{
-			this.removeEventListener(Event.ENTER_FRAME,delayQuery);
-			queryPicByType();
-		}
 		
 		//6小时以前
 		private function sixHourAgo(endTime:Number):String{
 			return (endTime-6*60*60*1000).toString();			 
 		}
+		
+		private function initDrawPoint():void{
+			drawStartX = InitParams.startDrawingX()
+				+InitParams.LEFTCOLUMN_WIDTH
+				+InitParams.DEFAULT_GAP;
+			drawStartY = InitParams.HEADER_HEIGHT
+				+InitParams.TOP_BOTTOM_GAP
+				+InitParams.MAINMENUBAR_HEIGHT
+				+InitParams.DEFAULT_GAP;
+			//默认高度，也是最小高度
+			displayAreaHeight = InitParams.CALLERY_HEIGHT;
+			if(InitParams.isStretchHeight()){
+				//拉伸高度
+				displayAreaHeight = InitParams.appHeight
+					-drawStartY
+					-InitParams.TOP_BOTTOM_GAP
+					-InitParams.FOOTER_HEIGHT;
+			}
+			displayAreaWidth = InitParams.GALLERY_WIDTH;
+		}
+		
+		private function initDisplayStage(event:Event):void{
+			_initialized = true;
+			queryPicByType();
+		}
+		
+		private function scrollGallery(event:MouseEvent):void{
+			//向后滚，负值，向前滚，正值
+			var moveDirection:int = event.delta;
+			_galleryMoveYSpeed = moveDirection*_acceleration;
+			moveGallery(null);
+		}
+		
+		private function moveGallery(event:Event):void{	
+			//画廊默认位置
+			var galleryHeight:Number = _picBuilder.galleryHeight;
+			var galleryMoveStartY:Number = 0;			
+			var galleryMoveEndY:Number = displayAreaHeight-galleryHeight;
+			//如果是负数表示超过了展示高度，则滚动，如果不是，则不滚动
+			if(galleryMoveEndY>=0)
+				return;			
+			
+			//按照计算好的速度移动
+			if(_galleryMoveYSpeed!=0)				
+				TweenLite.to(_picsContainer,0.6,{y:(_picsContainer.y + _galleryMoveYSpeed), ease:Strong.easeOut});
+			
+			//位置复原
+			if(_picsContainer.y>galleryMoveStartY){
+				//缓动效果
+				TweenLite.to(_picsContainer,0.4,{y:galleryMoveStartY,ease:Strong.easeOut});				
+			}
+			if(_picsContainer.y<galleryMoveEndY){
+				TweenLite.to(_picsContainer,0.4,{y:galleryMoveEndY,ease:Strong.easeOut});
+			}
+		}
+		
+
 		
 		
 		/**
@@ -429,7 +459,14 @@ package com.pintu.widgets{
 			_lastMouseY = relativeMouseY;
 		}
 				
-		
+		//重写销毁函数
+		//凡是在本类中，对_model加过事件监听的都要在这里置空
+		override public  function destroy():void{
+			super.destroy();
+			_model = null;
+			_picBuilder = null;
+//			Logger.debug("MainDisplayArea destroyed...");
+		}
 		
 	
 	} //end of class

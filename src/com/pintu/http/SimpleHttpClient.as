@@ -59,6 +59,7 @@ package com.pintu.http
 				var result:String = event.readUTFBytes();
 				var dataEvent:ResponseEvent = new ResponseEvent(method,result);
 				dispatchEvent(dataEvent);
+//				Logger.debug("Method: "+method+"\n"+"result: "+result);	
 			};
 			
 			_client.listener.onComplete = function(event:HttpResponseEvent):void {
@@ -69,7 +70,7 @@ package com.pintu.http
 			
 			_client.listener.onError = function(event:ErrorEvent):void {
 				var errorMessage:String = event.text;
-				Logger.error("Method: "+method+" , error: "+errorMessage);
+//				Logger.error("Method: "+method+" , error: "+errorMessage);
 				var errorEvent:PTErrorEvent = new PTErrorEvent(method,errorMessage);
 				dispatchEvent(errorEvent);
 			};  					

@@ -7,6 +7,7 @@ package com.pintu.controller
 	import flash.display.Sprite;
 	
 	import org.as3commons.collections.Map;
+	import org.casalib.display.CasaSprite;
 	
 	/**
 	 * 应用主模块创建工厂
@@ -26,8 +27,8 @@ package com.pintu.controller
 			this._model = model;
 		}
 		
-		public function createModuleByName(module:String):Sprite{
-			var moduleToDisplay:Sprite;
+		public function createModuleByName(module:String):CasaSprite{
+			var moduleToDisplay:CasaSprite;
 			
 			switch(module){
 				case GlobalNavigator.HOMPAGE:
@@ -37,7 +38,7 @@ package com.pintu.controller
 						modules.add(GlobalNavigator.HOMPAGE,moduleToDisplay);
 						this._canvas.addChild(moduleToDisplay);
 					}else{
-						moduleToDisplay = modules.itemFor(GlobalNavigator.HOMPAGE) as Sprite;
+						moduleToDisplay = modules.itemFor(GlobalNavigator.HOMPAGE) as CasaSprite;
 					}
 					break;
 					
@@ -48,7 +49,7 @@ package com.pintu.controller
 						modules.add(GlobalNavigator.UNLOGGED,moduleToDisplay);
 						this._canvas.addChild(moduleToDisplay);
 					}else{
-						moduleToDisplay = modules.itemFor(GlobalNavigator.UNLOGGED) as Sprite;
+						moduleToDisplay = modules.itemFor(GlobalNavigator.UNLOGGED) as CasaSprite;
 					}			
 
 					
