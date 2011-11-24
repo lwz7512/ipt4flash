@@ -59,12 +59,12 @@ package com.pintu.widgets
 		
 		public function MainToolBar(logged:Boolean){
 			super();
-			_isLogged = logged;
-			
-			initDisplayModeFromCache();
-			
+			_isLogged = logged;				
+			//计算位置
 			initVisualPartsPos();
+			//画背景框
 			drawTooBarBackground();
+			//生成图标按钮
 			createMainTools();
 		}
 		
@@ -73,27 +73,22 @@ package com.pintu.widgets
 		}
 		
 		
-		private function initDisplayModeFromCache():void{
-			//TODO, get display mode from cache by user...
-			if(_isLogged){
-				
-			}else{
-				_displayMode = TB_MODE;				
-			}
-		}
-		
-		
 		private function initVisualPartsPos():void{
 			
 			drawStartX = InitParams.startDrawingX();
-			drawStartY = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;			
-			firstButtonX = drawStartX+buttonGap;			
+			drawStartY = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;	
+			//第一按钮位置
+			firstButtonX = drawStartX+buttonGap;	
+			//判断登录状态
 			if(GlobalController.isLogged){
 				secondButtonX = firstButtonX+InitParams.MAINMENUBAR_HEIGHT+buttonGap;
 			}else{
 				secondButtonX = firstButtonX;
-			}			
-			thirdButtonX = secondButtonX+InitParams.MAINMENUBAR_HEIGHT+buttonGap;			
+			}	
+			//第三按钮位置
+			thirdButtonX = secondButtonX+InitParams.MAINMENUBAR_HEIGHT+buttonGap;	
+			
+			
 			searchingX  = drawStartX+InitParams.MAINMENUBAR_WIDTH/2;
 			loadingX = searchingX+InitParams.SEARCH_INPUT_WIDTH+2*buttonGap;
 		}
@@ -127,10 +122,29 @@ package com.pintu.widgets
 			var downColors:Array = [StyleParams.ICONMENU_SELECTED_TOP,
 				StyleParams.ICONMENU_SELECTED_BOTTOM];
 			
-			//刷新按钮
-			refresh = new IconButton(
-				InitParams.MAINMENUBAR_HEIGHT,
-				InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
+			//第一按钮：贴图按钮
+			if(GlobalController.isLogged){
+				postPic = new IconButton(InitParams.MAINMENUBAR_HEIGHT,InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
+				postPic.setSkinStyle(upColors,overColors,downColors);
+				postPic.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+					StyleParams.DEFAULT_TEXT_FONTSIZE,
+					StyleParams.DEFAULT_TEXT_COLOR,
+					StyleParams.DEFAULT_TEXT_COLOR,
+					StyleParams.DEFAULT_TEXT_COLOR);
+				postPic.label = "贴图";
+				postPic.x = firstButtonX;
+				postPic.y = drawStartY+buttonGap;	
+				//图标路径
+				postPic.iconPath = postPicPath;
+				postPic.addEventListener(MouseEvent.CLICK, function():void{				
+					
+				});
+				this.addChild(postPic);
+				
+			}
+			
+			//第二按钮：刷新按钮
+			refresh = new IconButton(InitParams.MAINMENUBAR_HEIGHT,InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
 			refresh.setSkinStyle(upColors,overColors,downColors);
 			refresh.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
 				StyleParams.DEFAULT_TEXT_FONTSIZE,
@@ -147,11 +161,9 @@ package com.pintu.widgets
 			});
 			this.addChild(refresh);
 			
-			//随机画廊
+			//第三按钮：随机画廊
 			//AT SAME TIME, SELECT THE TBMODE IN CATEGORY TREE...
-			randomView = new IconButton(
-				InitParams.MAINMENUBAR_HEIGHT,
-				InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
+			randomView = new IconButton(InitParams.MAINMENUBAR_HEIGHT,InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
 			randomView.setSkinStyle(upColors,overColors,downColors);
 			randomView.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
 				StyleParams.DEFAULT_TEXT_FONTSIZE,

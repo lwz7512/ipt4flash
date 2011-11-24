@@ -1,24 +1,26 @@
 package com.pintu.widgets
 {
-	import com.pintu.config.InitParams;
-	import com.pintu.config.StyleParams;
+	import com.pintu.common.TextMenu;
+	import com.pintu.config.*;
+	import com.pintu.controller.*;
+	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
 	
 	import flash.display.GradientType;
 	import flash.display.Loader;
 	import flash.display.Sprite;
 	import flash.events.IOErrorEvent;
+	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
 	import org.casalib.events.LoadEvent;
 	import org.casalib.load.ImageLoad;
-	import com.pintu.common.TextMenu;
 	
 	public class HeaderBar extends Sprite{
 		
-		private var isLogged:Boolean;
+		private var _isLogged:Boolean;
 		
 		private var logoLoader:ImageLoad;
 		private var version:TextField;
@@ -26,6 +28,7 @@ package com.pintu.widgets
 		private var homeMenu:TextMenu;
 		private var communityMenu:TextMenu;
 		private var marketMenu:TextMenu;
+		private var exitMenu:TextMenu;
 		
 		private var elementStartX:Number;
 		
@@ -35,11 +38,14 @@ package com.pintu.widgets
 		private var logoVersionGap:Number = 36;
 		private var versionHomeGap:Number = 100;
 		private var menuGap:Number = 2;
+		private var upColors:Array;
+		private var overColors:Array;
+		private var downColors:Array;
 		
-		public function HeaderBar(isLoggedin:Boolean){
-			super();
+		public function HeaderBar(isLogged:Boolean){
+			super();			
+			_isLogged = isLogged;
 			
-			isLogged = isLoggedin;
 			elementStartX = InitParams.startDrawingX();
 			
 			drawBackground();	
@@ -49,6 +55,17 @@ package com.pintu.widgets
 			showVersion();
 			
 			createTextMenus();
+						
+			createExitMenu();	
+				
+		}
+		
+		public function showExit():void{
+			exitMenu.visible = true;
+		}
+		
+		public function hideExit():void{
+			exitMenu.visible = false;
 		}
 		
 		private function showLogo():void{
@@ -91,10 +108,10 @@ package com.pintu.widgets
 		
 		//TODO, add event listener...
 		private function createTextMenus():void{
-			var upColors:Array = [0xFFFFFF,0xFFFFFF];
-			var overColors:Array = [StyleParams.HEADER_MENU_MOUSEOVER,
+			upColors = [0xFFFFFF,0xFFFFFF];
+			overColors = [StyleParams.HEADER_MENU_MOUSEOVER,
 				StyleParams.HEADER_MENU_MOUSEOVER];
-			var downColors:Array = [StyleParams.HEADER_MENU_SELECTED,
+			downColors = [StyleParams.HEADER_MENU_SELECTED,
 				StyleParams.HEADER_MENU_SELECTED];
 			
 			homeMenu = new TextMenu(
@@ -143,6 +160,36 @@ package com.pintu.widgets
 			this.addChild(marketMenu);
 						
 			
+		}
+		
+		
+		private function createExitMenu():void{
+			exitMenu = new TextMenu(
+				InitParams.HEADERMENU_BG_WIDTH,
+				InitParams.HEADER_HEIGHT);
+			exitMenu.setSkinStyle(upColors,overColors,downColors);
+			exitMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+				StyleParams.HEADER_MENU_FONTSIZE,
+				StyleParams.HEADER_MENU_COLOR,
+				StyleParams.HEADER_MENU_COLOR,
+				StyleParams.HEADER_MENU_COLOR);
+			exitMenu.label = "退出";
+			exitMenu.x = elementStartX
+				+InitParams.MAINMENUBAR_WIDTH
+				+InitParams.DEFAULT_GAP
+				+InitParams.LOGIN_FORM_WIDTH
+				+InitParams.DEFAULT_GAP;
+			exitMenu.y = 0;
+			
+			exitMenu.visible = false;
+			if(_isLogged) exitMenu.visible = true;
+			//派发导航事件，退出到未登录状态
+			exitMenu.addEventListener(MouseEvent.CLICK, logout);
+			this.addChild(exitMenu);
+		}
+		
+		private function logout(evt:MouseEvent):void{
+			dispatchEvent(new PintuEvent(PintuEvent.NAVIGATE, GlobalNavigator.UNLOGGED));
 		}
 		
 		private function onLoaded(e:LoadEvent):void {

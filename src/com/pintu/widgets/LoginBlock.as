@@ -42,11 +42,18 @@ package com.pintu.widgets
 		//邮箱验证结果
 		private var emailValid:Boolean = false;
 		
+		//登录成功开关值，真崩溃，事件监听到两次
+		//2011/11/24
+		private var logonSuccessFlag:Boolean = false;
+		
 		public function LoginBlock(model:IPintu){
 			super();
+			
+//			Logger.debug("Create LoginBlock once...");
+			
 			_model = model;
 			PintuImpl(_model).addEventListener(ApiMethods.LOGON, logonHandler);
-			
+			//计算位置，画背景
 			drawLoginBackGround();
 			
 			createFormInputs();
@@ -56,24 +63,35 @@ package com.pintu.widgets
 		private function logonHandler(event:ResponseEvent):void{
 			if(event is ResponseEvent){
 				var result:String = ResponseEvent(event).data;
-				//去除尾部的换行符号
-				result = StringUtil.trim(result);
 				
-				Logger.debug("user: "+result);
+				//如果登录过了就别再进入了	
+				//否则会引起_model空对象异常
+				//很怪异啊
+				//2011/11/24
+				if(logonSuccessFlag) return;
+				
+				//去除尾部的换行符号
+				result = StringUtil.trim(result);				
+//				Logger.debug("user: "+result);
 				
 				if(result == USERNOTEXIST){
 					inputHint.text = "用户不存在!";
 				}else if(result == PASSWORDERROR){
 					inputHint.text = "密码错误!";
-				}else{
+				}else{					
+					
 					//登录成功了
 					if(result.indexOf("@")>-1){
 						var role:String = result.split("@")[0];
 						var userId:String = result.split("@")[1];
-						//记下来
+						//缓存下来
 						GlobalController.rememberUser(userId,role);
+						//更新用户信息到模型中
+						_model.updateUser(userId);
 						//派发时间通知主应用导航到主页
 						dispatchEvent(new PintuEvent(PintuEvent.NAVIGATE,GlobalNavigator.HOMPAGE));
+						//标记登录成功
+						logonSuccessFlag = true;
 					}else{
 						inputHint.text = "非用户标识!";						
 					}
@@ -85,7 +103,8 @@ package com.pintu.widgets
 			}
 			
 			//移除进度条
-			this.removeChild(loading);
+			if(loading)
+				this.removeChild(loading);
 			//不管怎样都该恢复提交按钮状态
 			submit.enabled = true;
 		}

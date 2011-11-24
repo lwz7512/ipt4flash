@@ -17,7 +17,7 @@ package com.pintu.common{
 		
 		private static var _instance:Toast;
 		private static var _text:SimpleText;
-		private static var _parent:CasaSprite;
+		private static var _parent:Sprite;
 		private static var _timer:Timer;
 		
 		public function Toast(lokr:Locker){			
@@ -30,12 +30,10 @@ package com.pintu.common{
 		}
 		
 		private function timeToElapse(evt:TimerEvent):void{
-			//清理上次显示内容
-			_text.destroy();
-			_text = null;			
-			//移除自己
+			//隐藏自己			
 			_parent.removeChild(this);
 			_parent = null;
+			
 			//确保定时器停止
 			_timer.stop();
 		}
@@ -58,7 +56,7 @@ package com.pintu.common{
 		}
 
 		
-		public static function getInstance(context:CasaSprite):Toast{			
+		public static function getInstance(context:Sprite):Toast{			
 			if(!_instance){
 				_instance = new Toast(new Locker());				
 			}
@@ -74,12 +72,17 @@ package com.pintu.common{
 		
 		public function show(text:String, toastX:Number, toastY:Number):void{
 			//如果已经显示了，就不再显示
-			if(_parent && _parent.contains(this))
-				return;
+			if(_parent.contains(this)) return;			
 			
 			//创建文字
-			_text = new SimpleText(text,0xFFFFFF,12,false,false);
-			this.addChild(_text);
+			if(!_text){
+				//缓存起来
+				_text = new SimpleText(text,0xFFFFFF,12,false,false);
+				this.addChild(_text);				
+			}else{
+				//新的内容来了
+				_text.text = text;
+			}
 						
 			if(_parent)
 				_parent.addChild(this);

@@ -2,14 +2,14 @@ package com.pintu.modules
 {
 	import com.pintu.api.IPintu;
 	import com.pintu.events.PintuEvent;
+	import com.pintu.utils.Logger;
 	import com.pintu.widgets.*;
-	import com.pintu.widgets.AndiBlock;
 	
 	import flash.display.Sprite;
 	
 	import org.casalib.display.CasaSprite;
 	
-	public class HomePage extends CasaSprite{		
+	public class HomePage extends CasaSprite implements IDestroyableModule{		
 		
 		private var _model:IPintu;
 		
@@ -27,6 +27,8 @@ package com.pintu.modules
 		public function HomePage(model:IPintu){
 			super();
 			this._model = model;
+			
+//			Logger.debug("Create HomePage once...");
 			
 			mainToolBar = new MainToolBar(true);
 			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
@@ -73,7 +75,8 @@ package com.pintu.modules
 		}
 		
 		//重写销毁函数
-		override public  function destroy():void{
+		public  function killMe():void{
+			//移除自己，并销毁事件监听
 			super.destroy();
 			_model = null;
 			removeChildren(true,true);		

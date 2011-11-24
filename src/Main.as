@@ -29,7 +29,7 @@ package{
 		
 		private var model:IPintu;
 		
-		private var isLogged:Boolean = false;
+		private var _isLogged:Boolean = false;
 		private var navigator:GlobalNavigator;
 		private var factory:ModuleFactory;
 		
@@ -56,6 +56,12 @@ package{
 		
 		protected function buildApp(event:Event):void{			
 			this.removeEventListener(Event.ADDED_TO_STAGE, buildApp);
+			//如果舞台大小为0
+			if(!stage.stageWidth) {
+				Logger.warn("Stage is unavailable, stop to build app!");
+				return;
+			}	
+			
 			//listen navigate event
 			//may be from login to homepage...
 			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
@@ -64,44 +70,47 @@ package{
 			InitParams.appWidth = this.stage.stageWidth;
 			InitParams.appHeight = this.stage.stageHeight;	
 			
-			if(!checkStageValidity()) {
-				Logger.warn("Stage is unavailable, stop to build app!");
-				return;
-			}			
+			//初始化客户端缓存对象
+			GlobalController.initClientStorage(this);
+			//这时该知道是否已经登录过了没
+			_isLogged = GlobalController.isLogged;
 			
-			model = new PintuImpl();
+			var currentUser:String = GlobalController.loggedUser;
+			model = new PintuImpl(currentUser);
 			factory = new ModuleFactory(this,model);
 			navigator = new GlobalNavigator(this,factory);					
 			
 			//全局模块固定不变
-			buildHeaderMenu(isLogged);			
-			buildFooterContent();
-			
-			//检查登录状态			
-			checkLogonStatus();	
+			buildHeaderMenu(_isLogged);			
+			buildFooterContent();			
+								
 			//display home page
-			if(isLogged){
+			if(_isLogged){
 				navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
 				navigator.switchTo(GlobalNavigator.UNLOGGED);		
 			}	
 					
-		}
-		
-		private function checkStageValidity():Boolean{
-			return InitParams.appWidth>0?true:false;
-		}
-		
-		private function navigateTo(event:PintuEvent):void{
-//			Logger.debug("To navigating ... "+event.data);
-			navigator.switchTo(event.data);
 		}		
 		
-		private function checkLogonStatus():void{
-			//TODO, is logged in?
+		//运行时切换模块状态，比如从未登录到登陆
+		private function navigateTo(event:PintuEvent):void{
+//			Logger.debug("To navigating ... "+event.data);			
 			
-			GlobalController.isLogged = isLogged;
-		}
+			//进入登录状态
+			if(event.data==GlobalNavigator.HOMPAGE){
+				header.showExit();
+			}
+			//进入未登录状态
+			if(event.data==GlobalNavigator.UNLOGGED){
+				header.hideExit();
+				GlobalController.clearUser();
+			}
+			
+			//开始切换状态
+			navigator.switchTo(event.data);
+
+		}		
 		
 		
 		private function buildHeaderMenu(isLogged:Boolean):void{

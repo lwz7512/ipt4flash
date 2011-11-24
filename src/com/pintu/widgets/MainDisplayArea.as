@@ -81,6 +81,8 @@ package com.pintu.widgets{
 			super();					
 			initDrawPoint();
 			
+			Logger.debug("Create MainDisplayArea once...");
+			
 			this._model = model;
 			this._picsContainer = new CasaSprite();
 			addChild(_picsContainer);
@@ -229,8 +231,7 @@ package com.pintu.widgets{
 					break;
 				
 				case CategoryTree.CATEGORY_RANDOM_TBMODE:
-					//TODO, QUERY RANDOM MODE GALLERY...
-					hintToUser("随机画廊查询...");
+					//TODO, QUERY RANDOM MODE GALLERY...					
 					
 					break;
 				

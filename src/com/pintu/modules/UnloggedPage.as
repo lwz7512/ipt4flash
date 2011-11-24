@@ -1,15 +1,10 @@
 package com.pintu.modules
 {
 	import com.pintu.api.IPintu;
-	import com.pintu.config.InitParams;
-	import com.pintu.config.StyleParams;
+	import com.pintu.config.*;
 	import com.pintu.events.PintuEvent;
-	import com.pintu.widgets.ActiveUserBlock;
-	import com.pintu.widgets.CategoryTree;
-	import com.pintu.widgets.LoginBlock;
-	import com.pintu.widgets.MainDisplayArea;
-	import com.pintu.widgets.MainToolBar;
-	import com.pintu.widgets.SlideToolBar;
+	import com.pintu.utils.Logger;
+	import com.pintu.widgets.*;
 	
 	import flash.display.Sprite;
 	
@@ -18,7 +13,7 @@ package com.pintu.modules
 	/**
 	 * 只负责初始化对象，以及对象间交互
 	 */
-	public class UnloggedPage extends CasaSprite{
+	public class UnloggedPage extends CasaSprite implements IDestroyableModule{
 		
 		private var _model:IPintu;
 		private var mainToolBar:MainToolBar;
@@ -32,6 +27,8 @@ package com.pintu.modules
 		public function UnloggedPage(model:IPintu){
 			super();
 			this._model = model;
+			
+//			Logger.debug("Create UnloggedPage once...");
 				
 			mainToolBar = new MainToolBar(false);
 			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
@@ -76,7 +73,8 @@ package com.pintu.modules
 		}
 		
 		//重写销毁函数
-		override public  function destroy():void{
+		public  function killMe():void{
+			//移除自己，并销毁事件监听
 			super.destroy();
 			_model = null;
 			removeChildren(true,true);			

@@ -15,7 +15,7 @@ package com.pintu.controller
 	public class ModuleFactory{
 		
 		//cache the displayed module
-		private var modules:Map = new Map();
+		private var moduleToDisplay:CasaSprite;
 
 		//top level sprite
 		private var _canvas:Sprite;
@@ -27,32 +27,17 @@ package com.pintu.controller
 			this._model = model;
 		}
 		
-		public function createModuleByName(module:String):CasaSprite{
-			var moduleToDisplay:CasaSprite;
+		public function createModuleByName(module:String):CasaSprite{			
 			
 			switch(module){
-				case GlobalNavigator.HOMPAGE:
-					
-					if(!modules.hasKey(GlobalNavigator.HOMPAGE)){
-						moduleToDisplay = new HomePage(_model);
-						modules.add(GlobalNavigator.HOMPAGE,moduleToDisplay);
+				case GlobalNavigator.HOMPAGE:					
+						moduleToDisplay = new HomePage(_model);						
 						this._canvas.addChild(moduleToDisplay);
-					}else{
-						moduleToDisplay = modules.itemFor(GlobalNavigator.HOMPAGE) as CasaSprite;
-					}
 					break;
 					
-				case 	GlobalNavigator.UNLOGGED:
-					
-					if(!modules.hasKey(GlobalNavigator.UNLOGGED)){
-						moduleToDisplay = new UnloggedPage(_model);
-						modules.add(GlobalNavigator.UNLOGGED,moduleToDisplay);
-						this._canvas.addChild(moduleToDisplay);
-					}else{
-						moduleToDisplay = modules.itemFor(GlobalNavigator.UNLOGGED) as CasaSprite;
-					}			
-
-					
+				case 	GlobalNavigator.UNLOGGED:					
+						moduleToDisplay = new UnloggedPage(_model);						
+						this._canvas.addChild(moduleToDisplay);					
 					break;
 
 			}

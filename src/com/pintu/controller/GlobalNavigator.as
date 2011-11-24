@@ -4,6 +4,7 @@ package com.pintu.controller{
 	import com.greensock.TweenLite;
 	import com.pintu.api.IPintu;
 	import com.pintu.events.PintuEvent;
+	import com.pintu.modules.IDestroyableModule;
 	
 	import flash.display.Sprite;
 	
@@ -20,7 +21,10 @@ package com.pintu.controller{
 		private var _prevModule:CasaSprite;
 		//need to known what module currently in stage
 		private var _currentModule:CasaSprite;
-		//top level sprite
+		
+		private var _moduleName:String;
+		
+		//top level sprite: Main
 		private var _canvas:Sprite;
 		private var _factory:ModuleFactory;
 		
@@ -29,15 +33,13 @@ package com.pintu.controller{
 			this._canvas = canvas;
 			this._factory = factory;
 		}
-		
-		public function get currentModule():Sprite{
-			return _currentModule;
-		}
+
 		
 		public function switchTo(module:String):void{
-			
-			if(_currentModule==_factory.createModuleByName(module))
-				return;
+			//我擦，这里竟然写错了
+			//创建两次模块
+			//2011/11/24
+			if(_moduleName==module) return;
 			
 			switch(module){
 				case HOMPAGE:
@@ -53,6 +55,9 @@ package com.pintu.controller{
 				//...
 				
 			}
+			
+			//保存新建模块名称
+			_moduleName = module;
 		}
 		
 		
@@ -91,8 +96,10 @@ package com.pintu.controller{
 			_currentModule = next;
 			//置顶显示
 			_canvas.setChildIndex(_currentModule,_canvas.numChildren-1);
-			//销毁前一个模块
-			_prevModule.destroy();
+			//销毁前一个模块，销毁自己的事件监听和子对象
+			//并将自己从显示列表中移除
+			//这些模块都是IDestroyableModule
+			IDestroyableModule(_prevModule).killMe();
 		}
 		
 	} //end of classs

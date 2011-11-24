@@ -21,9 +21,9 @@ package com.pintu.api
 		private var remoteService:String = "http://ipintu.com/ipintu/pintuapi";
 		
 		
-		public function PintuImpl(){
+		public function PintuImpl(userId:String){
 			
-			client = new SimpleHttpClient(getServiceUrl(),GlobalController.user);
+			client = new SimpleHttpClient(getServiceUrl(),userId);
 			
 			client.addEventListener(ApiMethods.LOGON,responseHander);
 			client.addEventListener(ApiMethods.UPLOAD,responseHander);
@@ -39,16 +39,6 @@ package com.pintu.api
 			
 		}
 		
-		//这里指定泛型事件，因为可能是ResponseEvent，也可能是ErrorEvent
-		private function responseHander(event:Event):void{
-			this.dispatchEvent(event);
-		}
-		
-		//TODO, 登录成功后更新用户
-		public function updateUser(userId:String):void{
-			client.userId = userId;
-		}
-		
 		public function getServiceUrl():String{
 			if(GlobalController.isDebug){
 				return debugService;
@@ -56,6 +46,16 @@ package com.pintu.api
 				return remoteService;
 			}
 			return null;
+		}
+		
+		//这里指定泛型事件，因为可能是ResponseEvent，也可能是ErrorEvent
+		private function responseHander(event:Event):void{
+			this.dispatchEvent(event);
+		}
+		
+		//登录成功后更新用户
+		public function updateUser(userId:String):void{
+			client.userId = userId;
 		}
 		
 		public function cancelRequest():void{
