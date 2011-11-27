@@ -10,8 +10,8 @@ package com.pintu.common{
 			super();
 		}
 		
-		protected override function draw():void{
-			super.draw();
+		protected override function setTextFieldProperties():void{
+			super.setTextFieldProperties();
 			this._tf.displayAsPassword = true;
 		}
 		

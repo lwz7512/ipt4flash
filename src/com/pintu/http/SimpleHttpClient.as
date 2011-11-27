@@ -84,12 +84,16 @@ package com.pintu.http
 		 * [{name:"key1", value:"FirstName1"}, {name:"key2", value: "LastName1"}];
 		 */ 
 		public function uploadImage(file:FileReference, params:Array):void{						
-			
+			if(!file.data){
+				Logger.error("NO FILE DATA, EXECUTE FileReference.load() first!");
+				return;
+			}
 			var fileName:String = file.name;
 			var contentType:String = "image/jpeg";
 			if(fileName.substr(fileName.length-2,3)=="png"){
 				contentType = "image/png";
 			}
+			
 			var sended:ByteArray = new ByteArray();
 			//文件转为字节码data
 			file.data.readBytes(sended,0,file.data.length);
@@ -97,7 +101,8 @@ package com.pintu.http
 			var parts:Array = [];
 			//将参数解析封装
 			for each(var param:Object in params){
-				parts.push(new Part(param.name, param.value));
+				//字符集必须指定啊，否则中文是乱码
+				parts.push(new Part(param.name, param.value, "text/plain; charset=UTF-8"));
 			}
 			//方法参数必须传，后台用来区分上传图片的操作类型
 			var method:Part = new Part("method", "upload");

@@ -19,8 +19,6 @@ package com.pintu.widgets
 	
 	public class MainToolBar extends CasaSprite{
 		
-		public static const TB_MODE:String = "thumbnail";
-		public static const BP_MODE:String = "bigpic";
 		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
@@ -137,7 +135,7 @@ package com.pintu.widgets
 				//图标路径
 				postPic.iconPath = postPicPath;
 				postPic.addEventListener(MouseEvent.CLICK, function():void{				
-					
+					dispatchEvent(new PintuEvent(PintuEvent.UPLOAD_IMAGE,null));
 				});
 				this.addChild(postPic);
 				

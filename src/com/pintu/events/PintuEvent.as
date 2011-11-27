@@ -8,10 +8,12 @@ package com.pintu.events
 		public static const NAVIGATE:String = "navigate";
 		public static const BROWSE_CHANGED:String = "browseChanged";
 		public static const GETPICDETAILS:String = "getPicDetails";
-		public static const IMAGE_LOADED:String = "imageLoaded";
+		public static const IMAGE_LOADED:String = "imageLoaded";		
+		public static const SEARCH_BYTAGS:String = "searchByTags";
+		
 		public static const REFRESH_GALLERY:String = "refreshGallery";
 		public static const RANDOM_GALLERY:String = "randomGallery";
-		public static const SEARCH_BYTAGS:String = "searchByTags";
+		public static const UPLOAD_IMAGE:String = "uploadImage";
 		
 		public var data:String;		
 		

@@ -53,7 +53,9 @@ package{
 			addEventListener(Event.ADDED_TO_STAGE, buildApp);	
 		}
 		
-		
+		/**
+		 * 初始化系统参数，构建系统界面，并监听导航事件
+		 */ 
 		protected function buildApp(event:Event):void{			
 			this.removeEventListener(Event.ADDED_TO_STAGE, buildApp);
 			//如果舞台大小为0
@@ -62,8 +64,9 @@ package{
 				return;
 			}	
 			
-			//listen navigate event
-			//may be from login to homepage...
+			//主应用只监听来自headerbar和loginBlock的导航事件
+			//其他系统事件一概不予处理，放在各自的模块中处理
+			//2011/11/26
 			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
 			
 			//init stage size

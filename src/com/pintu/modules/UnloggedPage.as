@@ -33,6 +33,7 @@ package com.pintu.modules
 			mainToolBar = new MainToolBar(false);
 			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
 			mainToolBar.addEventListener(PintuEvent.RANDOM_GALLERY, randomGallery);
+			//将来还要加搜索监听
 			//TODO, ADD BUTTON EVENT LISTENER...
 			
 			this.addChild(mainToolBar);

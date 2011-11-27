@@ -1,22 +1,24 @@
-package com.pintu.modules
-{
+package com.pintu.modules{
+
 	import com.pintu.api.IPintu;
+	import com.pintu.config.InitParams;
+	import com.pintu.controller.FileManager;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
 	import com.pintu.widgets.*;
 	
 	import flash.display.Sprite;
 	
-	import org.casalib.display.CasaSprite;
+	import org.casalib.display.CasaSprite;	
+	
 	
 	public class HomePage extends CasaSprite implements IDestroyableModule{		
 		
 		private var _model:IPintu;
+		private var _fileManager:FileManager;
 		
-		private var mainToolBar:MainToolBar;
-		
-		private var categoryTree:CategoryTree;
-		
+		private var mainToolBar:MainToolBar;		
+		private var categoryTree:CategoryTree;		
 		private var mainDisplayArea:MainDisplayArea;
 		private var slideToolBar:SlideToolBar;
 		
@@ -24,15 +26,18 @@ package com.pintu.modules
 		private var andiAssets:AndiBlock;
 		private var weiboFriends:WeiboFriendsBlock;
 		
+		private var picEditWin:PicEditWin;
+		
 		public function HomePage(model:IPintu){
 			super();
-			this._model = model;
-			
-//			Logger.debug("Create HomePage once...");
+			this._model = model;	
+			this._fileManager = new FileManager(_model);
 			
 			mainToolBar = new MainToolBar(true);
 			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
 			mainToolBar.addEventListener(PintuEvent.RANDOM_GALLERY, randomGallery);
+			mainToolBar.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);
+			//将来还要加搜索监听
 			//TODO, ADD BUTTON EVENT LISTENER...
 			
 			this.addChild(mainToolBar);
@@ -67,12 +72,35 @@ package com.pintu.modules
 		private function refreshGallery(evt:PintuEvent):void{
 			mainDisplayArea.browseType = categoryTree.browseType;
 		}
+		
 		private function randomGallery(evt:PintuEvent):void{
 			//选中画廊模式节点
 			categoryTree.browseType = CategoryTree.CATEGORY_GALLERY_TBMODE;
 			//告诉显示区，按照随机模式查询
 			mainDisplayArea.browseType = CategoryTree.CATEGORY_RANDOM_TBMODE;
 		}
+		
+		private function editPic(evt:PintuEvent):void{
+			if(!picEditWin){
+				picEditWin = new PicEditWin(this, _fileManager);
+			}
+			picEditWin.x = (InitParams.appWidth-picEditWin.width)/2;
+			picEditWin.y = (InitParams.appHeight-picEditWin.height)/2;
+			this.addChild(picEditWin);
+			
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		//重写销毁函数
 		public  function killMe():void{
