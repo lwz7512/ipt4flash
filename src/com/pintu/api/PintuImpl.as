@@ -30,6 +30,8 @@ package com.pintu.api
 			
 			client.addEventListener(ApiMethods.GETGALLERYBYTIME,responseHander);
 			client.addEventListener(ApiMethods.GETGALLERYFORWEB,responseHander);
+			client.addEventListener(ApiMethods.GETGALLERYRANDOM,responseHander);
+			
 			client.addEventListener(ApiMethods.GETHOTPICTURE,responseHander);
 			client.addEventListener(ApiMethods.CLASSICALSTATISTICS,responseHander);
 			client.addEventListener(ApiMethods.COLLECTSTATISTICS,responseHander);
@@ -86,6 +88,10 @@ package com.pintu.api
 		public function getGalleryByTime(startTime:String, endTime:String):void{
 			var params:Array = [{name:"startTime",value:startTime},{name:"endTime",value:endTime}];			
 			client.post(params, ApiMethods.GETGALLERYBYTIME);					
+		}
+		
+		public function getRandomGallery():void{
+			client.post([],ApiMethods.GETGALLERYRANDOM);
 		}
 		
 		public function getGalleryForWeb(pageNum:String):void{

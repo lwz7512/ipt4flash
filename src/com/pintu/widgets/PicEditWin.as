@@ -13,6 +13,7 @@ package com.pintu.widgets{
 	import com.sibirjak.asdpc.button.Button;
 	import com.sibirjak.asdpc.button.ButtonEvent;
 	import com.sibirjak.asdpc.button.skins.ButtonSkin;
+	import com.sibirjak.asdpc.core.constants.Position;
 	import com.sibirjak.asdpc.textfield.Label;
 	import com.sibirjak.asdpc.textfield.TextInput;
 	import com.sibirjak.asdpc.textfield.TextInputEvent;
@@ -314,15 +315,18 @@ package com.pintu.widgets{
 			
 			_sendBtn.setStyle(Button.style.labelStyles, [
 				Label.style.color, 0xEEEEEE,				
-				Label.style.size, 12
+				Label.style.size, 12,
+				Label.style.verticalAlign, Position.MIDDLE
 			]);
 			_sendBtn.setStyle(Button.style.overLabelStyles, [
 				Label.style.color, 0xEEEEEE,				
-				Label.style.size, 12
+				Label.style.size, 12,
+				Label.style.verticalAlign, Position.MIDDLE
 			]);
 			_sendBtn.setStyle(Button.style.selectedLabelStyles, [
 				Label.style.color, 0xEEEEEE,				
-				Label.style.size, 12
+				Label.style.size, 12,
+				Label.style.verticalAlign, Position.MIDDLE
 			]);
 			_sendBtn.x = _elementStartX+_maxLoadImgWidth+_elementPadding+14;
 			_sendBtn.y = _descInput.y+_descInput.height+_elementPadding;

@@ -21,6 +21,7 @@ package com.pintu.api
 		function getPicDetail(tpId:String):void;
 		
 		function getGalleryForWeb(pageNum:String):void;
+		function getRandomGallery():void;
 		function getHotPicture():void;
 		function getClassicalPics():void;
 		function getFavoredPics():void;

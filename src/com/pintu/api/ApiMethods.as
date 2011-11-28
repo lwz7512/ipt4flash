@@ -6,6 +6,8 @@ package com.pintu.api
 		public static const GETGALLERYBYTIME:String = "getGalleryByTime";
 		//画廊大图，按页码分页，每页取12个
 		public static const GETGALLERYFORWEB:String = "getGalleryForWeb";
+		//随便看看
+		public static const GETGALLERYRANDOM:String = "getRandGallery";
 		//热图
 		public static const GETHOTPICTURE:String = "getHotPicture";
 		//经典

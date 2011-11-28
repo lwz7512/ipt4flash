@@ -100,6 +100,7 @@ package com.pintu.widgets{
 			createClipMask();
 			
 			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYBYTIME,thumbnailHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYRANDOM,thumbnailHandler);
 			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYFORWEB,bigPicHandler);
 			PintuImpl(_model).addEventListener(ApiMethods.GETHOTPICTURE,hotPicHandler);
 			PintuImpl(_model).addEventListener(ApiMethods.CLASSICALSTATISTICS,classicHandler);
@@ -137,6 +138,8 @@ package com.pintu.widgets{
 		public function hideMiddleLoading():void{
 			if(this.contains(loading))
 				this.removeChild(loading);
+			//查询结束
+			isRunning = false;
 		}
 		
 		/**
@@ -205,8 +208,7 @@ package com.pintu.widgets{
 					var endTime:String = _galleryLastRecordTime.toString();
 					//查询画廊数据
 					_model.getGalleryByTime(startTime,endTime);
-					//显示进度条
-					showMiddleLoading();
+					
 					break;
 				
 				case CategoryTree.CATEGORY_GALLERY_BPMODE:					
@@ -231,7 +233,7 @@ package com.pintu.widgets{
 					break;
 				
 				case CategoryTree.CATEGORY_RANDOM_TBMODE:
-					//TODO, QUERY RANDOM MODE GALLERY...					
+					_model.getRandomGallery();				
 					
 					break;
 				
@@ -240,9 +242,12 @@ package com.pintu.widgets{
 					//TODO, GET THUMBNIALS BY TAG...
 //					_model.getThumbnailsByTag(_browseType,_tagPageNum.toString());
 					
-					break;
-				
+					break;				
 			}
+			
+			//显示进度条
+			showMiddleLoading();
+			
 		}		
 		
 		
@@ -264,9 +269,7 @@ package com.pintu.widgets{
 				
 				//TODO, CHECK THE LAST GALLERY RECORD TIME...
 				//SO, GET THE NEWEST...
-				
-				//重置查询状态到初始状态
-				isRunning = false;
+								
 				//移除进度条
 				hideMiddleLoading();
 			}
@@ -280,8 +283,7 @@ package com.pintu.widgets{
 			if(event is ResponseEvent){
 				Logger.debug("to create big gallery...");
 				
-				//重置查询状态到初始状态
-				isRunning = false;
+				
 			}
 			if(event is PTErrorEvent){
 				
@@ -291,8 +293,7 @@ package com.pintu.widgets{
 			if(event is ResponseEvent){
 				Logger.debug("to create hot gallery...");
 				
-				//重置查询状态到初始状态
-				isRunning = false;
+				
 			}
 			if(event is PTErrorEvent){
 				
@@ -302,8 +303,7 @@ package com.pintu.widgets{
 			if(event is ResponseEvent){
 				Logger.debug("to create classic gallery...");
 				
-				//重置查询状态到初始状态
-				isRunning = false;
+				
 			}
 			if(event is PTErrorEvent){
 				
@@ -313,8 +313,7 @@ package com.pintu.widgets{
 			if(event is ResponseEvent){
 				Logger.debug("to create favorite gallery...");
 				
-				//重置查询状态到初始状态
-				isRunning = false;
+				
 			}
 			if(event is PTErrorEvent){
 				
@@ -323,8 +322,7 @@ package com.pintu.widgets{
 		private function tagPicHandler(event:Event):void{
 			if(event is ResponseEvent){
 				
-				//重置查询状态到初始状态
-				isRunning = false;
+				
 			}
 			if(event is PTErrorEvent){
 				
