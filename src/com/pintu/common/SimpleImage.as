@@ -48,6 +48,10 @@ package com.pintu.common{
 		
 		public function set maxSize(v:Number):void{
 			_maxsize = v;
+			if(_maxsize){
+				this.graphics.lineStyle(1,0xCCCCCC,0.4);
+				this.graphics.drawRect(0,0,_maxsize,_maxsize);
+			}
 		}
 		
 		public function get maxSize():Number{

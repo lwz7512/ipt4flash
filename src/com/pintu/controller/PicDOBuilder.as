@@ -91,6 +91,9 @@ package com.pintu.controller
 			back.textOnRight = true;
 			back.label = "返回";
 			_displayArea.addChild(back);
+			
+			//移除进度条
+			_owner.hideMiddleLoading();
 		}
 		
 

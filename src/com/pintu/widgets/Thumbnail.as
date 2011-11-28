@@ -84,7 +84,14 @@ package com.pintu.widgets{
 			if(bitmap.width>100)
 				bitmap.width = 100;
 			if(bitmap.height>100)
-				bitmap.height = 100;			
+				bitmap.height = 100;	
+			
+			//如果高度较大，就缩小点，好露出边框来
+			if(bitmap.height==100){
+				bitmap.height = 99;
+				bitmap.y = 1;
+				bitmap.x = 1;
+			}
 			
 			_initialized = true;
 			this.removeChild(tf);

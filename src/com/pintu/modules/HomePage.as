@@ -1,5 +1,6 @@
 package com.pintu.modules{
 
+	import com.greensock.TweenLite;
 	import com.pintu.api.IPintu;
 	import com.pintu.config.InitParams;
 	import com.pintu.controller.FileManager;
@@ -84,10 +85,14 @@ package com.pintu.modules{
 			if(!picEditWin){
 				picEditWin = new PicEditWin(this, _fileManager);
 			}
-			picEditWin.x = (InitParams.appWidth-picEditWin.width)/2;
-			picEditWin.y = (InitParams.appHeight-picEditWin.height)/2;
-			this.addChild(picEditWin);
 			
+			picEditWin.x = (InitParams.appWidth-picEditWin.width)/2;
+			//屏幕上方
+			picEditWin.y = -picEditWin.height;
+			this.addChild(picEditWin);
+			var endY:Number = (InitParams.appHeight-picEditWin.height)/2;
+			//动画切入
+			TweenLite.to(picEditWin, 0.6, {y:endY});
 		}
 		
 		

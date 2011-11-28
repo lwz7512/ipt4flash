@@ -1,5 +1,6 @@
 package com.pintu.widgets{
 	
+	import com.greensock.TweenLite;
 	import com.pintu.common.BusyIndicator;
 	import com.pintu.common.IconButton;
 	import com.pintu.common.MustTextInput;
@@ -87,6 +88,7 @@ package com.pintu.widgets{
 		
 		private function uploadSuccess(evt:Event):void{
 			closeMe(null);
+			
 		}
 		
 		private function uploadError(evt:Event):void{
@@ -221,23 +223,30 @@ package com.pintu.widgets{
 		//处理两个对象的事件：
 		//点击关闭按钮，上传成功
 		//所以用Event类型事件
-		private function closeMe(evt:Event):void{			
+		private function closeMe(evt:Event):void{
+			//清除发送进度条
+			if(_loading && this.contains(_loading))
+				this.removeChild(_loading);
+			//滑出舞台
+			var initY:Number = -_height;
+			TweenLite.to(this, 0.6, {y:initY, onComplete:reset});
+		}
+		
+		private function reset():void{
 			_context.removeChild(this);
 			//清除预览图
 			if(_loadFileBitmap)
 				removeChild(_loadFileBitmap);
 			_loadFileBitmap = null;
-			//清除发送进度条
-			if(_loading && this.contains(_loading))
-				this.removeChild(_loading);
+			
 			//清除输入框文字
 			_isOriginalCheck.selected = false;
 			_tagsInput.text = "";
 			_descInput.text = "";
 			//清除错误提示
 			_errorHint.text = "";
-			_sendBtn.enabled = true;
-		}		
+			_sendBtn.enabled = true;			
+		}
 		
 		private function createOriginalCheck():void{
 			_isOriginalCheck = new CheckBox();

@@ -129,14 +129,14 @@ package com.pintu.widgets{
 				loading = new BusyIndicator(32);
 			loading.x = middleX-16;
 			loading.y = middleY-16;			
-			_picsContainer.addChild(loading);
+			this.addChild(loading);
 			//打开查询开关，防止重复查询
 			isRunning = true;
 		}
 		
 		public function hideMiddleLoading():void{
-			if(_picsContainer.contains(loading))
-				_picsContainer.removeChild(loading);
+			if(this.contains(loading))
+				this.removeChild(loading);
 		}
 		
 		/**
@@ -145,7 +145,7 @@ package com.pintu.widgets{
 		public function hintToUser(hint:String):void{
 			var middleX:Number = drawStartX+displayAreaWidth/2;
 			var middleY:Number = drawStartY+displayAreaHeight/2;
-			Toast.getInstance(_picsContainer).show(hint,middleX,middleY);
+			Toast.getInstance(this).show(hint,middleX,middleY);
 		}
 		
 		//浏览类型，或者是标签id
@@ -267,6 +267,8 @@ package com.pintu.widgets{
 				
 				//重置查询状态到初始状态
 				isRunning = false;
+				//移除进度条
+				hideMiddleLoading();
 			}
 			if(event is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.GETGALLERYBYTIME);

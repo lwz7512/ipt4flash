@@ -30,8 +30,9 @@ package com.pintu.common{
 		}
 		
 		private function timeToElapse(evt:TimerEvent):void{
-			//隐藏自己			
-			_parent.removeChild(this);
+			//隐藏自己	
+			if(_parent.contains(this))
+				_parent.removeChild(this);
 			_parent = null;
 			
 			//确保定时器停止

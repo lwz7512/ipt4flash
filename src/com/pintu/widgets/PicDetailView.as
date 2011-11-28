@@ -245,7 +245,7 @@ package com.pintu.widgets{
 			var scoreStr:String = "积分 "+_data.score;
 			var scoreTF:SimpleText = new SimpleText(scoreStr, green);
 			scoreTF.x = userNameTF.x;
-			scoreTF.y = userNameTF.y+2*textItemVGap;
+			scoreTF.y = userNameTF.y+46;
 			imgInfoHolder.addChild(scoreTF);
 			
 			//发布时间
