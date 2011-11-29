@@ -11,6 +11,7 @@ package com.pintu.common{
 			this.autoSize = "left";
 			this.wordWrap = wrap;
 			this.multiline = true;			
+			this.selectable = false;
 			
 			var format:TextFormat = new TextFormat(null, fontSize,color,bold);
 			this.defaultTextFormat = format;
@@ -18,6 +19,7 @@ package com.pintu.common{
 			//先有样式，后设置文字内容
 			this.text = text;
 		}
+		
 		
 	} //end of class
 }

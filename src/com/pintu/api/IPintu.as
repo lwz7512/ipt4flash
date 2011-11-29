@@ -27,8 +27,8 @@ package com.pintu.api
 		function getFavoredPics():void;
 		function getThumbnailsByTag(tagId:String,pageNum:String):void;
 		
-
-		
+		function postComment(follow:String, content:String):void;
+		function getComments(tpId:String):void;
 		
 		
 	}

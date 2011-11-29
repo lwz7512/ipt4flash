@@ -1,12 +1,7 @@
 package com.pintu.widgets{
 	
 	import com.greensock.TweenLite;
-	import com.pintu.common.BusyIndicator;
-	import com.pintu.common.IconButton;
-	import com.pintu.common.MustTextInput;
-	import com.pintu.common.SimpleImage;
-	import com.pintu.common.SimpleText;
-	import com.pintu.common.TextArea;
+	import com.pintu.common.*;
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
 	import com.pintu.controller.FileManager;
@@ -302,32 +297,11 @@ package com.pintu.widgets{
 		}
 		
 		private function createSubmitBtn():void{
-			_sendBtn = new Button();
+			_sendBtn = new GreenButton();
 			_sendBtn.label = "发送";
 			//这个尺寸跟登陆按钮大小一致
 			_sendBtn.setSize(60, 28);
 			
-			_sendBtn.setStyle(ButtonSkin.style_backgroundColors, 
-				[StyleParams.HEADERBAR_NEARBOTTOM_LIGHTGREEN, StyleParams.HEADERBAR_BOTTOM_LIGHTGREEN]);
-			_sendBtn.setStyle(ButtonSkin.style_overBackgroundColors, 
-				[StyleParams.HEADERBAR_TOP_LIGHTGREEN, StyleParams.HEADERBAR_NEARBOTTOM_LIGHTGREEN]);
-			_sendBtn.setStyle(ButtonSkin.style_borderColors, [0x999999, 0x000000]);
-			
-			_sendBtn.setStyle(Button.style.labelStyles, [
-				Label.style.color, 0xEEEEEE,				
-				Label.style.size, 12,
-				Label.style.verticalAlign, Position.MIDDLE
-			]);
-			_sendBtn.setStyle(Button.style.overLabelStyles, [
-				Label.style.color, 0xEEEEEE,				
-				Label.style.size, 12,
-				Label.style.verticalAlign, Position.MIDDLE
-			]);
-			_sendBtn.setStyle(Button.style.selectedLabelStyles, [
-				Label.style.color, 0xEEEEEE,				
-				Label.style.size, 12,
-				Label.style.verticalAlign, Position.MIDDLE
-			]);
 			_sendBtn.x = _elementStartX+_maxLoadImgWidth+_elementPadding+14;
 			_sendBtn.y = _descInput.y+_descInput.height+_elementPadding;
 			_sendBtn.addEventListener(ButtonEvent.CLICK, sendPicture);

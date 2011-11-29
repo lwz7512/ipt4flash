@@ -1,12 +1,24 @@
 package com.pintu.widgets{
 	
+	import com.adobe.serialization.json.JSON;
 	import com.cartogrammar.drawing.DashedLine;
 	import com.greensock.TweenLite;
+	import com.pintu.api.*;
+	import com.pintu.common.BusyIndicator;
+	import com.pintu.common.GreenButton;
+	import com.pintu.common.IconButton;
+	import com.pintu.common.SimpleImage;
+	import com.pintu.common.SimpleText;
+	import com.pintu.common.TextArea;
 	import com.pintu.config.*;
-	import com.pintu.events.PintuEvent;
+	import com.pintu.events.*;
 	import com.pintu.utils.*;
+	import com.pintu.vos.CmntData;
 	import com.pintu.vos.TPicData;
+	import com.sibirjak.asdpc.button.Button;
+	import com.sibirjak.asdpc.button.ButtonEvent;
 	
+	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextField;
@@ -16,20 +28,16 @@ package com.pintu.widgets{
 	import org.casalib.display.CasaSprite;
 	import org.casalib.display.CasaTextField;
 	import org.casalib.load.ImageLoad;
-	import com.pintu.common.IconButton;
-	import com.pintu.common.SimpleImage;
-	import com.pintu.common.SimpleText;
 	
 	/**
-	 * 包括内容：
-	 * 可浮动的工具栏
-	 * 图片及相关信息
-	 * 评论列表以及评论发表
+	 * 包括内容：可浮动的工具栏、图片及相关信息、评论列表以及评论发表	
+	 * 
+	 * 由PicDOBuilder中的detailPicHandler方法创建
 	 */ 
 	public class PicDetailView extends CasaSprite{
 		
 		private var _data:TPicData;
-		
+		private var _model:IPintu;		
 		//看查看缩略图详情的返回按钮让位
 		//正常的大图列表是不需要此设置的
 		private var _showBackBtn:Boolean = false;
@@ -44,33 +52,41 @@ package com.pintu.widgets{
 		//默认图片大小，图片加载结束时改变
 		private var _mobImgWidth:Number = 440;
 		private var _mobImgHeight:Number = 440;
+		
 		//图片占位最小宽度，也是工具栏的宽度
 		private var defaultImgWidth:Number = 440;
 		//描述内容高度
-		private var defaultDescTextHeight:Number = 80;		
-		
-		//视图总高度
-		private var totalHeight:Number = _mobImgHeight;
+		private var defaultDescTextHeight:Number = 80;					
 		
 		//图片未展示前出现
 		private var mobImgPlaceHolder:DashedLine;
 		private var imgLoading:CasaTextField;		
 		
 		//详情内容
-		private var _mobImage:SimpleImage;
+		private var mobImage:SimpleImage;
 		private var toolHolder:CasaSprite;
 		private var imgInfoHolder:CasaSprite;
 		private var imgDescText:CasaSprite;
 		
-		//TODO, 评论相关内容
-		
+		//评论相关内容
+		private var commentsHolder:CasaSprite;
+		//评论输入框
+		private var cmtInput:TextArea;		
+		//评论提交和查询进度条
+		private var cmtLoading:BusyIndicator;
+		//很奇怪，评论列表会返回3次，做个开关屏蔽掉
+		private var commentsHandleFlag:Boolean;
 		
 		/*
 		 * construction function....
 		 */
-		public function PicDetailView(data:TPicData){
-			_data = data;	
+		public function PicDetailView(data:TPicData, model:IPintu){
+			_data = data;
 			if(!_data) return;
+			
+			_model = model;
+			PintuImpl(_model).addEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
 			
 			//draw image place hoder
 			drawImgePlaceHolder();			
@@ -78,9 +94,9 @@ package com.pintu.widgets{
 			drawLoadingText();
 			
 			//先生成图片，等图片加载完成后，再生成其他内容
-			_mobImage = new SimpleImage(data.mobImgUrl);
-			_mobImage.addEventListener(PintuEvent.IMAGE_LOADED,imgLoaded);
-			this.addChild(_mobImage);			
+			mobImage = new SimpleImage(data.mobImgUrl);
+			mobImage.addEventListener(PintuEvent.IMAGE_LOADED,imgLoaded);
+			this.addChild(mobImage);			
 						
 			this.addEventListener(MouseEvent.MOUSE_OVER, displayHidePart);
 			this.addEventListener(MouseEvent.MOUSE_OUT, hideToolAndDesc);
@@ -90,8 +106,61 @@ package com.pintu.widgets{
 			_showBackBtn = v;
 		}
 		
-		override public function get width():Number{
-			return totalHeight;
+		private function cmntPostHandler(evt:Event):void{
+			if(evt is PTStatusEvent){
+				//新的评论，先不添加进去
+				var cmntObj:CmntData = new CmntData();
+				cmntObj.author = "我";
+				cmntObj.content = cmtInput.text;
+				var cmntItem:CommentItem = new CommentItem(cmntObj);				
+				
+				//如果原来有评论，就将他们往下移动一个位置
+				//检查commentsHolder中CommentItem对象，挨个移动位置
+				relayoutComments(cmntItem.height);
+				
+				//添加我的评论到列表顶部
+				cmntItem.x = 0;
+				cmntItem.y = cmtInput.height+28;
+				commentsHolder.addChild(cmntItem);
+				
+				//移除loading
+				hideCmntLoading();	
+			}
+			
+			if(evt is PTErrorEvent){
+				Logger.error("Error in calling: "+ApiMethods.ADDSTORY);
+			}
+		}
+		
+		private function cmntListHandler(evt:Event):void{
+			if(!commentsHandleFlag) return;
+			
+			if(evt is ResponseEvent){
+				var jsonCmnt:String = ResponseEvent(evt).data;
+				Logger.debug("json comments: "+jsonCmnt);
+				createCommentList(jsonCmnt);
+				commentsHandleFlag = false;
+			}
+			if(evt is PTErrorEvent){
+				Logger.error("Error in calling: "+ApiMethods.ADDSTORY);
+			}
+			
+		}
+		
+		private function hideCmntLoading():void{
+			if(!cmtLoading) return;
+			if(commentsHolder.contains(cmtLoading)){
+				commentsHolder.removeChild(cmtLoading);
+				cmtInput.text = "";				
+			}
+		}
+		
+		private function showCmntLoading():void{
+			cmtLoading = new BusyIndicator(24);
+			//进度条位于提交评论按钮的左侧
+			cmtLoading.x = InitParams.GALLERY_WIDTH-94;
+			cmtLoading.y = cmtInput.height+2;;
+			commentsHolder.addChild(cmtLoading);
 		}
 		
 		private function drawImgePlaceHolder():void{
@@ -169,11 +238,9 @@ package com.pintu.widgets{
 			removeChild(imgLoading);
 			
 			//获得图片大小
-			_mobImgWidth = _mobImage.bitmap.width;
-			_mobImgHeight = _mobImage.bitmap.height;
+			_mobImgWidth = mobImage.bitmap.width;
+			_mobImgHeight = mobImage.bitmap.height;
 			
-			//当前视图总高度等于图片高度
-			totalHeight = _mobImgHeight;
 			
 			Logger.debug("_mobImgWidth: "+_mobImgWidth);
 			Logger.debug("_mobImgHeight: "+_mobImgHeight);								
@@ -215,10 +282,7 @@ package com.pintu.widgets{
 		 */ 
 		private function buildPicRelateInfo():void{
 			var startX:Number = _mobImgWidth+4;			
-			var startY:Number = 4;
-			//图片宽度小话，就往下移动头像
-			if(_mobImgWidth<defaultImgWidth)
-				startY = 30;		
+			var startY:Number = 4;	
 			
 			var textItemVGap:Number = 26;
 			var avatarSize:Number = 64;
@@ -297,8 +361,7 @@ package com.pintu.widgets{
 			descTF.x = startX;
 			descTF.y = commentsTF.y+textItemVGap;
 			imgInfoHolder.addChild(descTF);			
-			
-			
+						
 		}
 		
 		private function getShowUserName():String{
@@ -307,9 +370,7 @@ package com.pintu.widgets{
 				return account.split("@")[0];
 			}
 			return account;
-		}
-		
-
+		}		
 		
 		/**
 		 * 描述内容完整部分
@@ -349,7 +410,7 @@ package com.pintu.widgets{
 			if(imgWidth<defaultImgWidth){
 				imgWidth = defaultImgWidth;
 			}
-			var iconYOffset:int = 0;
+			var iconYOffset:int = 2;
 			var iconHGap:int = 66;
 			
 			var drawStartX:Number = 0;
@@ -372,25 +433,22 @@ package com.pintu.widgets{
 			toolbg.graphics.endFill();
 			toolHolder.addChild(toolbg);
 			
-			//ADD COMMENT BUTTON
-			//TODO, 点击评论，将图片上滚，展开输入框并查询评论列表
-			//提交评论成功后，刷新评论列表
-			//再次点击，恢复原状，图片复位，评论收起
-			//图片详情中的评论文字按钮操作与此类似
+			//ADD COMMENT BUTTON			
+			//提交评论成功后，在客户端评论列表顶部增加刚才发送的评论
+			//再次点击，恢复原状，图片复位，评论收起			
 			var comment:IconButton = new IconButton(26,26);
 			comment.iconPath = "assets/comment.png";
 			comment.addEventListener(MouseEvent.CLICK, addComment);
 			comment.x = drawStartX;
 			comment.y = iconYOffset;
 			comment.textOnRight = true;
-			comment.label = "评论";
-			comment.enabled = false;
+			comment.label = "评论";			
 			toolHolder.addChild(comment);
 			
 			//ADD TO FAVORITE
 			var favorite:IconButton = new IconButton(26,26);
 			favorite.iconPath = "assets/favorite.png";
-			favorite.addEventListener(MouseEvent.CLICK, todo);
+			favorite.addEventListener(MouseEvent.CLICK, addToFavorite);
 			favorite.x = comment.x +iconHGap;
 			favorite.y = iconYOffset;
 			favorite.textOnRight = true;
@@ -412,7 +470,7 @@ package com.pintu.widgets{
 			//SAVE TO LOCAL BUTTON
 			var save:IconButton = new IconButton(26,26);
 			save.iconPath = "assets/save.png";
-			save.addEventListener(MouseEvent.CLICK, todo);
+			save.addEventListener(MouseEvent.CLICK, saveToLocal);
 			save.x = forward.x +iconHGap;
 			save.y = iconYOffset;
 			save.textOnRight = true;
@@ -427,14 +485,125 @@ package com.pintu.widgets{
 			report.x = save.x +iconHGap;
 			report.y = iconYOffset;
 			report.textOnRight = true;
-			report.label = "收藏";
+			report.label = "举报";
 			report.enabled = false;
 			toolHolder.addChild(report);
 			
 		}
 		
+		/**
+		 * 评论输入框和评论列表
+		 * 如果没有就创建，如果有了销毁
+		 */ 
 		private function addComment(evt:MouseEvent):void{
-			//TODO, ADD COMMENT...
+						
+			//初始化
+			if(!commentsHolder) commentsHolder = new CasaSprite();
+			//如果存在就销毁
+			if(this.contains(commentsHolder)){
+				commentsHolder.removeChildren(true,true);
+				this.removeChild(commentsHolder);
+				return;
+			}else{
+				commentsHolder.x = _xStartOffset;
+				commentsHolder.y = 2*_yStartOffset+_mobImgHeight;
+				this.addChild(commentsHolder);
+			}
+			//输入框改变大小时跟这个比较得到增减的大小
+			//从而改变评论列表的位置
+			var origInputHeight:Number;
+			
+			//创建评论输入框，和提交按钮
+			cmtInput = new TextArea();
+			cmtInput.text = "";
+			cmtInput.setSize(InitParams.GALLERY_WIDTH-4, 24);
+			cmtInput.autoStretchHeight = true;			
+			cmtInput.autoFocus = true;	
+			//记录下来
+			origInputHeight = cmtInput.height;
+			
+			cmtInput.addEventListener(TextArea.RESIZED, function():void{
+				cmtSubmit.y = cmtInput.height+2;
+				//每次换行或者缩进都要调整评论列表的位置
+				var diff:Number = cmtInput.height-origInputHeight;
+				relayoutComments(diff);
+				//保存新的值
+				origInputHeight = cmtInput.height;
+			});
+			commentsHolder.addChild(cmtInput);
+			
+			var cmtSubmit:GreenButton = new GreenButton();
+			cmtSubmit.label = "评论";
+			cmtSubmit.setSize(60,24);
+			//在输入框的下面，右端对齐
+			cmtSubmit.x = InitParams.GALLERY_WIDTH-64;
+			cmtSubmit.y =  cmtInput.height+2;
+			cmtSubmit.addEventListener(ButtonEvent.CLICK, postComment);
+			commentsHolder.addChild(cmtSubmit);
+			
+			//如果评论数大于0，获取评论列表，评论获得后增加视图高度	
+			if(Number(_data.commentsNum)){
+				_model.getComments(_data.id);
+				commentsHandleFlag = true;
+			}
+		}
+		
+		private function createCommentList(jsonCmnt:String):void{
+			var cmnts:Array = JSON.decode(jsonCmnt) as Array;
+			var cmntItems:Array = [];
+			for each(var cmnt:Object in cmnts){
+				if(!cmnt) continue;
+				var cmntVO:CmntData = new CmntData();
+				cmntVO.id = cmnt["id"];
+				cmntVO.author = cmnt["author"];
+				cmntVO.content = cmnt["content"];
+				cmntVO.follow = cmnt["follow"];
+				cmntVO.owner = cmnt["owner"];
+				cmntVO.publishTime = cmnt["publishTime"];
+				var cmntItem:CommentItem = new CommentItem(cmntVO);
+				cmntItems.push(cmntItem);
+			}
+			
+			if(!commentsHolder) return;
+			
+			//评论列表布局
+			var layoutStartY:Number = commentsHolder.height+2;
+			for(var i:int=0; i<cmntItems.length; i++){
+				var eachItem:CommentItem = cmntItems[i];
+				eachItem.y = layoutStartY;
+				layoutStartY += eachItem.height;
+				commentsHolder.addChild(eachItem);
+			}
+		}
+		
+		private function relayoutComments(yOffset:Number):void{
+			//这里面除了有评论内容，还有输入框、按钮
+			var cmnts:Array = commentsHolder.children;
+			for each(var diplayObj:DisplayObject in cmnts){
+				if(diplayObj is CommentItem)
+					diplayObj.y += yOffset;
+			}
+		}
+		
+		private function insertToFirstComment():void{
+			
+		}
+		
+		private function postComment(evt:ButtonEvent):void{
+			var cmtTxt:String = cmtInput.text;
+			if(cmtTxt.length>0){
+				_model.postComment(_data.id, cmtTxt);
+				showCmntLoading();
+			}
+		}
+		
+		private function addToFavorite(evt:MouseEvent):void{
+			//TODO, ADD to favorite ...
+			
+		}
+		
+		private function saveToLocal(evt:MouseEvent):void{
+			//TODO, save to local ...
 			
 		}
 		

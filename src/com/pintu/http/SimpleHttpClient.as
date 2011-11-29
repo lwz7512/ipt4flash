@@ -2,11 +2,13 @@ package com.pintu.http
 {
 	import com.adobe.net.URI;
 	import com.pintu.events.PTErrorEvent;
+	import com.pintu.events.PTStatusEvent;
 	import com.pintu.events.ResponseEvent;
 	import com.pintu.utils.Logger;
 	
 	import flash.events.ErrorEvent;
 	import flash.events.EventDispatcher;
+	import flash.events.StatusEvent;
 	import flash.net.FileReference;
 	import flash.utils.ByteArray;
 	
@@ -46,11 +48,14 @@ package com.pintu.http
 			
 			params = params.concat([ {name:"method", value: method}]);
 			params = params.concat([ {name:"userId", value: _userId}]);
+			params = params.concat([ {name:"owner", value: _userId}]);
 			params = params.concat([ {name:"source", value: "desktop"}]);
 			
 			_client.listener.onStatus = function(event:HttpStatusEvent):void {
 				// Notified of response (with headers but not content)
 				var statusCode:String = event.code;
+				var statusEvent:PTStatusEvent = new PTStatusEvent(method, statusCode);
+				dispatchEvent(statusEvent);
 //				Logger.debug("Method: "+method+" , status: "+statusCode);
 			};
 			
@@ -102,6 +107,7 @@ package com.pintu.http
 			//将参数解析封装
 			for each(var param:Object in params){
 				//字符集必须指定啊，否则中文是乱码
+				//2011/11/27
 				parts.push(new Part(param.name, param.value, "text/plain; charset=UTF-8"));
 			}
 			//方法参数必须传，后台用来区分上传图片的操作类型
@@ -117,14 +123,14 @@ package com.pintu.http
 			_client.listener.onComplete = function(event:HttpResponseEvent):void {
 				// Notified when complete (after status and data)
 				var response:String = event.response.message;
-				Logger.debug("Method: upload , response: "+response);
+//				Logger.debug("Method: upload , response: "+response);
 				var completeEvent:ResponseEvent = new ResponseEvent("upload",response);
 				dispatchEvent(completeEvent);
 			};
 			
 			_client.listener.onError = function(event:ErrorEvent):void {
 				var errorMessage:String = event.text;
-				Logger.error("Method: upload, error: "+errorMessage);
+//				Logger.error("Method: upload, error: "+errorMessage);
 				var errorEvent:PTErrorEvent = new PTErrorEvent("upload",errorMessage);
 				dispatchEvent(errorEvent);
 			}; 

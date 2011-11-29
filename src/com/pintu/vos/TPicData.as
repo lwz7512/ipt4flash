@@ -5,6 +5,8 @@ package com.pintu.vos{
 		
 		//贴图ID
 		public var  id:String;
+		//贴图名称
+		public var picName:String;
 		//作者ID
 		public var owner:String;
 		//贴图作者

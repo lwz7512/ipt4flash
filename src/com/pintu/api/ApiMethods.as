@@ -18,14 +18,20 @@ package com.pintu.api
 		public static const GETTHUMBNAILSBYTAG:String = "getThumbnailsByTag";
 		
 		//查询图片详情
-		public static const GETPICDETAIL:String = "getPicDetail";
-		
+		public static const GETPICDETAIL:String = "getPicDetail";		
 		
 		public static const LOGON:String = "logon";
 		public static const UPLOAD:String = "upload";
 		
 		public static const GETIMAGEFILE:String = "getImageFile";
 		public static const GETIMAGEBYPATH:String = "getImageByPath";
+		
+		//添加评论
+		public static const ADDSTORY:String = "addStory";
+		//获取评论列表
+		public static const GETSTORIESOFPIC:String = "getStoriesOfPic";
+		
+		
 		
 		
 		public function ApiMethods(){}

@@ -146,6 +146,7 @@ package com.pintu.widgets
 			pswd.setStyle(TextInput.style.borderDarkColor,StyleParams.DARKER_BORDER_COLOR);			
 			pswd.x = drawStartX+padding;
 			pswd.y = pwdField.y+pwdField.height+verticalGap;
+			//支持密码输入框上使用回车键提交
 			pswd.addEventListener(TextInputEvent.SUBMIT, checkToLogin);
 			pswd.addEventListener(TextInputEvent.CHANGED, clearInput);
 			this.addChild(pswd);

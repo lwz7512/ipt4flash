@@ -140,6 +140,8 @@ package com.pintu.widgets{
 				this.removeChild(loading);
 			//查询结束
 			isRunning = false;
+			//这时查询开关打开
+			queryAvailableTimer.stop();
 		}
 		
 		/**
@@ -388,7 +390,7 @@ package com.pintu.widgets{
 		
 		private function moveGallery(event:Event):void{	
 			//画廊默认位置
-			var galleryHeight:Number = _picBuilder.galleryHeight;
+			var galleryHeight:Number = _picsContainer.height;
 			var galleryMoveStartY:Number = 0;			
 			var galleryMoveEndY:Number = displayAreaHeight-galleryHeight;
 			//如果是负数表示超过了展示高度，则滚动，如果不是，则不滚动
@@ -420,7 +422,7 @@ package com.pintu.widgets{
 		 * 根据鼠标在展示区域的上下位置，决定了画廊移动速度
 		 */ 
 		private function calculateMoveSpeed(event:MouseEvent):void{											
-			var galleryHeight:Number = _picBuilder.galleryHeight;
+			var galleryHeight:Number = _picsContainer.height;
 			//画廊默认位置
 			var galleryMoveStartY:Number = 0;			
 			var galleryMoveEndY:Number = displayAreaHeight-galleryHeight;
@@ -466,6 +468,7 @@ package com.pintu.widgets{
 			super.destroy();
 			_model = null;
 			_picBuilder = null;
+			this.removeChildren(true,true);
 //			Logger.debug("MainDisplayArea destroyed...");
 		}
 		

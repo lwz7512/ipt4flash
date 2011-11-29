@@ -2,19 +2,20 @@ package com.pintu.controller
 {
 	import com.adobe.serialization.json.JSON;
 	import com.pintu.api.*;
+	import com.pintu.common.IconButton;
 	import com.pintu.config.*;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.events.ResponseEvent;
 	import com.pintu.utils.Logger;
 	import com.pintu.vos.TPicData;
 	import com.pintu.vos.TPicDesc;
-	import com.pintu.common.IconButton;
 	import com.pintu.widgets.MainDisplayArea;
 	import com.pintu.widgets.PicDetailView;
 	import com.pintu.widgets.Thumbnail;
 	
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
 	import org.as3commons.collections.framework.IIterator;
@@ -32,8 +33,8 @@ package com.pintu.controller
 		private var _model:IPintu;
 		
 		//所创建内容的显示容器
-		private var _displayArea:CasaSprite;
-		//拥有本实例的对象，用来调用显示进度条和提示
+		private var _context:CasaSprite;
+		//拥有本实例的对象，用来调用显示进度条和提示方法
 		private var _owner:MainDisplayArea;
 		
 		private var _drawStartX:Number;
@@ -41,8 +42,7 @@ package com.pintu.controller
 		//画廊行数
 		private var rowNum:int;
 		private var tpics:Array;
-		//用于滚动计算位置
-		private var _currentGalleryHeight:Number;
+		
 		//缩略图大小
 		private var _thumbnailSize:int = 100;
 		//MINI画廊列数
@@ -50,10 +50,9 @@ package com.pintu.controller
 		//画廊边距
 		private var _margin:int = 10;		
 		
-		
-		
+			
 		public function PicDOBuilder(container:CasaSprite, model:IPintu){
-			_displayArea = container;
+			_context = container;
 			_model = model;
 			//缩略图详情响应
 			PintuImpl(_model).addEventListener(ApiMethods.GETPICDETAIL,detailPicHandler);
@@ -69,38 +68,43 @@ package com.pintu.controller
 			_owner = o;
 		}
 		
-		private function detailPicHandler(event:ResponseEvent):void{			
+		private function detailPicHandler(event:Event):void{	
+			//只处理结果事件，不处理状态事件
+			if(!(event is ResponseEvent)) return;
+						
 			//展示详情前，先清理
 			cleanUp();					
-			Logger.debug("pic details: \n"+event.data);
+			Logger.debug("pic details: \n"+ResponseEvent(event).data);
 			//CREATE PIC DETAILS...
-			var details:Object =  JSON.decode(event.data) as Object;
-			var picDetails:PicDetailView = new PicDetailView(objToTPicData(details));
+			var details:Object =  JSON.decode(ResponseEvent(event).data) as Object;
+			var picDetails:PicDetailView = new PicDetailView(objToTPicData(details), _model);
 			picDetails.x = _drawStartX;
 			picDetails.y = _drawStartY;
 			//工具栏左侧给返回按钮让位
 			picDetails.showBackBtn = true;
-			_displayArea.addChild(picDetails);
+			_context.addChild(picDetails);					
 			
 			//BACK BUTTON
 			var back:IconButton = new IconButton(26,26);
 			back.iconPath = "assets/back.png";
 			back.addEventListener(MouseEvent.CLICK, restoreGallery);
-			back.x = _drawStartX;
-			back.y = _drawStartY;
+			back.x = _drawStartX+2;
+			//往下移动下跟工具栏对齐
+			back.y = _drawStartY+2;
 			back.textOnRight = true;
 			back.label = "返回";
-			_displayArea.addChild(back);
+			_context.addChild(back);
 			
 			//移除进度条
 			_owner.hideMiddleLoading();
+			
 		}
 		
 
 		
 		private function restoreGallery(evt:MouseEvent):void{
 			cleanUp();
-			layoutThumbnails();
+			layoutThumbnails();		
 		}
 
 		
@@ -129,24 +133,19 @@ package com.pintu.controller
 			
 			//布局缩略图
 			layoutThumbnails();
-			
+					
 		}
 		
 		private function layoutThumbnails():void{
 			//画廊剩余宽度减去左右边距，然后按列数平分
 			var columnGap:Number = (InitParams.GALLERY_WIDTH-
-				_miniGalleryColumnNum*_thumbnailSize-2*_margin)/(_miniGalleryColumnNum-1);
-						
-			//需要计算新的画廊高度
-			//高度就是行数*(缩略图高度+2倍行距)
-			//保存实际的画廊高度，供滚动计算需要
-			_currentGalleryHeight = rowNum*(_thumbnailSize+columnGap);	
+				_miniGalleryColumnNum*_thumbnailSize-2*_margin)/(_miniGalleryColumnNum-1);						
 			
 			var grid:HLayout = new HLayout();
 			//每行最多放5个
 			grid.maxItemsPerRow = _miniGalleryColumnNum;
 			grid.minWidth = InitParams.GALLERY_WIDTH;
-			grid.minHeight = _currentGalleryHeight;
+			grid.minHeight = rowNum*(_thumbnailSize+columnGap);
 			var xOffset:Number = _margin;
 			var yOffset:Number = _margin;	
 			grid.marginX = _drawStartX +xOffset;
@@ -165,7 +164,7 @@ package com.pintu.controller
 				grid.add(thumbnail);
 			}
 			//展示画廊
-			grid.layout(_displayArea);
+			grid.layout(_context);
 		}
 		
 		private function getDetails(event:PintuEvent):void{			
@@ -179,10 +178,6 @@ package com.pintu.controller
 			_model.getPicDetail(tpId);
 		}
 
-		//获得事件视图的高度，以决定是否滚轮滚动
-		public function get galleryHeight():Number{			
-			return _currentGalleryHeight;
-		}
 		
 		//TODO, 创建列表式大图画廊...
 		//创建多个PicDetailView
@@ -192,8 +187,10 @@ package com.pintu.controller
 		}
 		
 		private function cleanUp():void{
-			_displayArea.graphics.clear();
-			_displayArea.removeChildren(true,true);
+			_context.graphics.clear();
+			_context.removeChildren(true,true);
+			//恢复滚动前的位置
+			_context.y = 0;
 		}
 		
 		private function objToTPicDescArray(thumnails:Array):Array{
@@ -215,6 +212,7 @@ package com.pintu.controller
 		private function objToTPicData(details:Object):TPicData{
 			var pic:TPicData = new TPicData();
 			pic.id = details["id"];
+			pic.picName = details["name"];
 			pic.owner = details["owner"];
 			pic.author = details["author"];
 			pic.avatarUrl = _model.composeImgUrlByPath(details["avatarImgPath"]);

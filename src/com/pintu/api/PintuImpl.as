@@ -2,7 +2,7 @@ package com.pintu.api
 {
 	import com.pintu.api.ApiMethods;
 	import com.pintu.controller.GlobalController;
-	import com.pintu.events.ResponseEvent;
+	import com.pintu.events.*;
 	import com.pintu.http.SimpleHttpClient;
 	import com.pintu.utils.Logger;
 	
@@ -37,6 +37,9 @@ package com.pintu.api
 			client.addEventListener(ApiMethods.COLLECTSTATISTICS,responseHander);
 			client.addEventListener(ApiMethods.GETTHUMBNAILSBYTAG,responseHander);
 			client.addEventListener(ApiMethods.GETPICDETAIL,responseHander);
+			
+			client.addEventListener(ApiMethods.ADDSTORY,responseHander);
+			client.addEventListener(ApiMethods.GETSTORIESOFPIC,responseHander);
 			//TODO, ADD OTHER LISTENER...
 			
 		}
@@ -50,9 +53,11 @@ package com.pintu.api
 			return null;
 		}
 		
-		//这里指定泛型事件，因为可能是ResponseEvent，也可能是ErrorEvent
+		//这里指定泛型事件，因为可能是ResponseEvent，也可能是PTErrorEvent
+		//也有可能是状态事件PTStatusEvent，用于提交动作的响应
+		//2011/11/29
 		private function responseHander(event:Event):void{
-			this.dispatchEvent(event);
+			dispatchEvent(event);
 		}
 		
 		//登录成功后更新用户
@@ -119,6 +124,16 @@ package com.pintu.api
 		public function getPicDetail(tpId:String):void{
 			var params:Array = [{name:"tpId",value:tpId}];
 			client.post(params,ApiMethods.GETPICDETAIL);
+		}
+		
+		public function postComment(follow:String, content:String):void{
+			var params:Array = [{name:"follow",value:follow},{name:"content",value:content}];
+			client.post(params,ApiMethods.ADDSTORY);
+		}
+		
+		public function getComments(tpId:String):void{
+			var params:Array = [{name:"tpId",value:tpId}];
+			client.post(params,ApiMethods.GETSTORIESOFPIC);
 		}
 		
 		
