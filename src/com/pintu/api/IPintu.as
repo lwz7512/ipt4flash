@@ -29,7 +29,12 @@ package com.pintu.api
 		
 		function postComment(follow:String, content:String):void;
 		function getComments(tpId:String):void;
-		
+		/**
+		 * 这里可以不用传userId值，client已经有该参数值了
+		 */ 
+		function markThePic(userId:String, picId:String):void
+		function postVote(receiver:String, follow:String, type:String, amount:String):void
+			
 		
 	}
 }

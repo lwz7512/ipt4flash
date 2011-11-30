@@ -14,11 +14,18 @@ package com.pintu.events
 		public static const REFRESH_GALLERY:String = "refreshGallery";
 		public static const RANDOM_GALLERY:String = "randomGallery";
 		public static const UPLOAD_IMAGE:String = "uploadImage";
+		public static const DNLOAD_IMAGE:String = "dnloadImage";
 		
-		public var data:String;		
+		//弹出提示事件
+		public static const HINT_USER:String = "hintToUser";
+		
+		//通常带的参数
+		public var data:String;
+		//第二参数
+		public var extra:String;
 		
 		public function PintuEvent(type:String, context:String){
-			//都是冒泡事件
+			//都是冒泡事件，可以传播到顶级对象
 			super(type,true);
 			this.data = context;
 		}

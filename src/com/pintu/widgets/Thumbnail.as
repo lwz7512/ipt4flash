@@ -31,6 +31,8 @@ package com.pintu.widgets{
 		private var _x:Number;
 		private var _y:Number;
 		
+		private var _roundRadius:int = 6;
+		
 		public function Thumbnail(data:TPicDesc){
 			_data = data;
 			//LOAD PIC BY URL...
@@ -105,13 +107,13 @@ package com.pintu.widgets{
 			//葱绿：1、浅绿又略显微黄的颜色；2、草木青翠的样子。
 			this.graphics.lineStyle(1,0x9ED900);
 			this.graphics.beginFill(0xFFFFFF);
-			this.graphics.drawRoundRect(0,0,100,100,13,13);
+			this.graphics.drawRoundRect(0,0,100,100,_roundRadius,_roundRadius);
 			this.graphics.endFill();
 			
 			//draw mask
 			var clip:CasaShape = new CasaShape();
 			clip.graphics.beginFill(0x000000);
-			clip.graphics.drawRoundRect(-1,-1,102,102,15,15);
+			clip.graphics.drawRoundRect(-1,-1,102,102,_roundRadius+2,_roundRadius+2);
 			clip.graphics.endFill();
 			this.addChild(clip);
 			this.mask = clip;

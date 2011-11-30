@@ -4,13 +4,9 @@ package com.pintu.widgets{
 	import com.cartogrammar.drawing.DashedLine;
 	import com.greensock.TweenLite;
 	import com.pintu.api.*;
-	import com.pintu.common.BusyIndicator;
-	import com.pintu.common.GreenButton;
-	import com.pintu.common.IconButton;
-	import com.pintu.common.SimpleImage;
-	import com.pintu.common.SimpleText;
-	import com.pintu.common.TextArea;
+	import com.pintu.common.*;
 	import com.pintu.config.*;
+	import com.pintu.controller.GlobalController;
 	import com.pintu.events.*;
 	import com.pintu.utils.*;
 	import com.pintu.vos.CmntData;
@@ -36,12 +32,13 @@ package com.pintu.widgets{
 	 */ 
 	public class PicDetailView extends CasaSprite{
 		
+		//当前图片详情对应数据
 		private var _data:TPicData;
-		private var _model:IPintu;		
+		private var _model:IPintu;	
+		
 		//看查看缩略图详情的返回按钮让位
 		//正常的大图列表是不需要此设置的
-		private var _showBackBtn:Boolean = false;
-		
+		private var _showBackBtn:Boolean = false;		
 		//图片加载结束标志
 		private var imgLoadedFlag:Boolean = false;
 		
@@ -49,6 +46,9 @@ package com.pintu.widgets{
 		private var _xStartOffset:Number = 2;
 		//上面有工具栏，给工具栏让位
 		private var _yStartOffset:Number = 2;	
+		//工具栏背景宽度
+		private var _toolBGWidth:Number = InitParams.GALLERY_WIDTH-4;
+		
 		//默认图片大小，图片加载结束时改变
 		private var _mobImgWidth:Number = 440;
 		private var _mobImgHeight:Number = 440;
@@ -87,6 +87,8 @@ package com.pintu.widgets{
 			_model = model;
 			PintuImpl(_model).addEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
 			PintuImpl(_model).addEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.ADDVOTE, votePicHandler);
 			
 			//draw image place hoder
 			drawImgePlaceHolder();			
@@ -137,7 +139,7 @@ package com.pintu.widgets{
 			
 			if(evt is ResponseEvent){
 				var jsonCmnt:String = ResponseEvent(evt).data;
-				Logger.debug("json comments: "+jsonCmnt);
+//				Logger.debug("json comments: "+jsonCmnt);
 				createCommentList(jsonCmnt);
 				commentsHandleFlag = false;
 			}
@@ -145,6 +147,26 @@ package com.pintu.widgets{
 				Logger.error("Error in calling: "+ApiMethods.ADDSTORY);
 			}
 			
+		}
+		
+		private function markPicHandler(evt:Event):void{
+			if(evt is PTStatusEvent){
+				//在主显示区弹出提示
+				this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "图片收藏成功"));
+			}
+			if(evt is PTErrorEvent){
+				Logger.error("Error in calling: "+ApiMethods.MARKTHEPIC);
+			}
+		}
+		
+		private function votePicHandler(evt:Event):void{
+			if(evt is PTStatusEvent){
+				//在主显示区弹出提示
+				this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "图片投票成功"));
+			}
+			if(evt is PTErrorEvent){
+				Logger.error("Error in calling: "+ApiMethods.ADDVOTE);
+			}
 		}
 		
 		private function hideCmntLoading():void{
@@ -239,8 +261,7 @@ package com.pintu.widgets{
 			
 			//获得图片大小
 			_mobImgWidth = mobImage.bitmap.width;
-			_mobImgHeight = mobImage.bitmap.height;
-			
+			_mobImgHeight = mobImage.bitmap.height;			
 			
 			Logger.debug("_mobImgWidth: "+_mobImgWidth);
 			Logger.debug("_mobImgHeight: "+_mobImgHeight);								
@@ -259,6 +280,9 @@ package com.pintu.widgets{
 			buildPicOperaTools(_mobImgWidth);		
 						
 			imgLoadedFlag = true;
+			
+			//通知外围，渲染完成
+			rendered();		
 		}
 		
 		private function buildPicInfoBlackBG():void{
@@ -299,8 +323,6 @@ package com.pintu.widgets{
 			//用户名
 			var userNameStr:String = getShowUserName();
 			var userNameTF:SimpleText = new SimpleText(userNameStr,green,14,true);
-//			userNameTF.x = startX;
-//			userNameTF.y = avatarImg.y+avatarSize+avatarToTextGap;
 			userNameTF.x = startX+avatarImg.maxSize+avatarToTextGap;
 			userNameTF.y = startY;
 			imgInfoHolder.addChild(userNameTF);
@@ -347,6 +369,13 @@ package com.pintu.widgets{
 			commentsTF.y = tagsTF.y+textItemVGap;
 			imgInfoHolder.addChild(commentsTF);
 			
+			//喜欢人数
+			var likeNumStr:String = "喜欢人数 "+_data.coolCount;
+			var likeTF:SimpleText = new SimpleText(likeNumStr, green);
+			likeTF.x = startX;
+			likeTF.y = commentsTF.y+textItemVGap;
+			imgInfoHolder.addChild(likeTF);
+			
 			//描述摘要
 			var origDescContent:String = _data.description;
 			var descStr:String;
@@ -359,7 +388,7 @@ package com.pintu.widgets{
 			}			
 			var descTF:SimpleText = new SimpleText(descStr,green);
 			descTF.x = startX;
-			descTF.y = commentsTF.y+textItemVGap;
+			descTF.y = likeTF.y+textItemVGap;
 			imgInfoHolder.addChild(descTF);			
 						
 		}
@@ -403,7 +432,7 @@ package com.pintu.widgets{
 		
 		/**
 		 * 5项操作：
-		 * 评论、收藏、转发、保存、举报
+		 * 评论、收藏、转发、保存、喜欢、举报
 		 */ 
 		private function buildPicOperaTools(imgWidth:Number):void{
 			//工具栏不能小于defaultImgWidth
@@ -429,7 +458,7 @@ package com.pintu.widgets{
 			toolbg.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
 			//与图片左对齐
 			toolbg.graphics.drawRect(_xStartOffset, _yStartOffset,
-				imgWidth-_xStartOffset, InitParams.TREEITEM_HEIGHT);
+				_toolBGWidth, InitParams.TREEITEM_HEIGHT);
 			toolbg.graphics.endFill();
 			toolHolder.addChild(toolbg);
 			
@@ -452,42 +481,52 @@ package com.pintu.widgets{
 			favorite.x = comment.x +iconHGap;
 			favorite.y = iconYOffset;
 			favorite.textOnRight = true;
-			favorite.label = "收藏";
-			favorite.enabled = false;
+			favorite.label = "收藏";			
 			toolHolder.addChild(favorite);
+			
+			//喜欢投票
+			var like:IconButton = new IconButton(26,26);
+			like.iconPath = "assets/heart.png";
+			like.addEventListener(MouseEvent.CLICK, likeIt);
+			like.x = favorite.x +iconHGap;
+			like.y = iconYOffset;
+			like.textOnRight = true;
+			like.label = "喜欢";			
+			toolHolder.addChild(like);
+			
+			
+			//SAVE TO LOCAL BUTTON
+			var save:IconButton = new IconButton(26,26);
+			save.iconPath = "assets/save.png";
+			save.addEventListener(MouseEvent.CLICK, saveToLocal);
+			save.x = like.x +iconHGap;
+			save.y = iconYOffset;
+			save.textOnRight = true;
+			save.label = "保存";			
+			toolHolder.addChild(save);
 			
 			//FORWAR TO WEIBO BUTTON
 			var forward:IconButton = new IconButton(26,26);
 			forward.iconPath = "assets/forward.png";
 			forward.addEventListener(MouseEvent.CLICK, todo);
-			forward.x = favorite.x +iconHGap;
+			forward.x = save.x +iconHGap;
 			forward.y = iconYOffset;
 			forward.textOnRight = true;
 			forward.label = "转发";
 			forward.enabled = false;
 			toolHolder.addChild(forward);
 			
-			//SAVE TO LOCAL BUTTON
-			var save:IconButton = new IconButton(26,26);
-			save.iconPath = "assets/save.png";
-			save.addEventListener(MouseEvent.CLICK, saveToLocal);
-			save.x = forward.x +iconHGap;
-			save.y = iconYOffset;
-			save.textOnRight = true;
-			save.label = "保存";
-			save.enabled = false;
-			toolHolder.addChild(save);
-			
 			//REPORT TO ADMIN BUTTON
 			var report:IconButton = new IconButton(26,26);
 			report.iconPath = "assets/report.png";
 			report.addEventListener(MouseEvent.CLICK, todo);
-			report.x = save.x +iconHGap;
+			report.x = forward.x +iconHGap;
 			report.y = iconYOffset;
 			report.textOnRight = true;
 			report.label = "举报";
 			report.enabled = false;
 			toolHolder.addChild(report);
+						
 			
 		}
 		
@@ -502,8 +541,11 @@ package com.pintu.widgets{
 			//如果存在就销毁
 			if(this.contains(commentsHolder)){
 				commentsHolder.removeChildren(true,true);
-				this.removeChild(commentsHolder);
+				this.removeChild(commentsHolder);				
+				//通知外围，渲染完成
+				rendered();						
 				return;
+				
 			}else{
 				commentsHolder.x = _xStartOffset;
 				commentsHolder.y = 2*_yStartOffset+_mobImgHeight;
@@ -526,9 +568,11 @@ package com.pintu.widgets{
 				cmtSubmit.y = cmtInput.height+2;
 				//每次换行或者缩进都要调整评论列表的位置
 				var diff:Number = cmtInput.height-origInputHeight;
+				//如果下面有评论就往下移动
 				relayoutComments(diff);
 				//保存新的值
 				origInputHeight = cmtInput.height;
+								
 			});
 			commentsHolder.addChild(cmtInput);
 			
@@ -546,6 +590,8 @@ package com.pintu.widgets{
 				_model.getComments(_data.id);
 				commentsHandleFlag = true;
 			}
+			//通知外围，渲染完成
+			rendered();		
 		}
 		
 		private function createCommentList(jsonCmnt:String):void{
@@ -574,6 +620,9 @@ package com.pintu.widgets{
 				layoutStartY += eachItem.height;
 				commentsHolder.addChild(eachItem);
 			}
+			
+			//通知外围，渲染完成
+			rendered();		
 		}
 		
 		private function relayoutComments(yOffset:Number):void{
@@ -583,11 +632,9 @@ package com.pintu.widgets{
 				if(diplayObj is CommentItem)
 					diplayObj.y += yOffset;
 			}
-		}
-		
-		private function insertToFirstComment():void{
-			
-		}
+			//通知外围，渲染完成
+			rendered();		
+		}		
 		
 		private function postComment(evt:ButtonEvent):void{
 			var cmtTxt:String = cmtInput.text;
@@ -597,19 +644,35 @@ package com.pintu.widgets{
 			}
 		}
 		
-		private function addToFavorite(evt:MouseEvent):void{
-			//TODO, ADD to favorite ...
-			
+		private function addToFavorite(evt:MouseEvent):void{			
+			_model.markThePic(null,_data.id);
 		}
 		
-		private function saveToLocal(evt:MouseEvent):void{
-			//TODO, save to local ...
+		//保存原图到本地，在HomePage中处理该事件
+		private function saveToLocal(evt:MouseEvent):void{			
+			var globalEvt:PintuEvent = new PintuEvent(PintuEvent.DNLOAD_IMAGE, _data.rawImgUrl);
+			globalEvt.extra = _data.picName;
+			this.dispatchEvent(globalEvt);
+		}
+		
+		private function likeIt(evt:MouseEvent):void{		
 			
+			if(_data.owner == PintuImpl(_model).currentUser){
+				//在主显示区弹出提示
+				this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "不能给自己投票哟"));
+			}else{
+				_model.postVote(_data.owner, _data.id, "cool", "1");							
+			}
 		}
 		
 		private function todo(evt:MouseEvent):void{
 			//TODO, ADD COMMENT...
 			
+		}
+		
+		private function rendered():void{
+			//派发尺寸改变事件						
+			this.stage.invalidate();			
 		}
 
 		

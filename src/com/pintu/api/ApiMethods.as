@@ -30,9 +30,10 @@ package com.pintu.api
 		public static const ADDSTORY:String = "addStory";
 		//获取评论列表
 		public static const GETSTORIESOFPIC:String = "getStoriesOfPic";
-		
-		
-		
+		//收藏
+		public static const MARKTHEPIC:String = "markThePic";
+		//投票，喜欢
+		public static const ADDVOTE:String= "addVote";
 		
 		public function ApiMethods(){}
 	}

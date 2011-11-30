@@ -224,7 +224,10 @@ package com.pintu.controller
 			pic.description = details["description"];
 			pic.isOriginal = details["isOriginal"];
 			pic.mobImgUrl =  _model.composeImgUrlById(details["mobImgId"]);
+			pic.rawImgUrl =  _model.composeImgUrlById(details["rawImgId"]);
 			pic.commentsNum = details["storiesNum"];
+			pic.coolCount = details["coolCount"];
+			
 			return pic;
 		}
 		

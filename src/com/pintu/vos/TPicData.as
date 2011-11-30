@@ -1,6 +1,8 @@
 package com.pintu.vos{
 	
-	
+	/**
+	 * 图片详情数据
+	 */ 
 	public class TPicData{
 		
 		//贴图ID
@@ -44,9 +46,15 @@ package com.pintu.vos{
 		
 		//生成的原始图ID，这个ID是由pId+"_Raw"构成
 		public var rawImgId:String;
+		//原图的下载地址
+		public var rawImgUrl:String;
 				
 		//评论数目
 		public var commentsNum:String;
+		
+		//喜欢数目
+		public var coolCount:String;
+		
 		
 	} //end of class
 }

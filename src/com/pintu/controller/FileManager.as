@@ -57,11 +57,11 @@ package com.pintu.controller{
 			m_upload.browse( getImageTypes() );
 		}
 		
-		public function download ( inURL : String, inName : String ) : void{
-			m_downloadURL = new URLRequest( inURL )
-			m_fileName = inName;
+		public function download (picURL : String, picName : String ) : void{
+			m_downloadURL = new URLRequest(picURL)
+			m_fileName = picName;
 			//打开对话框，让用户指定下载文件的保存目录
-			m_download.download( m_downloadURL, m_fileName );
+			m_download.download( m_downloadURL, m_fileName);
 		}
 		
 		//TODO, ...

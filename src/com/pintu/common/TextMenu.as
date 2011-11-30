@@ -267,7 +267,7 @@ package com.pintu.common
 		
 		private function drawDisabledSkin():void{
 			drawGradientRec(this.upSkinColors,0);
-			updateLabelColor(0xCCCCCC);
+			updateLabelColor(0x666666);
 		}
 		
 		private function drawGradientRec(colors:Array, alpha:Number=1):void{

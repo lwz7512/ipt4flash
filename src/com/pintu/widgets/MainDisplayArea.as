@@ -10,8 +10,7 @@ package com.pintu.widgets{
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
 	import com.pintu.controller.PicDOBuilder;
-	import com.pintu.events.PTErrorEvent;
-	import com.pintu.events.ResponseEvent;
+	import com.pintu.events.*;
 	import com.pintu.utils.Logger;
 	
 	import flash.display.Shape;
@@ -110,7 +109,9 @@ package com.pintu.widgets{
 			//初始化时，按浏览模式查询画廊
 			this.addEventListener(Event.ADDED_TO_STAGE, initDisplayStage);
 			//滚轮处理画廊移动
-			this.addEventListener(MouseEvent.MOUSE_WHEEL,scrollGallery);
+			this.addEventListener(MouseEvent.MOUSE_WHEEL,scrollGallery);			
+			//监听系统事件：弹出提示
+			this.addEventListener(PintuEvent.HINT_USER, hintTextHandler);			
 			
 			//2秒内运行检查，类型设置时启动
 			queryAvailableTimer = new Timer(2000,1);
@@ -330,6 +331,10 @@ package com.pintu.widgets{
 				
 			}			
 		}	
+		
+		private function hintTextHandler(evt:PintuEvent):void{
+			hintToUser(evt.data);
+		}
 		
 		//--------------------------------  handler end --------------------------------------------				
 		

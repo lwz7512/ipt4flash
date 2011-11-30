@@ -1,7 +1,7 @@
 package com.pintu.modules{
 
 	import com.greensock.TweenLite;
-	import com.pintu.api.IPintu;
+	import com.pintu.api.*;
 	import com.pintu.config.InitParams;
 	import com.pintu.controller.FileManager;
 	import com.pintu.events.PintuEvent;
@@ -33,6 +33,8 @@ package com.pintu.modules{
 			super();
 			this._model = model;	
 			this._fileManager = new FileManager(_model);
+			//PicDetailView派发的保存事件
+			this.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);			
 			
 			mainToolBar = new MainToolBar(true);
 			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
@@ -62,6 +64,12 @@ package com.pintu.modules{
 			weiboFriends = new WeiboFriendsBlock(_model);
 			this.addChild(weiboFriends);
 			
+		}
+		
+		private function downLoadRawPic(evt:PintuEvent):void{
+			var picName:String = evt.extra;
+			//打开文件保存路径选择窗口，确定后开始下载
+			_fileManager.download(evt.data, picName);
 		}
 		
 		

@@ -1,6 +1,8 @@
 package com.pintu.vos{
 	
-	
+	/**
+	 * 缩略图数据
+	 */ 
 	public class TPicDesc{
 		
 		//贴图ID

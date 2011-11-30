@@ -15,6 +15,7 @@ package com.pintu.api
 
 	public class PintuImpl extends EventDispatcher implements IPintu{
 		
+		private var _currentUser:String;
 		private var client:SimpleHttpClient;
 		
 		private var debugService:String = "http://localhost:8080/ipintu/pintuapi";
@@ -22,7 +23,7 @@ package com.pintu.api
 		
 		
 		public function PintuImpl(userId:String){
-			
+			_currentUser = userId;
 			client = new SimpleHttpClient(getServiceUrl(),userId);
 			
 			client.addEventListener(ApiMethods.LOGON,responseHander);
@@ -40,6 +41,9 @@ package com.pintu.api
 			
 			client.addEventListener(ApiMethods.ADDSTORY,responseHander);
 			client.addEventListener(ApiMethods.GETSTORIESOFPIC,responseHander);
+			client.addEventListener(ApiMethods.MARKTHEPIC,responseHander);
+			client.addEventListener(ApiMethods.ADDVOTE,responseHander);
+			
 			//TODO, ADD OTHER LISTENER...
 			
 		}
@@ -63,6 +67,11 @@ package com.pintu.api
 		//登录成功后更新用户
 		public function updateUser(userId:String):void{
 			client.userId = userId;
+			_currentUser = userId;
+		}
+		
+		public function get currentUser():String{
+			return _currentUser;
 		}
 		
 		public function cancelRequest():void{
@@ -134,6 +143,18 @@ package com.pintu.api
 		public function getComments(tpId:String):void{
 			var params:Array = [{name:"tpId",value:tpId}];
 			client.post(params,ApiMethods.GETSTORIESOFPIC);
+		}
+		
+		public function markThePic(userId:String, picId:String):void{
+			//其实在client中已经把userId传进去了
+			var params:Array = [{name:"picId",value:picId}];
+			client.post(params,ApiMethods.MARKTHEPIC);
+		}
+		
+		public function postVote(receiver:String, follow:String, type:String, amount:String):void{
+			var params:Array = [{name:"receiver",value:receiver},{name:"follow",value:follow},
+				{name:"type",value:type},{name:"amount",value:amount}];
+			client.post(params,ApiMethods.ADDVOTE);
 		}
 		
 		
