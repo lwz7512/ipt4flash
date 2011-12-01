@@ -19,8 +19,10 @@ package com.pintu.api
 		
 		//查询图片详情
 		public static const GETPICDETAIL:String = "getPicDetail";		
-		
+		//登录
 		public static const LOGON:String = "logon";
+		
+		//上传贴图
 		public static const UPLOAD:String = "upload";
 		
 		public static const GETIMAGEFILE:String = "getImageFile";
@@ -35,6 +37,12 @@ package com.pintu.api
 		//投票，喜欢
 		public static const ADDVOTE:String= "addVote";
 		
-		public function ApiMethods(){}
+		//获取用户详情
+		public static const GETUSERDETAIL:String = "getUserDetail";
+		
+		
+		
+		
+		
 	}
 }

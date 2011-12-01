@@ -8,26 +8,20 @@ package com.pintu.api
 	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.events.TimerEvent;
 	import flash.net.FileReference;
+	import flash.utils.Timer;
 	
+	import org.as3commons.collections.ArrayList;
 	import org.httpclient.HttpClient;
+	import org.osmf.events.TimeEvent;
 	
 
-	public class PintuImpl extends EventDispatcher implements IPintu{
-		
-		private var _currentUser:String;
-		private var client:SimpleHttpClient;
-		
-		private var debugService:String = "http://localhost:8080/ipintu/pintuapi";
-		private var remoteService:String = "http://ipintu.com/ipintu/pintuapi";
-		
+	public class PintuImpl extends ModelBase implements IPintu{
+				
 		
 		public function PintuImpl(userId:String){
-			_currentUser = userId;
-			client = new SimpleHttpClient(getServiceUrl(),userId);
-			
-			client.addEventListener(ApiMethods.LOGON,responseHander);
-			client.addEventListener(ApiMethods.UPLOAD,responseHander);
+			super(userId);															
 			
 			client.addEventListener(ApiMethods.GETGALLERYBYTIME,responseHander);
 			client.addEventListener(ApiMethods.GETGALLERYFORWEB,responseHander);
@@ -44,17 +38,10 @@ package com.pintu.api
 			client.addEventListener(ApiMethods.MARKTHEPIC,responseHander);
 			client.addEventListener(ApiMethods.ADDVOTE,responseHander);
 			
+			client.addEventListener(ApiMethods.GETUSERDETAIL,responseHander);
+			
 			//TODO, ADD OTHER LISTENER...
 			
-		}
-		
-		public function getServiceUrl():String{
-			if(GlobalController.isDebug){
-				return debugService;
-			}else{
-				return remoteService;
-			}
-			return null;
 		}
 		
 		//这里指定泛型事件，因为可能是ResponseEvent，也可能是PTErrorEvent
@@ -62,27 +49,8 @@ package com.pintu.api
 		//2011/11/29
 		private function responseHander(event:Event):void{
 			dispatchEvent(event);
-		}
+		}			
 		
-		//登录成功后更新用户
-		public function updateUser(userId:String):void{
-			client.userId = userId;
-			_currentUser = userId;
-		}
-		
-		public function get currentUser():String{
-			return _currentUser;
-		}
-		
-		public function cancelRequest():void{
-			client.cancel();
-		}
-		
-		public function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void{
-			var params:Array = [{name:"tags",value:tags},{name:"description",value:description},
-											{name:"isOriginal",value:isOriginal}];			
-			client.uploadImage(file,params);		
-		}
 		
 		public function composeImgUrlById(imgId:String):String{
 			return getServiceUrl() + "?method=" + ApiMethods.GETIMAGEFILE 
@@ -94,68 +62,92 @@ package com.pintu.api
 				+ "&path="+ imgPath;
 		}
 		
+		public function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void{
+			var params:Array = [{name:"tags",value:tags},{name:"description",value:description},
+											{name:"isOriginal",value:isOriginal}];				
+			var myClient:SimpleHttpClient = new SimpleHttpClient(getServiceUrl(),this.currentUser);
+			myClient.addEventListener(ApiMethods.UPLOAD,responseHander);
+			myClient.addEventListener(ApiMethods.UPLOAD,function():void{
+				myClient.disconnect();
+			});		
+			myClient.uploadImage(file,params);		
+		}		
+		
 		public function logon(account:String, password:String):void{
 			var params:Array = [{name:"account",value:account},{name:"password",value:password}];			
-			client.post(params, ApiMethods.LOGON);			
+			var myClient:SimpleHttpClient = new SimpleHttpClient(getServiceUrl(),this.currentUser);
+			myClient.addEventListener(ApiMethods.LOGON,responseHander);
+			myClient.addEventListener("complete",function():void{
+				myClient.disconnect();
+			});		
+			myClient.post(params, ApiMethods.LOGON);			
 		}
 		
 		public function getGalleryByTime(startTime:String, endTime:String):void{
 			var params:Array = [{name:"startTime",value:startTime},{name:"endTime",value:endTime}];			
-			client.post(params, ApiMethods.GETGALLERYBYTIME);					
+			addHttpTask(params, ApiMethods.GETGALLERYBYTIME);				
 		}
 		
 		public function getRandomGallery():void{
-			client.post([],ApiMethods.GETGALLERYRANDOM);
+			addHttpTask([],ApiMethods.GETGALLERYRANDOM);
 		}
 		
 		public function getGalleryForWeb(pageNum:String):void{
 			var params:Array = [{name:"pageNum",value:pageNum}];			
-			client.post(params, ApiMethods.GETGALLERYFORWEB);				
+			addHttpTask(params, ApiMethods.GETGALLERYFORWEB);				
 		}
 		
 		public function getHotPicture():void{
-			client.post([],ApiMethods.GETHOTPICTURE);
+			addHttpTask([],ApiMethods.GETHOTPICTURE);
 		}
 		
 		public function getClassicalPics():void{
-			client.post([],ApiMethods.CLASSICALSTATISTICS);
+			addHttpTask([],ApiMethods.CLASSICALSTATISTICS);
 		}
 		
 		public function getFavoredPics():void{
-			client.post([],ApiMethods.COLLECTSTATISTICS);
+			addHttpTask([],ApiMethods.COLLECTSTATISTICS);
 		}
 		
 		public function getThumbnailsByTag(tagId:String,pageNum:String):void{
 			var params:Array = [{name:"tagId",value:tagId},{name:"pageNum",value:pageNum}];
-			client.post(params,ApiMethods.GETTHUMBNAILSBYTAG);
+			addHttpTask(params,ApiMethods.GETTHUMBNAILSBYTAG);
 		}
 		
 		public function getPicDetail(tpId:String):void{
 			var params:Array = [{name:"tpId",value:tpId}];
-			client.post(params,ApiMethods.GETPICDETAIL);
+			addHttpTask(params,ApiMethods.GETPICDETAIL);
 		}
 		
 		public function postComment(follow:String, content:String):void{
 			var params:Array = [{name:"follow",value:follow},{name:"content",value:content}];
-			client.post(params,ApiMethods.ADDSTORY);
+			addHttpTask(params,ApiMethods.ADDSTORY);
 		}
 		
 		public function getComments(tpId:String):void{
 			var params:Array = [{name:"tpId",value:tpId}];
-			client.post(params,ApiMethods.GETSTORIESOFPIC);
+			addHttpTask(params,ApiMethods.GETSTORIESOFPIC);
 		}
 		
 		public function markThePic(userId:String, picId:String):void{
 			//其实在client中已经把userId传进去了
 			var params:Array = [{name:"picId",value:picId}];
-			client.post(params,ApiMethods.MARKTHEPIC);
+			addHttpTask(params,ApiMethods.MARKTHEPIC);
 		}
 		
 		public function postVote(receiver:String, follow:String, type:String, amount:String):void{
 			var params:Array = [{name:"receiver",value:receiver},{name:"follow",value:follow},
 				{name:"type",value:type},{name:"amount",value:amount}];
-			client.post(params,ApiMethods.ADDVOTE);
+			addHttpTask(params,ApiMethods.ADDVOTE);
 		}
+		
+		public function getUserDetail(userId:String):void{
+			var params:Array = [{name:"userId",value:userId}];
+			addHttpTask(params,ApiMethods.GETUSERDETAIL);
+		}
+		
+
+		
 		
 		
 	} //end of class

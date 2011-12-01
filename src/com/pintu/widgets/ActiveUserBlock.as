@@ -1,6 +1,7 @@
 package com.pintu.widgets
 {
 	import com.pintu.api.IPintu;
+	import com.pintu.common.SimpleText;
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
 	
@@ -20,11 +21,22 @@ package com.pintu.widgets
 		private var blockWidth:Number;
 		private var blockHeight:Number;
 		
+		private var headerHeight:Number = 24;
+		
 		public function ActiveUserBlock(model:IPintu){
 			super();
 			_model = model;
 			
 			drawActiveUserBackground();
+			
+			//标题
+			var title:SimpleText = new SimpleText("活跃用户排行榜",0x000000,12);
+			//居中
+			title.x = drawStartX+InitParams.LOGIN_FORM_WIDTH/2-title.textWidth/2;
+			title.y = drawStartY+2;
+			this.addChild(title);
+			
+			//TODO, 列表...
 			
 		}
 		
@@ -47,6 +59,10 @@ package com.pintu.widgets
 			this.graphics.drawRect(drawStartX,drawStartY,blockWidth,blockHeight);
 			this.graphics.endFill();
 			
+			//标题背景条
+			this.graphics.beginFill(StyleParams.MENUBAR_BOTTOM_ICE);
+			this.graphics.drawRect(drawStartX,drawStartY,blockWidth,headerHeight);
+			this.graphics.endFill();
 		}
 		
 		

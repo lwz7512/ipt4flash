@@ -60,10 +60,10 @@ package com.pintu.widgets
 						
 		}
 		
-		private function logonHandler(event:ResponseEvent):void{
+		private function logonHandler(event:Event):void{
+			
 			if(event is ResponseEvent){
 				var result:String = ResponseEvent(event).data;
-				
 				//如果登录过了就别再进入了	
 				//否则会引起_model空对象异常
 				//很怪异啊
@@ -78,23 +78,9 @@ package com.pintu.widgets
 					inputHint.text = "用户不存在!";
 				}else if(result == PASSWORDERROR){
 					inputHint.text = "密码错误!";
-				}else{					
-					
+				}else{										
 					//登录成功了
-					if(result.indexOf("@")>-1){
-						var role:String = result.split("@")[0];
-						var userId:String = result.split("@")[1];
-						//缓存下来
-						GlobalController.rememberUser(userId,role);
-						//更新用户信息到模型中
-						_model.updateUser(userId);
-						//派发时间通知主应用导航到主页
-						dispatchEvent(new PintuEvent(PintuEvent.NAVIGATE,GlobalNavigator.HOMPAGE));
-						//标记登录成功
-						logonSuccessFlag = true;
-					}else{
-						inputHint.text = "非用户标识!";						
-					}
+					logonSuccess(result);
 				}
 			}
 			
@@ -103,10 +89,26 @@ package com.pintu.widgets
 			}
 			
 			//移除进度条
-			if(loading)
-				this.removeChild(loading);
+			if(this.contains(loading)) this.removeChild(loading);
 			//不管怎样都该恢复提交按钮状态
 			submit.enabled = true;
+		}
+		
+		private function logonSuccess(result:String):void{
+			if(result.indexOf("@")>-1){
+				var role:String = result.split("@")[0];
+				var userId:String = result.split("@")[1];
+				//缓存下来
+				GlobalController.rememberUser(userId,role);
+				//更新用户信息到模型中
+				_model.updateUser(userId);
+				//派发时间通知主应用导航到主页
+				dispatchEvent(new PintuEvent(PintuEvent.NAVIGATE,GlobalNavigator.HOMPAGE));
+				//标记登录成功
+				logonSuccessFlag = true;
+			}else{
+				inputHint.text = "非用户标识!";						
+			}
 		}
 		
 		private function createFormInputs():void{			

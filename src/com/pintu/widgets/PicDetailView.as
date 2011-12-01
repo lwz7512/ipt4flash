@@ -102,10 +102,15 @@ package com.pintu.widgets{
 						
 			this.addEventListener(MouseEvent.MOUSE_OVER, displayHidePart);
 			this.addEventListener(MouseEvent.MOUSE_OUT, hideToolAndDesc);
+			this.addEventListener(Event.REMOVED_FROM_STAGE, cleanUp);
 		}
 		
 		public function set showBackBtn(v:Boolean):void{
 			_showBackBtn = v;
+		}
+		//清空模型引用
+		private function cleanUp(evt:Event):void{
+			_model = null;
 		}
 		
 		private function cmntPostHandler(evt:Event):void{

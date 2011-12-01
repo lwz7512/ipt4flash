@@ -4,17 +4,31 @@ package com.pintu.api
 	
 	import org.httpclient.HttpClient;
 	
-	public interface IPintu{		
-					
+	public interface IPintu{	
+		
+		/**
+		 * 这4个方法在ModelBase中实现
+		 */ 
+		//client是否空闲
+		function get isIdle():Boolean;
+		//停止队列
+		function destory():void;
+		//登录成功更新用户
+		function updateUser(userId:String):void;	
+		//服务地址
 		function getServiceUrl():String;
+		
 		function composeImgUrlById(imgId:String):String;
-		function composeImgUrlByPath(imgPath:String):String;
-		
-		function cancelRequest():void;
-		
-		function updateUser(userId:String):void;
-		function logon(account:String, password:String):void;		
+		function composeImgUrlByPath(imgPath:String):String;			
+		/**
+		 * 单独操作，不存在并发请求
+		 */ 
+		function logon(account:String, password:String):void;	
+		/**
+		 * 单独操作，不存在并发请求
+		 */ 
 		function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void;
+				
 		
 		function getGalleryByTime(startTime:String, endTime:String):void;
 		
@@ -34,7 +48,8 @@ package com.pintu.api
 		 */ 
 		function markThePic(userId:String, picId:String):void
 		function postVote(receiver:String, follow:String, type:String, amount:String):void
-			
+		
+		function getUserDetail(userId:String):void
 		
 	}
 }

@@ -20,6 +20,7 @@ package{
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	
+	import org.casalib.util.ColorUtil;
 	import org.libspark.ui.SWFWheel;
 		
 	public class Main extends Sprite{
@@ -51,6 +52,7 @@ package{
 			SWFWheel.browserScroll = false;
 			//舞台准备好后创建应用
 			addEventListener(Event.ADDED_TO_STAGE, buildApp);	
+						
 		}
 		
 		/**

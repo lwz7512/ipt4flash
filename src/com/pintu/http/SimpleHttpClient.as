@@ -7,6 +7,7 @@ package com.pintu.http
 	import com.pintu.utils.Logger;
 	
 	import flash.events.ErrorEvent;
+	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.StatusEvent;
 	import flash.net.FileReference;
@@ -23,19 +24,28 @@ package com.pintu.http
 		private var _userId:String;
 		private var _client:HttpClient;
 		
+		private var _isRuning:Boolean;
+		
 		public function SimpleHttpClient(serviceUrl:String, userId:String)
 		{
 			this._serviceUrl = serviceUrl;
 			this._userId = userId;
-			this._client = new HttpClient();
+			this._client = new HttpClient();			
 		}
 		
 		public function set userId(userId:String):void{
 			this._userId = userId;
+		}		
+		
+		/**
+		 * 判断当前提交是否完成
+		 */ 
+		public function isRunning():Boolean{
+			return _isRuning;
 		}
 		
-		public function cancel():void{
-			if(_client) _client.cancel();
+		public function disconnect():void{
+			_client.close();
 		}
 		
 		/**
@@ -70,7 +80,10 @@ package com.pintu.http
 			_client.listener.onComplete = function(event:HttpResponseEvent):void {
 				// Notified when complete (after status and data)
 				var response:String = event.response.message;
-//				Logger.debug("Method: "+method+" , response: "+response);				
+//				Logger.debug("Method: "+method+" , response: "+response);	
+				dispatchEvent(new Event("complete"));
+				//提交结束
+				_isRuning = false;
 			};
 			
 			_client.listener.onError = function(event:ErrorEvent):void {
@@ -78,10 +91,14 @@ package com.pintu.http
 //				Logger.error("Method: "+method+" , error: "+errorMessage);
 				var errorEvent:PTErrorEvent = new PTErrorEvent(method,errorMessage);
 				dispatchEvent(errorEvent);
+				//提交结束
+				_isRuning = false;
 			};  					
 			
+			//提交
 			_client.postFormData(uri, params);	
-						
+			//正在运行
+			_isRuning = true;
 		}
 		
 		/**		 
@@ -126,6 +143,8 @@ package com.pintu.http
 //				Logger.debug("Method: upload , response: "+response);
 				var completeEvent:ResponseEvent = new ResponseEvent("upload",response);
 				dispatchEvent(completeEvent);
+				//提交结束
+				_isRuning = false;
 			};
 			
 			_client.listener.onError = function(event:ErrorEvent):void {
@@ -133,10 +152,13 @@ package com.pintu.http
 //				Logger.error("Method: upload, error: "+errorMessage);
 				var errorEvent:PTErrorEvent = new PTErrorEvent("upload",errorMessage);
 				dispatchEvent(errorEvent);
+				//提交结束
+				_isRuning = false;
 			}; 
 			
 			_client.postMultipart(new URI(_serviceUrl), new Multipart(parts));
-			
+			//正在运行
+			_isRuning = true;
 		}
 		
 		
