@@ -28,23 +28,9 @@ package com.pintu.modules
 			super();
 			this._model = model;
 			
-//			Logger.debug("Create UnloggedPage once...");
-				
-			mainToolBar = new MainToolBar(false);
-			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
-			mainToolBar.addEventListener(PintuEvent.RANDOM_GALLERY, randomGallery);
-			//将来还要加搜索监听
-			//TODO, ADD BUTTON EVENT LISTENER...
-			
-			this.addChild(mainToolBar);
-			
-			categoryTree = new CategoryTree(_model);
-			categoryTree.addEventListener(PintuEvent.BROWSE_CHANGED,changeBrowseType);			
-			this.addChild(categoryTree);
-			
 			mainDisplayArea = new MainDisplayArea(_model);
 			//未登录，默认画廊
-			mainDisplayArea.browseType = categoryTree.browseType;			
+			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;	
 			this.addChild(mainDisplayArea);
 			
 			slideToolBar = new SlideToolBar();
@@ -64,13 +50,11 @@ package com.pintu.modules
 		}
 
 		private function refreshGallery(evt:PintuEvent):void{
-			mainDisplayArea.browseType = categoryTree.browseType;
+//			mainDisplayArea.browseType = categoryTree.browseType;
 		}
-		private function randomGallery(evt:PintuEvent):void{
-			//选中画廊模式节点
-			categoryTree.browseType = CategoryTree.CATEGORY_GALLERY_TBMODE;
+		private function randomGallery(evt:PintuEvent):void{			
 			//告诉显示区，按照随机模式查询
-			mainDisplayArea.browseType = CategoryTree.CATEGORY_RANDOM_TBMODE;
+			mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;
 		}
 		
 		//重写销毁函数

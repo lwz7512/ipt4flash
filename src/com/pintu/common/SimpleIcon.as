@@ -20,22 +20,29 @@ package com.pintu.common
 		
 		private var _showUpSkin:Boolean = false;
 		
-		private var _iconWidth:Number = 30;
-		//为了跟搜索框底部对齐，高度稍微大点
-		private var _iconHeight:Number = 31;
+		private var _iconWidth:Number = 24;		
+		private var _iconHeight:Number = 24;
 		
 		private var _mouseOn:Boolean = false;
 		
 		public function SimpleIcon(path:String){			
-			super(path);
-			
-			drawBackground();
+			super(path);					
 			
 			this.addEventListener(MouseEvent.MOUSE_OVER,drawOverSkin);
 			this.addEventListener(MouseEvent.MOUSE_OUT,drawOutSkin);
 			this.addEventListener(MouseEvent.MOUSE_DOWN,drawDownSkin);
 			this.addEventListener(MouseEvent.MOUSE_UP,drawUpSkin);
-		}		
+			
+			this._imgLoader.addEventListener(LoadEvent.COMPLETE, resizeBG);
+		}
+		
+		private function resizeBG(e:LoadEvent):void{
+			var _bitmap:Bitmap = this._imgLoader.contentAsBitmap;
+			_iconWidth = _bitmap.width;
+			_iconHeight = _bitmap.height;
+			
+			drawBackground();
+		}
 		
 		public function set showUpSkin(v:Boolean):void{
 			_showUpSkin = v;
@@ -57,6 +64,8 @@ package com.pintu.common
 			_mouseOn = true;
 			
 			this.graphics.clear();
+			//墨灰：即黑灰
+			this.graphics.lineStyle(1,0x758a99);
 			//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白。
 			this.graphics.beginFill(0xc2ccd0);
 			this.graphics.drawRect(0,0,_iconWidth,_iconHeight);
@@ -68,6 +77,8 @@ package com.pintu.common
 		}
 		private function drawDownSkin(event:MouseEvent):void{
 			this.graphics.clear();
+			//墨灰：即黑灰
+			this.graphics.lineStyle(1,0x758a99);
 			this.graphics.beginFill(0xc2ccd0);
 			this.graphics.drawRect(0,0,_iconWidth,_iconHeight);
 			this.graphics.endFill();

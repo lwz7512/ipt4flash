@@ -82,7 +82,7 @@ package com.pintu.config
 		//xx xx xx xx or xxx xxx xxx, so total is 12;
 		public static const TEXTINPUT_MAXCHARS:int = 12;
 		
-		public static const SEARCHINPUT_FONTSIZE:int = 18;
+		public static const SEARCHINPUT_FONTSIZE:int = 14;
 		public static const TEXTINPUT_FONTSIZE:int = 14;
 		//黯：深黑色、泛指黑色
 		public static const DEFAULT_TEXT_COLOR:uint = 0x41555D;		

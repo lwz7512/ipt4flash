@@ -18,7 +18,7 @@ package com.pintu.modules{
 		private var _model:IPintu;
 		private var _fileManager:FileManager;
 		
-		private var mainToolBar:MainToolBar;		
+		
 		private var categoryTree:CategoryTree;		
 		private var mainDisplayArea:MainDisplayArea;
 		private var slideToolBar:SlideToolBar;
@@ -36,22 +36,19 @@ package com.pintu.modules{
 			//PicDetailView派发的保存事件
 			this.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);			
 			
-			mainToolBar = new MainToolBar(true);
-			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
-			mainToolBar.addEventListener(PintuEvent.RANDOM_GALLERY, randomGallery);
-			mainToolBar.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);
-			//将来还要加搜索监听
-			//TODO, ADD BUTTON EVENT LISTENER...
+//			mainToolBar = new MainToolBar(true);
+//			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
+//			mainToolBar.addEventListener(PintuEvent.RANDOM_GALLERY, randomGallery);
+//			mainToolBar.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);		
+//			this.addChild(mainToolBar);
+//			categoryTree = new CategoryTree(_model);
+//			categoryTree.addEventListener(PintuEvent.BROWSE_CHANGED,changeBrowseType);			
+//			this.addChild(categoryTree);									
 			
-			this.addChild(mainToolBar);
-			
-			categoryTree = new CategoryTree(_model);
-			categoryTree.addEventListener(PintuEvent.BROWSE_CHANGED,changeBrowseType);			
-			this.addChild(categoryTree);
 			
 			mainDisplayArea = new MainDisplayArea(_model);
-			//未登录，默认画廊
-			mainDisplayArea.browseType = categoryTree.browseType;			
+			//默认缩略图模式画廊
+			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;			
 			this.addChild(mainDisplayArea);
 			
 			slideToolBar = new SlideToolBar();
@@ -79,12 +76,10 @@ package com.pintu.modules{
 		}
 		
 		private function refreshGallery(evt:PintuEvent):void{
-			mainDisplayArea.browseType = categoryTree.browseType;
+//			mainDisplayArea.browseType = categoryTree.browseType;
 		}
 		
-		private function randomGallery(evt:PintuEvent):void{
-			//选中画廊模式节点
-			categoryTree.browseType = CategoryTree.CATEGORY_GALLERY_TBMODE;
+		private function randomGallery(evt:PintuEvent):void{			
 			//告诉显示区，按照随机模式查询
 			mainDisplayArea.browseType = CategoryTree.CATEGORY_RANDOM_TBMODE;
 		}

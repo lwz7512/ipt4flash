@@ -94,8 +94,7 @@ package com.pintu.controller{
 		private function saveTransitionState(next:CasaSprite):void{
 			//记下当前模块
 			_currentModule = next;
-			//置顶显示
-			_canvas.setChildIndex(_currentModule,_canvas.numChildren-1);
+			
 			//销毁前一个模块，销毁自己的事件监听和子对象
 			//并将自己从显示列表中移除
 			//这些模块都是IDestroyableModule

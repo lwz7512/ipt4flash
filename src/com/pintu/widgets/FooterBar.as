@@ -1,7 +1,8 @@
 package com.pintu.widgets
 {
 	
-	import com.pintu.config.InitParams;
+	import com.pintu.common.SimpleText;
+	import com.pintu.config.*;
 	import com.pintu.config.StyleParams;
 	
 	import flash.display.Sprite;
@@ -16,12 +17,7 @@ package com.pintu.widgets
 		
 		private function drawBackground():void{
 			var footerX:Number = InitParams.startDrawingX();
-			var footerY:Number = InitParams.HEADER_HEIGHT												
-												+InitParams.TOP_BOTTOM_GAP
-												+InitParams.MAINMENUBAR_HEIGHT
-												+InitParams.DEFAULT_GAP
-												+InitParams.LEFTCOLUMN_HEIGHT
-												+InitParams.DEFAULT_GAP;
+			var footerY:Number =0;
 			//如果舞台大小大于默认应用大小，就贴到底部绘制
 			var isSnapBottom:Boolean = InitParams.MINAPP_HEIGHT<InitParams.appHeight?false:true;
 			if(!isSnapBottom){
@@ -36,6 +32,12 @@ package com.pintu.widgets
 		
 		//TODO, create text menu...
 		private function createTextMenus():void{
+			
+			var copyRight:SimpleText = new SimpleText("北京远博畅享科技有限公司版权所有",StyleParams.HEADERBAR_BOTTOM_LIGHTGREEN);
+			copyRight.width = 300;
+			copyRight.x = InitParams.startDrawingX()+InitParams.MINAPP_WIDTH-200;
+			copyRight.y = InitParams.appHeight - InitParams.FOOTER_HEIGHT+4;
+			this.addChild(copyRight);
 			
 		}
 		

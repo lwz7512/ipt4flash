@@ -44,11 +44,11 @@ package com.pintu.widgets
 		private var searchInput:TextInput;
 		private var searchIcon:SimpleIcon;
 		private var loading:BusyIndicator;
+		private var searchIconPath:String = "assets/system_search.png";
 		
 		private var postPicPath:String = "assets/post_pic.png";
 		private var refreshPath:String = "assets/refresh.png";
 		private var bigPicPath:String = "assets/bigpic_mode.png";
-		private var searchIconPath:String = "assets/system_search.png";
 		private var randomViewPath:String = "assets/randomview.png";
 		
 		//图片展示模式

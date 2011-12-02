@@ -77,7 +77,8 @@ package com.pintu.widgets{
 		
 		
 		public function MainDisplayArea(model:IPintu){
-			super();					
+			super();	
+			//先确定绘图起始位置
 			initDrawPoint();
 			
 			Logger.debug("Create MainDisplayArea once...");
@@ -88,6 +89,7 @@ package com.pintu.widgets{
 			
 			//画廊内容生成工具
 			this._picBuilder = new PicDOBuilder(_picsContainer,_model);
+			//图片工厂要知道放置起始位置
 			this._picBuilder.drawStartX = drawStartX;
 			this._picBuilder.drawStartY = drawStartY;
 			//为了让他可以调用以展示进度条和提示
@@ -189,7 +191,10 @@ package com.pintu.widgets{
 		}
 		
 		//根据_displayMode和_browseType来查看图片
-		private function queryPicByType():void{				
+		private function queryPicByType():void{
+			
+			//FIXME, TEMP STOP QUERY...
+			return;
 			
 			//定时器运行期间或者正在查询期间，不能重新查询
 			if(queryAvailableTimer.running || isRunning){
@@ -341,7 +346,7 @@ package com.pintu.widgets{
 		
 		private function drawMainDisplayBackground():void{						
 			this.graphics.clear();
-			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
+//			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
 			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR);
 			this.graphics.drawRect(drawStartX,drawStartY,displayAreaWidth,displayAreaHeight);
 			this.graphics.endFill();
@@ -363,13 +368,8 @@ package com.pintu.widgets{
 		}
 		
 		private function initDrawPoint():void{
-			drawStartX = InitParams.startDrawingX()
-				+InitParams.LEFTCOLUMN_WIDTH
-				+InitParams.DEFAULT_GAP;
-			drawStartY = InitParams.HEADER_HEIGHT
-				+InitParams.TOP_BOTTOM_GAP
-				+InitParams.MAINMENUBAR_HEIGHT
-				+InitParams.DEFAULT_GAP;
+			drawStartX = InitParams.startDrawingX();				
+			drawStartY = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;
 			//默认高度，也是最小高度
 			displayAreaHeight = InitParams.CALLERY_HEIGHT;
 			if(InitParams.isStretchHeight()){

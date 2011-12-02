@@ -94,8 +94,9 @@ package{
 				navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
 				navigator.switchTo(GlobalNavigator.UNLOGGED);		
-			}	
-					
+			}				
+			
+			moveHeaderBarTop();
 		}		
 		
 		//运行时切换模块状态，比如从未登录到登陆
@@ -112,9 +113,10 @@ package{
 				GlobalController.clearUser();
 			}
 			
-			//开始切换状态
+			//开始切换模块
 			navigator.switchTo(event.data);
 
+			moveHeaderBarTop();
 		}		
 		
 		
@@ -129,7 +131,12 @@ package{
 			this.addChild(footer);
 		}
 		
-
+		/**
+		 * 主菜单置顶，好让它盖住下面的子菜单，这样子菜单可以在画廊上面显示
+		 */ 
+		private function moveHeaderBarTop():void{
+			this.setChildIndex(header, this.numChildren-1);
+		}
 		
 	} //end of class
 }

@@ -19,7 +19,7 @@ package com.pintu.config
 		
 		//Header footer height
 		public static const HEADER_HEIGHT:Number = 32;
-		public static const FOOTER_HEIGHT:Number = 26;
+		public static const FOOTER_HEIGHT:Number = 24;
 		//Header menu background width
 		public static const HEADERMENU_BG_WIDTH:Number = 60;
 		
@@ -28,13 +28,13 @@ package com.pintu.config
 		//Main menu bar width
 		public static const MAINMENUBAR_WIDTH:Number = 772;
 		//search input width
-		public static const SEARCH_INPUT_WIDTH:Number = 240;
+		public static const SEARCH_INPUT_WIDTH:Number = 200;
 		
 		//树组件条目高度
 		public static const TREEITEM_HEIGHT:int = 26;
 		
 		//Gallery display section width
-		public static const GALLERY_WIDTH:Number = 597;
+		public static const GALLERY_WIDTH:Number =  772;
 		//Gallery display section height
 		public static const CALLERY_HEIGHT:Number = 478;
 		

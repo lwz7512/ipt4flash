@@ -14,17 +14,18 @@ package com.pintu.api{
 	public class ModelBase extends EventDispatcher{
 		
 		protected var client:SimpleHttpClient;		
-		protected  var _currentUser:String;
 		
-		private var debugService:String = "http://localhost:8080/ipintu/pintuapi";
-		private var remoteService:String = "http://ipintu.com/ipintu/pintuapi";		
+		private  var _currentUser:String;		
 		private var taskQueue:ArrayList;
 		private var taskTimer:Timer;
 				
+		private var debugService:String = "http://localhost:8080/ipintu/pintuapi";
+		private var remoteService:String = "http://ipintu.com/ipintu/pintuapi";		
 		
 		
 		public function ModelBase(userId:String){
 			_currentUser = userId;
+			
 			client = new SimpleHttpClient(getServiceUrl(),userId);
 			//执行一个，清除一个
 			client.addEventListener("complete",clearHeaderTask);
@@ -33,8 +34,7 @@ package com.pintu.api{
 			//慎用啊，销毁时一定要停掉
 			taskTimer = new Timer(10);
 			taskTimer.addEventListener(TimerEvent.TIMER, excuteTaskQueue);
-			taskTimer.start();
-			
+			taskTimer.start();			
 			
 		}
 		
@@ -76,6 +76,8 @@ package com.pintu.api{
 		}		
 		/**
 		 * 定时查看队列，并执行第一个任务
+		 * 只有在：队列不为空，而且客户端空闲时执行查询
+		 * 这样保证只有一个客户端只有一个HTTP链接
 		 */ 
 		private function excuteTaskQueue(evt:TimerEvent):void{
 			if(taskQueue.size>0 && !client.isRunning()){

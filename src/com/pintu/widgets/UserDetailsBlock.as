@@ -42,7 +42,7 @@ package com.pintu.widgets{
 		
 		private function queryUserInfo(evt:Event):void{
 			//获取个人信息			
-			_model.getUserDetail(PintuImpl(_model).currentUser);
+//			_model.getUserDetail(PintuImpl(_model).currentUser);
 		}
 		
 		private function userDetailHandler(evt:Event):void{	
