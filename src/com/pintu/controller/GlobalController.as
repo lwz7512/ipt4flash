@@ -93,6 +93,10 @@ package com.pintu.controller{
 			return true;
 		}
 		
+		public static function get usePaperTile():Boolean{
+			return true;
+		}
+		
 		public function GlobalController()
 		{
 		}

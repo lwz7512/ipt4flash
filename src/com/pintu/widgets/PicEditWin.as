@@ -78,7 +78,7 @@ package com.pintu.widgets{
 			//本窗口自主管理遮罩层：
 			//稍后创建全局遮罩层
 			this.addEventListener(Event.ADDED_TO_STAGE,createModalLayer);
-			//隐藏时自动消耗	
+			//隐藏时自动销毁	
 			this.addEventListener(Event.REMOVED_FROM_STAGE, removeModalLayer);
 		}
 		

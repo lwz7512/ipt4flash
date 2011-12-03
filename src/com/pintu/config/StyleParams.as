@@ -93,5 +93,12 @@ package com.pintu.config
 		//标准红色，大红：正红色，三原色中的红，传统的中国红，又称绛色
 		public static const DEFAULT_ERROR_RED:uint = 0xFF2121;
 		
+		//子菜单颜色：
+		//普通颜色，花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
+		public static const SUBMENU_UPCOLOR:uint = 0xC2CCD0;
+		//高亮颜色，豆绿：浅黄绿色
+		public static const SUBMENU_HLCOLOR:uint = 0x9ED048;
+		
+		
 	} //end of color
 }

@@ -46,7 +46,7 @@ package com.pintu.controller
 		//缩略图大小
 		private var _thumbnailSize:int = 100;
 		//MINI画廊列数
-		private var _miniGalleryColumnNum:int = 5;
+		private var _miniGalleryColumnNum:int = 7;
 		//画廊边距
 		private var _margin:int = 10;		
 		
@@ -116,8 +116,7 @@ package com.pintu.controller
 			
 			//画廊没新图片
 			if(thumnails.length==0){
-				_owner.hintToUser("没有最新的图片，不然随便看看？");
-				_owner.hideMiddleLoading();
+				_owner.hintToUser("没有最新的图片，不然随便看看？");				
 				return;
 			}
 			
@@ -142,12 +141,13 @@ package com.pintu.controller
 				_miniGalleryColumnNum*_thumbnailSize-2*_margin)/(_miniGalleryColumnNum-1);						
 			
 			var grid:HLayout = new HLayout();
-			//每行最多放5个
+			//每行最多放7个
 			grid.maxItemsPerRow = _miniGalleryColumnNum;
 			grid.minWidth = InitParams.GALLERY_WIDTH;
 			grid.minHeight = rowNum*(_thumbnailSize+columnGap);
 			var xOffset:Number = _margin;
 			var yOffset:Number = _margin;	
+			//指定画廊起始位置
 			grid.marginX = _drawStartX +xOffset;
 			grid.marginY = _drawStartY +yOffset;			
 			grid.vGap = columnGap;

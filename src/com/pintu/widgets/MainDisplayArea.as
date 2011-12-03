@@ -191,10 +191,7 @@ package com.pintu.widgets{
 		}
 		
 		//根据_displayMode和_browseType来查看图片
-		private function queryPicByType():void{
-			
-			//FIXME, TEMP STOP QUERY...
-			return;
+		private function queryPicByType():void{			
 			
 			//定时器运行期间或者正在查询期间，不能重新查询
 			if(queryAvailableTimer.running || isRunning){

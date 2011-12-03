@@ -1,5 +1,6 @@
 package com.pintu.common{
 	
+	import com.pintu.config.StyleParams;
 	
 	import flash.display.GradientType;
 	import flash.display.Sprite;
@@ -10,7 +11,7 @@ package com.pintu.common{
 	
 	/**
 	 * 一个带背景渐变色和图标的菜单项
-	 * 输着放形成一组
+	 * 竖着放形成一组
 	 */ 
 	public class IconMenuItem extends CasaSprite{
 		
@@ -18,11 +19,11 @@ package com.pintu.common{
 		private var _menuText:String = "子菜单...";
 		private var _defaultWidth:int = 100;
 		private var _defaultHeight:int = 28;
-		//深绿
-		private var _firstBGColor:uint = 0xC2CCD0;
+		
+		private var _firstBGColor:uint = StyleParams.SUBMENU_UPCOLOR;
+		private var _hiliBGColor:uint = StyleParams.SUBMENU_HLCOLOR;
 		private var _secdBGColor:uint = 0xFFFFFF;
-		//浅绿
-		private var _hiliBGColor:uint = 0x9ED048;
+		
 		
 		public function IconMenuItem(text:String, icon:String=null){
 			if(icon) _iconPath = icon;

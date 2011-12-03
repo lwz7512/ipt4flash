@@ -1,6 +1,9 @@
 package com.pintu.widgets{
 	
 	import com.greensock.TweenLite;
+	import com.pintu.common.IconMenuItem;
+	import com.pintu.config.InitParams;
+	import com.pintu.events.PintuEvent;
 	
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -8,7 +11,6 @@ package com.pintu.widgets{
 	
 	import org.casalib.display.CasaShape;
 	import org.casalib.display.CasaSprite;
-	import com.pintu.common.IconMenuItem;
 	
 	public class BrowseMode extends CasaSprite{
 		
@@ -56,42 +58,50 @@ package com.pintu.widgets{
 		private var mouseInOwner:Boolean = false;		
 		//鼠标在当前子菜单上吗
 		private var isMouseOn:Boolean = false;
+		//点击子菜单项，强迫收回
+		private var forceCloseFlag:Boolean = false;
 		
 		private var frameCounter:int;
 		private var idleDurationFrames:int = 24;
 		
 		public function BrowseMode(){
 			
-			//加个阴影是不是好看点
+			//阴影层放在最底下
 			var shadowLayer:CasaShape = new CasaShape();
 			shadowLayer.graphics.lineStyle(1,0xC2CCD0, 1);
 			shadowLayer.graphics.drawRect(0,0,menuGroupWidth,menuItemHeight*6);
-			this.addChild(shadowLayer);
-			
+			this.addChild(shadowLayer);	
+			//加个阴影是不是好看点
 			var shadow:DropShadowFilter = new DropShadowFilter(2,45,0x999999,0.6);
 			shadowLayer.filters = [shadow];
 			
 			thumbnailMenu = new IconMenuItem("缩略图");
+			thumbnailMenu.addEventListener(MouseEvent.CLICK, thumbnailClickHandler);
 			this.addChild(thumbnailMenu);
 			
 			bigPicListMenu = new IconMenuItem("大图列表");
 			bigPicListMenu.y = menuItemHeight;
+			bigPicListMenu.addEventListener(MouseEvent.CLICK, bigPicListClickHandler);
 			this.addChild(bigPicListMenu);
 			
 			hotPicsMenu = new IconMenuItem("热点图片");
 			hotPicsMenu.y = 2*menuItemHeight;
+			hotPicsMenu.addEventListener(MouseEvent.CLICK, hotPicsClickHandler);
 			this.addChild(hotPicsMenu);
 			
 			classicalMenu = new IconMenuItem("经典图片");
 			classicalMenu.y = 3*menuItemHeight;
+			classicalMenu.addEventListener(MouseEvent.CLICK, classicalClickHandler);
 			this.addChild(classicalMenu);
 			
 			favoredMenu = new IconMenuItem("最近收藏");
 			favoredMenu.y = 4*menuItemHeight;
+			favoredMenu.addEventListener(MouseEvent.CLICK, favoredClickHandler);
 			this.addChild(favoredMenu);
 			
 			randomMenu = new IconMenuItem("随便看看");
 			randomMenu.y = 5*menuItemHeight;
+			randomMenu.addEventListener(MouseEvent.CLICK, randomClickHandler);
 			this.addChild(randomMenu);
 			
 			//监听鼠标动作
@@ -104,11 +114,62 @@ package com.pintu.widgets{
 									
 		}
 		
+		private function thumbnailClickHandler(evt:MouseEvent):void{
+			//通知菜单收回
+			forceCloseFlag = true;
+			
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, CATEGORY_GALLERY_TBMODE);			
+			this.dispatchEvent(typeChangeEvent);
+		}
+		private function bigPicListClickHandler(evt:MouseEvent):void{
+			//通知菜单收回
+			forceCloseFlag = true;
+			
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, CATEGORY_GALLERY_BPMODE);			
+			this.dispatchEvent(typeChangeEvent);
+		}
+		private function hotPicsClickHandler(evt:MouseEvent):void{
+			//通知菜单收回
+			forceCloseFlag = true;
+			
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, CATEGORY_HOT);			
+			this.dispatchEvent(typeChangeEvent);
+		}
+		private function classicalClickHandler(evt:MouseEvent):void{
+			//通知菜单收回
+			forceCloseFlag = true;
+			
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, CATEGORY_CLASSICAL);			
+			this.dispatchEvent(typeChangeEvent);
+		}
+		private function favoredClickHandler(evt:MouseEvent):void{
+			//通知菜单收回
+			forceCloseFlag = true;
+			
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, CATEGORY_FAVORED);			
+			this.dispatchEvent(typeChangeEvent);
+		}
+		private function randomClickHandler(evt:MouseEvent):void{
+			//通知菜单收回
+			forceCloseFlag = true;
+			
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, CATEGORY_RANDOM_TBMODE);			
+			this.dispatchEvent(typeChangeEvent);
+		}
+		
 		//0.3秒内滑出
 		public function goDown():void{
 			this.addEventListener(Event.ENTER_FRAME, idleCheckToClose);
 			//滑到工具栏以下
-			TweenLite.to(this, 0.3, {y : 32});
+			var targetY:int = InitParams.HEADER_HEIGHT+2;
+			TweenLite.to(this, 0.3, {y : targetY});
+			//这时鼠标还在主菜单上
 			mouseInOwner = true;
 		}
 		
@@ -116,16 +177,14 @@ package com.pintu.widgets{
 			super.x = v;
 			//只初始化一次
 			if(!_initX) {
-				_initX = v;
-				trace("sub menu initX: "+_initX);
+				_initX = v;				
 			}
 		}
 		override public function set y(v:Number):void{
 			super.y = v;
 			//只初始化一次
 			if(!_initY) {
-				_initY = v;
-				trace("sub menu initY: "+_initY);
+				_initY = v;				
 			}			
 		}
 		
@@ -137,18 +196,26 @@ package com.pintu.widgets{
 		private function goBack():void{
 			this.removeEventListener(Event.ENTER_FRAME, idleCheckToClose);			
 			//回去初始位置
-			TweenLite.to(this, 0.3, {y : _initY});
+			TweenLite.to(this, 0.1, {y : _initY});
+			//这时鼠标肯定不在主菜单上了
 			mouseInOwner = false;
+			//恢复初始状态开关
+			frameCounter = 0;
+			forceCloseFlag = false;
 		}
 		
 		//如果24帧内，即0.6秒内鼠标还没落在菜单上，菜单自动收回
 		//也发生在鼠标离开后0.5秒，菜单自动收回
 		//如果鼠标还在父菜单上，不收回
 		public function idleCheckToClose(evt:Event):void{
+			if(forceCloseFlag){
+				goBack();
+				return;
+			}			
+			//离开菜单的空闲检测
 			frameCounter++;			
 			if(frameCounter>idleDurationFrames && !isMouseOn && !mouseInOwner){				
-				goBack();
-				frameCounter = 0;
+				goBack();				
 			}
 		}
 		

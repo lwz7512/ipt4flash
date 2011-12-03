@@ -12,7 +12,7 @@ package com.pintu.events
 		public static const SEARCH_BYTAGS:String = "searchByTags";
 		
 		public static const REFRESH_GALLERY:String = "refreshGallery";
-		public static const RANDOM_GALLERY:String = "randomGallery";
+		
 		public static const UPLOAD_IMAGE:String = "uploadImage";
 		public static const DNLOAD_IMAGE:String = "dnloadImage";
 		

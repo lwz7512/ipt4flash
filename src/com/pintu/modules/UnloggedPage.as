@@ -13,7 +13,7 @@ package com.pintu.modules
 	/**
 	 * 只负责初始化对象，以及对象间交互
 	 */
-	public class UnloggedPage extends CasaSprite implements IDestroyableModule{
+	public class UnloggedPage extends CasaSprite implements IDestroyableModule, IMenuClickResponder{
 		
 		private var _model:IPintu;
 		private var mainToolBar:MainToolBar;
@@ -55,6 +55,13 @@ package com.pintu.modules
 		private function randomGallery(evt:PintuEvent):void{			
 			//告诉显示区，按照随机模式查询
 			mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;
+		}
+		
+		
+		
+		
+		public function menuHandler(operation:String, extra:String):void{
+			
 		}
 		
 		//重写销毁函数

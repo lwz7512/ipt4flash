@@ -9,17 +9,23 @@ package{
 	import com.pintu.config.InitParams;
 	import com.pintu.controller.*;
 	import com.pintu.events.PintuEvent;
+	import com.pintu.modules.IDestroyableModule;
+	import com.pintu.modules.IMenuClickResponder;
 	import com.pintu.utils.Logger;
 	import com.pintu.widgets.FooterBar;
 	import com.pintu.widgets.HeaderBar;
 	
+	import flash.display.BitmapData;
 	import flash.display.Sprite;
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
+	import flash.geom.Matrix;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	
+	import org.casalib.events.LoadEvent;
+	import org.casalib.load.ImageLoad;
 	import org.casalib.util.ColorUtil;
 	import org.libspark.ui.SWFWheel;
 		
@@ -29,14 +35,17 @@ package{
 		private var delayIntervalID:int;
 		
 		private var model:IPintu;
-		
-		private var _isLogged:Boolean = false;
+				
 		private var navigator:GlobalNavigator;
 		private var factory:ModuleFactory;
 		
 		private var header:HeaderBar;
 		private var footer:FooterBar;
 		private var currentModule:Sprite;
+		
+		private var tileImagePath:String = "assets/paper103.png";
+		
+		private var _currentModule:IMenuClickResponder;
 		
 //		[Frame(factoryClass="Preloader")]
 		public function Main(){
@@ -66,7 +75,7 @@ package{
 				return;
 			}	
 			
-			//主应用只监听来自headerbar和loginBlock的导航事件
+			//主应用只监听来自headerbar退出和loginBlock的登录引起的导航事件
 			//其他系统事件一概不予处理，放在各自的模块中处理
 			//2011/11/26
 			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
@@ -78,24 +87,28 @@ package{
 			//初始化客户端缓存对象
 			GlobalController.initClientStorage(this);
 			//这时该知道是否已经登录过了没
-			_isLogged = GlobalController.isLogged;
+			var isLogged:Boolean = GlobalController.isLogged;
 			
 			var currentUser:String = GlobalController.loggedUser;
 			model = new PintuImpl(currentUser);
 			factory = new ModuleFactory(this,model);
-			navigator = new GlobalNavigator(this,factory);					
+			navigator = new GlobalNavigator(this,factory);	
+			
+			//画纹理背景
+			var usePaperBG:Boolean = GlobalController.usePaperTile;
+			if(usePaperBG) drawPaperBackground();
 			
 			//全局模块固定不变
-			buildHeaderMenu(_isLogged);			
+			buildHeaderMenu(isLogged);			
 			buildFooterContent();			
 								
 			//display home page
-			if(_isLogged){
-				navigator.switchTo(GlobalNavigator.HOMPAGE);				
+			if(isLogged){
+				_currentModule = navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
-				navigator.switchTo(GlobalNavigator.UNLOGGED);		
+				_currentModule = navigator.switchTo(GlobalNavigator.UNLOGGED);		
 			}				
-			
+			//主菜单栏再顶部，好让菜单浮在画廊上面
 			moveHeaderBarTop();
 		}		
 		
@@ -114,7 +127,7 @@ package{
 			}
 			
 			//开始切换模块
-			navigator.switchTo(event.data);
+			_currentModule = navigator.switchTo(event.data);
 
 			moveHeaderBarTop();
 		}		
@@ -122,7 +135,12 @@ package{
 		
 		private function buildHeaderMenu(isLogged:Boolean):void{
 			header = new HeaderBar(isLogged);
+			header.addEventListener(PintuEvent.BROWSE_CHANGED, browseTypeChanged);
 			this.addChild(header);			
+		}
+		
+		private function browseTypeChanged(evt:PintuEvent):void{
+			_currentModule.menuHandler(PintuEvent.BROWSE_CHANGED, evt.data);
 		}
 		
 		
@@ -137,6 +155,20 @@ package{
 		private function moveHeaderBarTop():void{
 			this.setChildIndex(header, this.numChildren-1);
 		}
+		
+		private function drawPaperBackground():void{
+			var canvas:Sprite = this;
+			var imgloader:ImageLoad = new ImageLoad(tileImagePath);
+			imgloader.addEventListener(LoadEvent.COMPLETE,function():void{
+				var bmdata:BitmapData = imgloader.contentAsBitmapData;
+				canvas.graphics.beginBitmapFill(bmdata);
+				canvas.graphics.drawRect(0,0,InitParams.appWidth,InitParams.appHeight);
+				canvas.graphics.endFill();
+			});
+			imgloader.start();
+		}
+		
+		
 		
 	} //end of class
 }

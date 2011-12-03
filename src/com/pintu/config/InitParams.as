@@ -18,9 +18,10 @@ package com.pintu.config
 		public static const DEFAULT_GAP:Number = 4;
 		
 		//Header footer height
-		public static const HEADER_HEIGHT:Number = 32;
+		public static const HEADER_HEIGHT:Number = 36;
 		public static const FOOTER_HEIGHT:Number = 24;
-		//Header menu background width
+		
+		//这个也是默认的主菜单宽度
 		public static const HEADERMENU_BG_WIDTH:Number = 60;
 		
 		//Main menu bar height

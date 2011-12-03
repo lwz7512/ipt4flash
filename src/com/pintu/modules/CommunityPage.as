@@ -6,7 +6,7 @@ package com.pintu.modules
 	
 	import org.casalib.display.CasaSprite;
 	
-	public class CommunityPage extends CasaSprite implements IDestroyableModule{
+	public class CommunityPage extends CasaSprite implements IDestroyableModule, IMenuClickResponder{
 		
 		private var _model:IPintu;
 		

@@ -5,6 +5,7 @@ package com.pintu.controller{
 	import com.pintu.api.IPintu;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.modules.IDestroyableModule;
+	import com.pintu.modules.IMenuClickResponder;
 	
 	import flash.display.Sprite;
 	
@@ -35,20 +36,26 @@ package com.pintu.controller{
 		}
 
 		
-		public function switchTo(module:String):void{
+		public function switchTo(module:String):IMenuClickResponder{
+			
+			var nextModule:IMenuClickResponder;
+			
 			//我擦，这里竟然写错了
 			//创建两次模块
 			//2011/11/24
-			if(_moduleName==module) return;
+			if(_moduleName==module) return null;
+			
 			
 			switch(module){
 				case HOMPAGE:
 					var homePage:CasaSprite = _factory.createModuleByName(HOMPAGE);
+					nextModule = IMenuClickResponder(homePage);
 					transition(_currentModule,homePage);
 					break;
 				
 				case 	UNLOGGED:
 					var unlogged:CasaSprite = _factory.createModuleByName(UNLOGGED);
+					nextModule = IMenuClickResponder(unlogged);
 					transition(_currentModule,unlogged);
 					break;
 				
@@ -58,6 +65,8 @@ package com.pintu.controller{
 			
 			//保存新建模块名称
 			_moduleName = module;
+			
+			return nextModule;
 		}
 		
 		

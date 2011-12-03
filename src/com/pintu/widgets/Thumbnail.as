@@ -104,8 +104,8 @@ package com.pintu.widgets{
 		}
 		
 		private function drawBackground():void{
-			//葱绿：1、浅绿又略显微黄的颜色；2、草木青翠的样子。
-			this.graphics.lineStyle(1,0x9ED900);
+			//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
+			this.graphics.lineStyle(1,0xC2CCD0);
 			this.graphics.beginFill(0xFFFFFF);
 			this.graphics.drawRoundRect(0,0,100,100,_roundRadius,_roundRadius);
 			this.graphics.endFill();

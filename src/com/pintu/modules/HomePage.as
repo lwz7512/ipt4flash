@@ -13,7 +13,7 @@ package com.pintu.modules{
 	import org.casalib.display.CasaSprite;	
 	
 	
-	public class HomePage extends CasaSprite implements IDestroyableModule{		
+	public class HomePage extends CasaSprite implements IDestroyableModule, IMenuClickResponder{		
 		
 		private var _model:IPintu;
 		private var _fileManager:FileManager;
@@ -33,17 +33,11 @@ package com.pintu.modules{
 			super();
 			this._model = model;	
 			this._fileManager = new FileManager(_model);
-			//PicDetailView派发的保存事件
-			this.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);			
 			
-//			mainToolBar = new MainToolBar(true);
-//			mainToolBar.addEventListener(PintuEvent.REFRESH_GALLERY, refreshGallery);
-//			mainToolBar.addEventListener(PintuEvent.RANDOM_GALLERY, randomGallery);
-//			mainToolBar.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);		
-//			this.addChild(mainToolBar);
-//			categoryTree = new CategoryTree(_model);
-//			categoryTree.addEventListener(PintuEvent.BROWSE_CHANGED,changeBrowseType);			
-//			this.addChild(categoryTree);									
+			//PicDetailView派发的保存事件
+			this.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);				
+			//用户工具栏派发的事件
+			this.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);						
 			
 			
 			mainDisplayArea = new MainDisplayArea(_model);
@@ -70,20 +64,6 @@ package com.pintu.modules{
 		}
 		
 		
-		private function changeBrowseType(event:PintuEvent):void{
-			var type:String = event.data;
-			mainDisplayArea.browseType = type;		
-		}
-		
-		private function refreshGallery(evt:PintuEvent):void{
-//			mainDisplayArea.browseType = categoryTree.browseType;
-		}
-		
-		private function randomGallery(evt:PintuEvent):void{			
-			//告诉显示区，按照随机模式查询
-			mainDisplayArea.browseType = CategoryTree.CATEGORY_RANDOM_TBMODE;
-		}
-		
 		private function editPic(evt:PintuEvent):void{
 			if(!picEditWin){
 				picEditWin = new PicEditWin(this, _fileManager);
@@ -99,16 +79,14 @@ package com.pintu.modules{
 		}
 		
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		public function menuHandler(operation:String, extra:String):void{
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_RANDOM_TBMODE){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;
+			}
+			
+		}
 		
 		
 		public  function killMe():void{

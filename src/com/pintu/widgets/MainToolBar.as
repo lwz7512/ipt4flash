@@ -159,24 +159,6 @@ package com.pintu.widgets
 			});
 			this.addChild(refresh);
 			
-			//第三按钮：随机画廊
-			//AT SAME TIME, SELECT THE TBMODE IN CATEGORY TREE...
-			randomView = new IconButton(InitParams.MAINMENUBAR_HEIGHT,InitParams.MAINMENUBAR_HEIGHT-buttonGap);			
-			randomView.setSkinStyle(upColors,overColors,downColors);
-			randomView.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
-				StyleParams.DEFAULT_TEXT_FONTSIZE,
-				StyleParams.DEFAULT_TEXT_COLOR,
-				StyleParams.DEFAULT_TEXT_COLOR,
-				StyleParams.DEFAULT_TEXT_COLOR);
-			randomView.label = "随便看看";
-			randomView.x = thirdButtonX;
-			randomView.y = drawStartY+buttonGap;	
-			//图标路径
-			randomView.iconPath = randomViewPath;
-			randomView.addEventListener(MouseEvent.CLICK, function():void{				
-				dispatchEvent(new PintuEvent(PintuEvent.RANDOM_GALLERY,null));
-			});
-			this.addChild(randomView);
 			
 			//TODO, ADD MORE ICON...			
 			
