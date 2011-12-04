@@ -105,7 +105,7 @@ package com.pintu.widgets{
 		
 		private function drawBackground():void{
 			//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
-			this.graphics.lineStyle(1,0xC2CCD0);
+			this.graphics.lineStyle(1,0xC2CCD0,1,true);
 			this.graphics.beginFill(0xFFFFFF);
 			this.graphics.drawRoundRect(0,0,100,100,_roundRadius,_roundRadius);
 			this.graphics.endFill();
@@ -113,7 +113,7 @@ package com.pintu.widgets{
 			//draw mask
 			var clip:CasaShape = new CasaShape();
 			clip.graphics.beginFill(0x000000);
-			clip.graphics.drawRoundRect(-1,-1,102,102,_roundRadius+2,_roundRadius+2);
+			clip.graphics.drawRoundRect(0,0,100,100,_roundRadius,_roundRadius);
 			clip.graphics.endFill();
 			this.addChild(clip);
 			this.mask = clip;

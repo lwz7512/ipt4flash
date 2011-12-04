@@ -343,8 +343,8 @@ package com.pintu.widgets{
 		
 		private function drawMainDisplayBackground():void{						
 			this.graphics.clear();
-//			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
-			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR);
+			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
+			this.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
 			this.graphics.drawRect(drawStartX,drawStartY,displayAreaWidth,displayAreaHeight);
 			this.graphics.endFill();
 		}

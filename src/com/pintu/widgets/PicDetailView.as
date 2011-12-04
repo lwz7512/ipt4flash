@@ -676,8 +676,8 @@ package com.pintu.widgets{
 		}
 		
 		private function rendered():void{
-			//派发尺寸改变事件						
-			this.stage.invalidate();			
+			//派发尺寸改变事件	
+			if(this.stage) this.stage.invalidate();			
 		}
 
 		

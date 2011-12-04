@@ -2,6 +2,7 @@ package com.pintu.widgets{
 	import com.cartogrammar.drawing.DashedLine;
 	import com.pintu.common.SimpleText;
 	import com.pintu.config.InitParams;
+	import com.pintu.config.StyleParams;
 	import com.pintu.utils.PintuUtils;
 	import com.pintu.vos.CmntData;
 	
@@ -47,11 +48,16 @@ package com.pintu.widgets{
 			
 			//底线
 			var drawStartY:Number = contentTxt.y+contentTxt.textHeight+12;
-			var bottomLine:DashedLine = new DashedLine(1,0xa1afc9,[2,1,2,1]);
+			var bottomLine:DashedLine = new DashedLine(1,StyleParams.DEFAULT_BORDER_COLOR,[2,1,2,1]);
 			bottomLine.moveTo(2, drawStartY);
 			bottomLine.lineTo(InitParams.GALLERY_WIDTH-4, drawStartY);
 			this.addChild(bottomLine);
 			
+			
+			//画评论背景，在黑色背景上
+			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR);
+			this.graphics.drawRect(0,0,InitParams.GALLERY_WIDTH-4, drawStartY+4);
+			this.graphics.endFill();
 		}
 		
 		private function getShowUserName():String{

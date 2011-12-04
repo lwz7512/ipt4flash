@@ -60,10 +60,9 @@ package com.pintu.common{
 		private function drawBackground(color:uint):void{
 			var startColor:uint = color;
 			var colors:Array = [startColor, _secdBGColor];
-			var alphas:Array = [0.8,0.4];
+			var alphas:Array = [1,0.6];
 			var ratios:Array = [120,255];		
 			this.graphics.clear();
-//			this.graphics.lineStyle(1, 0xC2CCD0, 0.6);
 			this.graphics.beginGradientFill(GradientType.LINEAR,colors,alphas,ratios);
 			this.graphics.drawRect(0,0,_defaultWidth,_defaultHeight);
 			this.graphics.endFill();
