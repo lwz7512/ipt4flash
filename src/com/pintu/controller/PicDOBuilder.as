@@ -116,7 +116,8 @@ package com.pintu.controller
 			
 			//画廊没新图片
 			if(thumnails.length==0){
-				_owner.hintToUser("没有最新的图片，不然随便看看？");				
+				var hintEvt:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "没有最新的图片，不然随便看看？");
+				_owner.dispatchEvent(hintEvt);				
 				return;
 			}
 			
@@ -231,6 +232,9 @@ package com.pintu.controller
 			return pic;
 		}
 		
+		public function cleanUpListener():void{
+			PintuImpl(_model).removeEventListener(ApiMethods.GETPICDETAIL,detailPicHandler);
+		}
 		
 	}
 }

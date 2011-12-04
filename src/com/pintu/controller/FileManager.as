@@ -122,5 +122,10 @@ package com.pintu.controller{
 			return d.getMonth() + 1 + '' + d.getDate() + '' + d.getHours() + '' + d.getMinutes() + ''  + d.getMilliseconds();
 		}
 		
+		public function cleanUp():void{
+			PintuImpl(_model).removeEventListener(ApiMethods.UPLOAD,uploadSuccesHandler);
+		}
+		
+		
 	} //end of class
 }

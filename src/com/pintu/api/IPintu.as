@@ -1,7 +1,6 @@
 package com.pintu.api
 {
-	import flash.net.FileReference;
-	
+	import flash.net.FileReference;	
 	import org.httpclient.HttpClient;
 	
 	public interface IPintu{	
@@ -20,9 +19,7 @@ package com.pintu.api
 		
 		function composeImgUrlById(imgId:String):String;
 		function composeImgUrlByPath(imgPath:String):String;			
-		/**
-		 * 单独操作，不存在并发请求
-		 */ 
+		
 		function logon(account:String, password:String):void;	
 		/**
 		 * 单独操作，不存在并发请求

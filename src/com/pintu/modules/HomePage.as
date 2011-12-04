@@ -42,7 +42,8 @@ package com.pintu.modules{
 			
 			mainDisplayArea = new MainDisplayArea(_model);
 			//默认缩略图模式画廊
-			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;			
+			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;	
+			
 			this.addChild(mainDisplayArea);
 			
 			slideToolBar = new SlideToolBar();
@@ -92,6 +93,9 @@ package com.pintu.modules{
 		public  function killMe():void{
 			//移除自己，并销毁事件监听
 			super.destroy();
+			//清除事件监听
+			_fileManager.cleanUp();
+			_fileManager = null;
 			//清空引用
 			_model = null;
 			removeChildren(true,true);		

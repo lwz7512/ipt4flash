@@ -4,8 +4,7 @@ package com.pintu.controller{
 	import com.greensock.TweenLite;
 	import com.pintu.api.IPintu;
 	import com.pintu.events.PintuEvent;
-	import com.pintu.modules.IDestroyableModule;
-	import com.pintu.modules.IMenuClickResponder;
+	import com.pintu.modules.*;
 	
 	import flash.display.Sprite;
 	
@@ -17,9 +16,7 @@ package com.pintu.controller{
 		//module names...
 		public static const HOMPAGE:String = "homepage";
 		public static const UNLOGGED:String = "unloggedin";
-		
-		//the module hided to be destroyed
-		private var _prevModule:CasaSprite;
+				
 		//need to known what module currently in stage
 		private var _currentModule:CasaSprite;
 		
@@ -27,12 +24,12 @@ package com.pintu.controller{
 		
 		//top level sprite: Main
 		private var _canvas:Sprite;
-		private var _factory:ModuleFactory;
+		private var _model:IPintu;
 		
 		
-		public function GlobalNavigator(canvas:Sprite, factory:ModuleFactory){
+		public function GlobalNavigator(canvas:Sprite, model:IPintu){
 			this._canvas = canvas;
-			this._factory = factory;
+			this._model = model;
 		}
 
 		
@@ -48,13 +45,13 @@ package com.pintu.controller{
 			
 			switch(module){
 				case HOMPAGE:
-					var homePage:CasaSprite = _factory.createModuleByName(HOMPAGE);
+					var homePage:CasaSprite = new HomePage(_model);
 					nextModule = IMenuClickResponder(homePage);
 					transition(_currentModule,homePage);
 					break;
 				
 				case 	UNLOGGED:
-					var unlogged:CasaSprite = _factory.createModuleByName(UNLOGGED);
+					var unlogged:CasaSprite = new UnloggedPage(_model);
 					nextModule = IMenuClickResponder(unlogged);
 					transition(_currentModule,unlogged);
 					break;
@@ -79,36 +76,27 @@ package com.pintu.controller{
 			//如果不是运行时切换，就直接显示下一个
 			//比如一上来显示未登录状态，或者登录状态
 			if(!prev) {
-				next.alpha = 1;
+//				next.alpha = 1;
 				//保存第一次展示的模块
 				_currentModule = next;
+				_canvas.addChild(_currentModule);
 				//不用切换了
 				return;
 			}
-			
-			//状态切换开始：
-			//比如：从未登录状态进入登录状态，或者反过来
-			_prevModule = prev;
-						
-			//动画切换
-			var myTimeline:TimelineLite = new TimelineLite({paused:true, 
-				onComplete:saveTransitionState ,onCompleteParams:[next]});
-			//隐藏前一个
-			myTimeline.append( TweenLite.to(prev, 0.6, {alpha:0}) );
-			//淡入下一个
-			myTimeline.append( TweenLite.from(next, 0.6, {alpha:0}) );
-			myTimeline.play();
-		}
-		
-		private function saveTransitionState(next:CasaSprite):void{
-			//记下当前模块
-			_currentModule = next;
-			
+				
 			//销毁前一个模块，销毁自己的事件监听和子对象
 			//并将自己从显示列表中移除
 			//这些模块都是IDestroyableModule
-			IDestroyableModule(_prevModule).killMe();
+			IDestroyableModule(_currentModule).killMe();
+			
+			//然后淡入下一个
+			_canvas.addChild(next);	
+			next.alpha = 1;
+			TweenLite.from(next, 0.6, {alpha:0});	
+			//记下当前模块
+			_currentModule = next;
 		}
+				
 		
 	} //end of classs
 }

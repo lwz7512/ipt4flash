@@ -47,17 +47,23 @@ package com.pintu.widgets
 		private var logonSuccessFlag:Boolean = false;
 		
 		public function LoginBlock(model:IPintu){
-			super();
+			super();			
+//			Logger.debug("Create LoginBlock once...");	
 			
-//			Logger.debug("Create LoginBlock once...");
-			
-			_model = model;
-			PintuImpl(_model).addEventListener(ApiMethods.LOGON, logonHandler);
+			_model = model;			
 			//计算位置，画背景
-			drawLoginBackGround();
-			
+			drawLoginBackGround();			
 			createFormInputs();
-						
+			
+			this.addEventListener(Event.ADDED_TO_STAGE, initLogin);
+			this.addEventListener(Event.REMOVED_FROM_STAGE, cleanUp);
+		}
+		
+		private function initLogin(evt:Event):void{
+			PintuImpl(_model).addEventListener(ApiMethods.LOGON, logonHandler);
+		}
+		private function cleanUp(evt:Event):void{
+			PintuImpl(_model).removeEventListener(ApiMethods.LOGON, logonHandler);
 		}
 		
 		private function logonHandler(event:Event):void{

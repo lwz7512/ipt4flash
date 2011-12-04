@@ -6,6 +6,8 @@
 package{
 	
 	import com.pintu.api.*;
+	import com.pintu.common.BusyIndicator;
+	import com.pintu.common.Toast;
 	import com.pintu.config.InitParams;
 	import com.pintu.controller.*;
 	import com.pintu.events.PintuEvent;
@@ -31,9 +33,14 @@ package{
 		
 	public class Main extends Sprite{
 		
-		
-		private var delayIntervalID:int;
-		
+				
+		/**
+		 * 整个应用只有一个模型，即服务实现的一个实例
+		 * 各个widget都是用的这同一个实例
+		 * 每个widget使用模型时，添加服务事件的监听
+		 * 均在视图Event.ADDED_TO_STAGE进行添加
+		 * 在视图Event.REMOVED_FROM_STAGE进行移除
+		 */ 
 		private var model:IPintu;
 				
 		private var navigator:GlobalNavigator;
@@ -46,6 +53,8 @@ package{
 		private var tileImagePath:String = "assets/paper103.png";
 		
 		private var _currentModule:IMenuClickResponder;
+		
+		
 		
 //		[Frame(factoryClass="Preloader")]
 		public function Main(){
@@ -60,8 +69,8 @@ package{
 			SWFWheel.initialize(stage);
 			SWFWheel.browserScroll = false;
 			//舞台准备好后创建应用
-			addEventListener(Event.ADDED_TO_STAGE, buildApp);	
-						
+			this.addEventListener(Event.ADDED_TO_STAGE, buildApp);	
+			
 		}
 		
 		/**
@@ -79,6 +88,8 @@ package{
 			//其他系统事件一概不予处理，放在各自的模块中处理
 			//2011/11/26
 			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
+			//监听系统事件：弹出提示
+			this.addEventListener(PintuEvent.HINT_USER, hintTextHandler);		
 			
 			//init stage size
 			InitParams.appWidth = this.stage.stageWidth;
@@ -91,8 +102,8 @@ package{
 			
 			var currentUser:String = GlobalController.loggedUser;
 			model = new PintuImpl(currentUser);
-			factory = new ModuleFactory(this,model);
-			navigator = new GlobalNavigator(this,factory);	
+			
+			navigator = new GlobalNavigator(this,model);	
 			
 			//画纹理背景
 			var usePaperBG:Boolean = GlobalController.usePaperTile;
@@ -168,7 +179,27 @@ package{
 			imgloader.start();
 		}
 		
+		private function hintTextHandler(evt:PintuEvent):void{
+			hintToUser(evt.data);
+		}
 		
+		private  function hintToUser(hint:String):void{
+			var drawStartX:Number = InitParams.startDrawingX();				
+			var drawStartY:Number = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;
+			//默认高度，也是最小高度
+			var displayAreaHeight:Number = InitParams.CALLERY_HEIGHT;
+			if(InitParams.isStretchHeight()){
+				//拉伸高度
+				displayAreaHeight = InitParams.appHeight
+					-drawStartY
+					-InitParams.TOP_BOTTOM_GAP
+					-InitParams.FOOTER_HEIGHT;
+			}
+			var displayAreaWidth:Number = InitParams.GALLERY_WIDTH;
+			var middleX:Number = drawStartX+displayAreaWidth/2;
+			var middleY:Number = drawStartY+displayAreaHeight/2;
+			Toast.getInstance(this).show(hint,middleX,middleY);
+		}
 		
 	} //end of class
 }

@@ -17,6 +17,7 @@ package com.pintu.widgets{
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.globalization.Collator;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
@@ -74,8 +75,7 @@ package com.pintu.widgets{
 		private var cmtInput:TextArea;		
 		//评论提交和查询进度条
 		private var cmtLoading:BusyIndicator;
-		//很奇怪，评论列表会返回3次，做个开关屏蔽掉
-		private var commentsHandleFlag:Boolean;
+		
 		
 		/*
 		 * construction function....
@@ -84,11 +84,7 @@ package com.pintu.widgets{
 			_data = data;
 			if(!_data) return;
 			
-			_model = model;
-			PintuImpl(_model).addEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.ADDVOTE, votePicHandler);
+			_model = model;			
 			
 			//draw image place hoder
 			drawImgePlaceHolder();			
@@ -102,7 +98,17 @@ package com.pintu.widgets{
 						
 			this.addEventListener(MouseEvent.MOUSE_OVER, displayHidePart);
 			this.addEventListener(MouseEvent.MOUSE_OUT, hideToolAndDesc);
+			
+			this.addEventListener(Event.ADDED_TO_STAGE, initDetailView);
+			//清除给模型添加的事件
 			this.addEventListener(Event.REMOVED_FROM_STAGE, cleanUp);
+		}
+		
+		private function initDetailView(evt:Event):void{
+			PintuImpl(_model).addEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.ADDVOTE, votePicHandler);
 		}
 		
 		public function set showBackBtn(v:Boolean):void{
@@ -110,11 +116,19 @@ package com.pintu.widgets{
 		}
 		//清空模型引用
 		private function cleanUp(evt:Event):void{
+			PintuImpl(_model).removeEventListener(ApiMethods.ADDSTORY, cmntPostHandler)
+			PintuImpl(_model).removeEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler)
+			PintuImpl(_model).removeEventListener(ApiMethods.MARKTHEPIC, markPicHandler)
+			PintuImpl(_model).removeEventListener(ApiMethods.ADDVOTE, votePicHandler)
 			_model = null;
 		}
 		
-		private function cmntPostHandler(evt:Event):void{
+		private function cmntPostHandler(evt:Event):void{								
+			//因为有舞台的invalidate方法，这时舞台可能丢失，所以要处理
+			if(!stageAvailable()) return;
+			
 			if(evt is PTStatusEvent){
+				Logger.debug("comment post once...");
 				//新的评论，先不添加进去
 				var cmntObj:CmntData = new CmntData();
 				cmntObj.author = "我";
@@ -140,13 +154,16 @@ package com.pintu.widgets{
 		}
 		
 		private function cmntListHandler(evt:Event):void{
-			if(!commentsHandleFlag) return;
+			if(evt is ResponseEvent){
+				Logger.debug("ResponseEvent arrived once...");
+			}			
+			
+			if(!stageAvailable()) return;
 			
 			if(evt is ResponseEvent){
 				var jsonCmnt:String = ResponseEvent(evt).data;
-//				Logger.debug("json comments: "+jsonCmnt);
+				Logger.debug("json comments: "+jsonCmnt);
 				createCommentList(jsonCmnt);
-				commentsHandleFlag = false;
 			}
 			if(evt is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.ADDSTORY);
@@ -593,7 +610,6 @@ package com.pintu.widgets{
 			//如果评论数大于0，获取评论列表，评论获得后增加视图高度	
 			if(Number(_data.commentsNum)){
 				_model.getComments(_data.id);
-				commentsHandleFlag = true;
 			}
 			//通知外围，渲染完成
 			rendered();		
@@ -601,6 +617,8 @@ package com.pintu.widgets{
 		
 		private function createCommentList(jsonCmnt:String):void{
 			var cmnts:Array = JSON.decode(jsonCmnt) as Array;
+			if(cmnts.length==0) return;
+			
 			var cmntItems:Array = [];
 			for each(var cmnt:Object in cmnts){
 				if(!cmnt) continue;
@@ -675,9 +693,35 @@ package com.pintu.widgets{
 			
 		}
 		
+		/**
+		 * 五次改变详情视图高度的渲染事件：
+		 * 1. 点击评论按钮增加输入框和按钮，addComment触发
+		 * 2. 同时，获取评论列表结果，createCommentList个数大于0时触发
+		 * 3. 输入框高度发生变化，relayoutComments派发
+		 * 4. 提交评论成功后，新评论置顶，relayoutComments再次派发
+		 * 5. 再次点击评论按钮，收回评论内容，addComment触发
+		 * 
+		 */ 
 		private function rendered():void{
 			//派发尺寸改变事件	
-			if(this.stage) this.stage.invalidate();			
+			if(this.stage) {
+				this.stage.invalidate();	
+				Logger.debug("pic detail view rendered...");
+			}else{
+				Logger.warn("stage in pic detail view lost!");
+			}
+		}
+		
+		/**
+		 * 该方法与stage.invalidate()同时使用
+		 * 当调用invalidate一次后，舞台将暂时失效
+		 */ 
+		private function stageAvailable():Boolean{
+			if(this.stage){
+				return true;
+			}else{
+				return false;
+			}
 		}
 
 		

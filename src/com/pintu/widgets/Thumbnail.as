@@ -1,6 +1,7 @@
 package com.pintu.widgets{
 	
 	import com.greensock.TweenLite;
+	import com.pintu.config.StyleParams;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
 	import com.pintu.vos.TPicDesc;
@@ -37,7 +38,7 @@ package com.pintu.widgets{
 			_data = data;
 			//LOAD PIC BY URL...
 			_imgLoader = new ImageLoad(data.url);			
-			this._imgLoader.addEventListener(LoadEvent.COMPLETE, this._onComplete);
+			this._imgLoader.addEventListener(LoadEvent.COMPLETE, _onComplete);
 			this._imgLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,_onError);
 			this._imgLoader.start();
 			
@@ -78,7 +79,9 @@ package com.pintu.widgets{
 		}
 		
 		private function _onComplete(e:LoadEvent):void {
-			var bitmap:Bitmap = this._imgLoader.contentAsBitmap;			
+			var bitmap:Bitmap = this._imgLoader.contentAsBitmap;	
+			bitmap.x = 1;
+			bitmap.y = 1;
 			this.addChild(bitmap);
 			
 			//如果比缩略图默认尺寸大，就按默认尺寸设置
@@ -86,14 +89,7 @@ package com.pintu.widgets{
 			if(bitmap.width>100)
 				bitmap.width = 100;
 			if(bitmap.height>100)
-				bitmap.height = 100;	
-			
-			//如果高度较大，就缩小点，好露出边框来
-			if(bitmap.height==100){
-				bitmap.height = 99;
-				bitmap.y = 1;
-				bitmap.x = 1;
-			}
+				bitmap.height = 100;					
 			
 			_initialized = true;
 			this.removeChild(tf);
@@ -106,14 +102,17 @@ package com.pintu.widgets{
 		private function drawBackground():void{
 			//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
 			this.graphics.lineStyle(1,0xC2CCD0,1,true);
-			this.graphics.beginFill(0xFFFFFF);
-			this.graphics.drawRoundRect(0,0,100,100,_roundRadius,_roundRadius);
+			//黑色背景，这样暗示详情背景是黑色的
+			this.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
+			//稍微宽点容纳图片
+			this.graphics.drawRoundRect(0,0,101,100,_roundRadius,_roundRadius);
 			this.graphics.endFill();
 			
 			//draw mask
 			var clip:CasaShape = new CasaShape();
 			clip.graphics.beginFill(0x000000);
-			clip.graphics.drawRoundRect(0,0,100,100,_roundRadius,_roundRadius);
+			//稍微宽点容纳图片
+			clip.graphics.drawRoundRect(0,0,101,100,_roundRadius,_roundRadius);
 			clip.graphics.endFill();
 			this.addChild(clip);
 			this.mask = clip;

@@ -18,6 +18,8 @@ package com.pintu.events
 		
 		//弹出提示事件
 		public static const HINT_USER:String = "hintToUser";
+		//进度条事件
+		public static const PROGRESS:String = "progress";
 		
 		//通常带的参数
 		public var data:String;

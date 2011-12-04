@@ -5,8 +5,8 @@ package com.pintu.widgets{
 	import com.pintu.api.ApiMethods;
 	import com.pintu.api.IPintu;
 	import com.pintu.api.PintuImpl;
+
 	import com.pintu.common.BusyIndicator;
-	import com.pintu.common.Toast;
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
 	import com.pintu.controller.PicDOBuilder;
@@ -55,8 +55,7 @@ package com.pintu.widgets{
 		private var _picsContainer:CasaSprite;
 		//画廊遮罩，别动
 		private var _clip:Shape;	
-		//加载进度条
-		private var loading:BusyIndicator;
+		
 		
 		//画廊移动速度
 		private var _galleryMoveYSpeed:Number = 0;
@@ -75,6 +74,8 @@ package com.pintu.widgets{
 		//生成画廊开关，以此来解决重复的事件响应
 		private var galleryCreated:Boolean;
 		
+		//加载进度条
+		private var loading:BusyIndicator;
 		
 		public function MainDisplayArea(model:IPintu){
 			super();	
@@ -85,38 +86,22 @@ package com.pintu.widgets{
 			
 			this._model = model;
 			this._picsContainer = new CasaSprite();
-			addChild(_picsContainer);
-			
-			//画廊内容生成工具
-			this._picBuilder = new PicDOBuilder(_picsContainer,_model);
-			//图片工厂要知道放置起始位置
-			this._picBuilder.drawStartX = drawStartX;
-			this._picBuilder.drawStartY = drawStartY;
-			//为了让他可以调用以展示进度条和提示
-			this._picBuilder.owner = this;
+			addChild(_picsContainer);					
 			
 			//默认舞台背景色
 			drawMainDisplayBackground();
 			//生成裁剪区域
-			createClipMask();
-			
-			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYBYTIME,thumbnailHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYRANDOM,thumbnailHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYFORWEB,bigPicHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.GETHOTPICTURE,hotPicHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.CLASSICALSTATISTICS,classicHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.COLLECTSTATISTICS,favoredPicHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.GETTHUMBNAILSBYTAG,tagPicHandler);
+			createClipMask();					
 								
 			//初始化时，按浏览模式查询画廊
 			this.addEventListener(Event.ADDED_TO_STAGE, initDisplayStage);
+			this.addEventListener(Event.REMOVED_FROM_STAGE, destroyDisplayStage);
 			//滚轮处理画廊移动
-			this.addEventListener(MouseEvent.MOUSE_WHEEL,scrollGallery);			
-			//监听系统事件：弹出提示
-			this.addEventListener(PintuEvent.HINT_USER, hintTextHandler);			
+			this.addEventListener(MouseEvent.MOUSE_WHEEL,scrollGallery);							
 			
 			//2秒内运行检查，类型设置时启动
 			queryAvailableTimer = new Timer(2000,1);
+					
 		}
 		
 		
@@ -150,11 +135,7 @@ package com.pintu.widgets{
 		/**
 		 * _picBuilder在对无内容返回处理时，要用到
 		 */ 
-		public function hintToUser(hint:String):void{
-			var middleX:Number = drawStartX+displayAreaWidth/2;
-			var middleY:Number = drawStartY+displayAreaHeight/2;
-			Toast.getInstance(this).show(hint,middleX,middleY);
-		}
+
 		
 		//浏览类型，或者是标签id
 		public function set browseType(type:String):void{
@@ -195,8 +176,9 @@ package com.pintu.widgets{
 			
 			//定时器运行期间或者正在查询期间，不能重新查询
 			if(queryAvailableTimer.running || isRunning){
-				//定时器已启动，查询正在进行，不能再次查询
-				hintToUser("不能在2秒内持续查询...");
+				//定时器已启动，查询正在进行，不能再次查询				
+				//在主显示区弹出提示
+				this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "不能在2秒内持续查询..."));
 				return;
 			}else{
 				queryAvailableTimer.start();
@@ -259,13 +241,30 @@ package com.pintu.widgets{
 		
 		//--------------------------------  handler start --------------------------------------------		
 		private function thumbnailHandler(event:Event):void{
+			
+			
+			//移除进度条
+			hideMiddleLoading();
+			
+			//查询结束
+			isRunning = false;
+			//这时查询开关打开
+			queryAvailableTimer.stop();
+			
+			
+			//这个BUG好像修正了，就是由于创建了2个MainDisplayArea对象引起的
+			//2011/12/4
+			if(event is ResponseEvent){
+				Logger.debug("thumbnailHandler ResponseEvent arrived once...");
+			}						
+			
 			if(event is ResponseEvent){				
 				var galleryData:String = ResponseEvent(event).data;
 //				Logger.debug("thumbnail data: \n"+galleryData);
 				
 				//FIXME, 从非登陆状态切换到登陆状态时，很奇怪有两次事件响应
 				//用开关值来防止重复创建画廊，数据到达后只生成一次画廊
-				//2011/11/21
+				//2011/11/21				
 				if(!galleryCreated){
 					Logger.debug("to create mini gallery...");
 					//创建画廊
@@ -275,13 +274,13 @@ package com.pintu.widgets{
 				
 				//TODO, CHECK THE LAST GALLERY RECORD TIME...
 				//SO, GET THE NEWEST...
-								
-				//移除进度条
-				hideMiddleLoading();
+
 			}
 			if(event is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.GETGALLERYBYTIME);
 			}
+			
+
 		}
 		
 		
@@ -335,16 +334,13 @@ package com.pintu.widgets{
 			}			
 		}	
 		
-		private function hintTextHandler(evt:PintuEvent):void{
-			hintToUser(evt.data);
-		}
-		
 		//--------------------------------  handler end --------------------------------------------				
 		
 		private function drawMainDisplayBackground():void{						
 			this.graphics.clear();
 			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
-			this.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
+			//半透明效果似乎更好
+			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR, 0.6);
 			this.graphics.drawRect(drawStartX,drawStartY,displayAreaWidth,displayAreaHeight);
 			this.graphics.endFill();
 		}
@@ -382,6 +378,33 @@ package com.pintu.widgets{
 		private function initDisplayStage(event:Event):void{
 			_initialized = true;
 			queryPicByType();
+			
+			//画廊内容生成工具
+			this._picBuilder = new PicDOBuilder(_picsContainer,_model);
+			//图片工厂要知道放置起始位置
+			this._picBuilder.drawStartX = drawStartX;
+			this._picBuilder.drawStartY = drawStartY;
+			//为了让他可以调用以展示进度条和提示
+			this._picBuilder.owner = this;
+			
+			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYBYTIME,thumbnailHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYRANDOM,thumbnailHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYFORWEB,bigPicHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.GETHOTPICTURE,hotPicHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.CLASSICALSTATISTICS,classicHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.COLLECTSTATISTICS,favoredPicHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.GETTHUMBNAILSBYTAG,tagPicHandler);
+		}
+		
+		private function destroyDisplayStage(event:Event):void{
+			queryAvailableTimer.stop();
+			PintuImpl(_model).removeEventListener(ApiMethods.GETGALLERYBYTIME,thumbnailHandler);
+			PintuImpl(_model).removeEventListener(ApiMethods.GETGALLERYRANDOM,thumbnailHandler);
+			PintuImpl(_model).removeEventListener(ApiMethods.GETGALLERYFORWEB,bigPicHandler);
+			PintuImpl(_model).removeEventListener(ApiMethods.GETHOTPICTURE,hotPicHandler);
+			PintuImpl(_model).removeEventListener(ApiMethods.CLASSICALSTATISTICS,classicHandler);
+			PintuImpl(_model).removeEventListener(ApiMethods.COLLECTSTATISTICS,favoredPicHandler);
+			PintuImpl(_model).removeEventListener(ApiMethods.GETTHUMBNAILSBYTAG,tagPicHandler);
 		}
 		
 		private function scrollGallery(event:MouseEvent):void{
@@ -469,10 +492,10 @@ package com.pintu.widgets{
 		//凡是在本类中，对_model加过事件监听的都要在这里置空
 		override public  function destroy():void{
 			super.destroy();
-			_model = null;
-			_picBuilder = null;
+			_picBuilder.cleanUpListener();
+			galleryCreated = false;
 			this.removeChildren(true,true);
-//			Logger.debug("MainDisplayArea destroyed...");
+			Logger.debug("MainDisplayArea destroyed...");
 		}
 		
 	

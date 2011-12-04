@@ -80,7 +80,10 @@ package com.pintu.http
 			_client.listener.onComplete = function(event:HttpResponseEvent):void {
 				// Notified when complete (after status and data)
 				var response:String = event.response.message;
+				
 //				Logger.debug("Method: "+method+" , response: "+response);	
+				
+				//FIXME, HTTP任务执行完成后，ModelBase依据此方法来清除执行过的任务
 				dispatchEvent(new Event("complete"));
 				//提交结束
 				_isRuning = false;

@@ -5,15 +5,15 @@ package com.pintu.events{
 	
 	public class PTStatusEvent extends Event{
 		
-		public var status:String;
+		public var data:String;
 		
 		public function PTStatusEvent(type:String, status:String){
 			super(type);
-			this.status = status;
+			this.data = status;
 		}
 		
 		public override function  clone():Event{
-			return new PTStatusEvent(type,status);
+			return new PTStatusEvent(type,data);
 		}
 		
 	} //end of class

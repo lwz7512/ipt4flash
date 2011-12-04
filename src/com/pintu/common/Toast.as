@@ -12,7 +12,15 @@ package com.pintu.common{
 	import org.casalib.display.CasaSprite;
 	import org.osmf.events.TimeEvent;
 	
-	
+	/**
+	 * 该提示对象，只能放在一个不会被被动销毁和移除的容器中
+	 * 也就是说，该对象，只能是主动触发show并自动消失来移除
+	 * 不能被其所在容器在销毁子对象的同时来移除它
+	 * 因此，本对象最好放在单独的tooltip层，或者主应用层
+	 * 这样其他对象的移除不会影响到它
+	 * 
+	 * 2011/12/4
+	 */ 
 	public class Toast extends CasaSprite{
 		
 		private static var _instance:Toast;
