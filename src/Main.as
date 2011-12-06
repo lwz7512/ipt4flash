@@ -44,7 +44,6 @@ package{
 		private var model:IPintu;
 				
 		private var navigator:GlobalNavigator;
-		private var factory:ModuleFactory;
 		
 		private var header:HeaderBar;
 		private var footer:FooterBar;
@@ -52,6 +51,10 @@ package{
 		
 		private var tileImagePath:String = "assets/paper103.png";
 		
+		/**
+		 * 当前模块，比如HomePage
+		 * 都要实现这个接口，以对菜单动作进行响应
+		 */ 
 		private var _currentModule:IMenuClickResponder;
 		
 		
@@ -101,8 +104,7 @@ package{
 			var isLogged:Boolean = GlobalController.isLogged;
 			
 			var currentUser:String = GlobalController.loggedUser;
-			model = new PintuImpl(currentUser);
-			
+			model = new PintuImpl(currentUser);			
 			navigator = new GlobalNavigator(this,model);	
 			
 			//画纹理背景

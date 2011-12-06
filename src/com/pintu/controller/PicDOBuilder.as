@@ -37,8 +37,15 @@ package com.pintu.controller
 		//拥有本实例的对象，用来调用显示进度条和提示方法
 		private var _owner:MainDisplayArea;
 		
+		/**
+		 * 画廊起始位置，由主显示区指定，不能随意改变
+		 */ 
 		private var _drawStartX:Number;
+		/**
+		 * 画廊起始位置，由主显示区指定，不能随意改变
+		 */ 
 		private var _drawStartY:Number;
+		
 		//画廊行数
 		private var rowNum:int;
 		private var tpics:Array;
@@ -50,6 +57,11 @@ package com.pintu.controller
 		//画廊边距
 		private var _margin:int = 10;		
 		
+		//大图之间的间距
+		private	var verticalGap:Number = 1;
+		
+		//大图模式下生成的列表对象，缓存下来用来重新排列位置
+		private var bigPicViews:Array;
 			
 		public function PicDOBuilder(container:CasaSprite, model:IPintu){
 			_context = container;
@@ -179,12 +191,61 @@ package com.pintu.controller
 			_model.getPicDetail(tpId);
 		}
 
-		
-		//TODO, 创建列表式大图画廊...
-		//创建多个PicDetailView
+		//TODO, ...
+		/**
+		 * 创建列表式大图画廊，创建多个PicDetailView
+		 */ 
 		public function createScrollableBigGallery(json:String):void{
+			var detailObjs:Array = JSON.decode(json) as Array;					
 			
+			//大图数据列表
+			var tpicDatas:Array = [];
+			for(var i:int=0; i<detailObjs.length; i++){
+				var tpidData:TPicData = objToTPicData(detailObjs[i]);
+				tpicDatas.push(tpidData);
+			}
+						
+			//初始化视图容器
+			bigPicViews = [];
+			for(var j:int=0; j<tpicDatas.length; j++){				
+				var picDetails:PicDetailView = new PicDetailView(tpicDatas[j], _model);
+				picDetails.x = _drawStartX;
+				//按照每个详情高度往下排，初始高度是一样的
+				picDetails.y = _drawStartY+picDetails.height*j+verticalGap;
+				//每次渲染事件都重新排列位置
+				picDetails.addEventListener(Event.RENDER, delayRelayoutBigPicList);
+				//显示空容器
+				_context.addChild(picDetails);	
+				
+				//存一份视图引用
+				bigPicViews.push(picDetails);
+			}
+		}
+		
+		/**
+		 * 每个详情视图发生内容变化时，整个列表项的位置都要发生重排
+		 */ 
+		private function delayRelayoutBigPicList(evt:Event):void{
+//			Logger.debug(".... send layout event... ");
+			invalidate();
+		}
+		
+		private function invalidate():void{
+			if(!_context.hasEventListener(Event.ENTER_FRAME))
+				_context.addEventListener(Event.ENTER_FRAME, relayout);
+		}
+		private function relayout(evt:Event):void{
+			Logger.debug(".... to relayout... ");
+			_context.removeEventListener(Event.ENTER_FRAME, relayout);
 			
+			var localStartY:Number = _drawStartY;
+			for(var i:int=0; i<bigPicViews.length; i++){
+				var bigPicView:PicDetailView = bigPicViews[i];				
+				//按照每个详情高度往下排，初始高度是一样的
+				bigPicView.y = localStartY;
+				//记下下一个图的位置
+				localStartY += bigPicView.height+verticalGap;
+			}
 		}
 		
 		private function cleanUp():void{
@@ -234,6 +295,7 @@ package com.pintu.controller
 		
 		public function cleanUpListener():void{
 			PintuImpl(_model).removeEventListener(ApiMethods.GETPICDETAIL,detailPicHandler);
+			bigPicViews = null;
 		}
 		
 	}

@@ -71,11 +71,11 @@ package com.pintu.widgets
 			
 			elementStartX = InitParams.startDrawingX();
 			
-			//先放，在下面
+			//子菜单内容先放，在下面
 			subMenuContainer = new CasaSprite();
 			this.addChild(subMenuContainer);
 			
-			//后放，在上面
+			//主菜单内容后放，在上面
 			mainMenuContainer = new CasaSprite();
 			this.addChild(mainMenuContainer);
 			//加个阴影是不是好看点
@@ -328,7 +328,7 @@ package com.pintu.widgets
 		 */ 
 		private function onHomeMenuOver(evt:MouseEvent):void{
 			if(homeMenu.selected && browseMode.y<0){
-				//				Logger.debug("slide to sub menu...");
+				//Logger.debug("slide to sub menu...");
 				browseMode.goDown();
 			}
 		}
@@ -355,7 +355,7 @@ package com.pintu.widgets
 			browseMode.y = -browseMode.height;
 			subMenuContainer.addChild(browseMode);
 			
-			//其他子菜单
+			//TODO, 其他子菜单
 			
 		}
 		

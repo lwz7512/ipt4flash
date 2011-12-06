@@ -12,10 +12,13 @@ package com.pintu.widgets{
 	import org.casalib.display.CasaShape;
 	import org.casalib.display.CasaSprite;
 	
+	/**
+	 * HeaderBar在主应用中监听此事件，然后调用各模块的menuHandler
+	 */ 
 	public class BrowseMode extends CasaSprite{
 		
 		/**
-		 * 缩略图模式
+		 * 缩略图模式，展现最近6个小时的图片
 		 */
 		public static const CATEGORY_GALLERY_TBMODE:String = "gallery_tb";
 		/**
@@ -75,7 +78,7 @@ package com.pintu.widgets{
 			var shadow:DropShadowFilter = new DropShadowFilter(2,45,0x999999,0.6);
 			shadowLayer.filters = [shadow];
 			
-			thumbnailMenu = new IconMenuItem("缩略图");
+			thumbnailMenu = new IconMenuItem("最新画廊");
 			thumbnailMenu.addEventListener(MouseEvent.CLICK, thumbnailClickHandler);
 			this.addChild(thumbnailMenu);
 			
@@ -163,7 +166,10 @@ package com.pintu.widgets{
 			this.dispatchEvent(typeChangeEvent);
 		}
 		
-		//0.3秒内滑出
+		/**
+		 * HeaderBar 点击或者滑过主菜单文字时，调用该方法展开子菜单
+		 * 0.3秒内滑出
+		 */ 
 		public function goDown():void{
 			this.addEventListener(Event.ENTER_FRAME, idleCheckToClose);
 			//滑到工具栏以下
@@ -207,7 +213,7 @@ package com.pintu.widgets{
 		//如果24帧内，即0.6秒内鼠标还没落在菜单上，菜单自动收回
 		//也发生在鼠标离开后0.5秒，菜单自动收回
 		//如果鼠标还在父菜单上，不收回
-		public function idleCheckToClose(evt:Event):void{
+		private function idleCheckToClose(evt:Event):void{
 			if(forceCloseFlag){
 				goBack();
 				return;

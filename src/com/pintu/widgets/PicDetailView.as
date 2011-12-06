@@ -31,7 +31,7 @@ package com.pintu.widgets{
 	 * 图片详情对象，大图模式下，多个详情有同时出现的情况
 	 * 包括内容：可浮动的工具栏、图片及相关信息、评论列表以及评论发表	
 	 * 
-	 * 由PicDOBuilder中的detailPicHandler方法创建
+	 * 由PicDOBuilder大图对象创建
 	 */ 
 	public class PicDetailView extends CasaSprite{
 		
@@ -87,8 +87,7 @@ package com.pintu.widgets{
 			_data = data;
 			if(!_data) return;
 			//每个视图中，都有各自不同的模型，这样就不会干扰了
-			_clonedModel = model.clone();
-			
+			_clonedModel = model.clone();			
 			//或者可以考虑liteclient，但是稍微麻烦点
 //			_miniClient = new LiteHttpClient(ModelBase(model).getServiceUrl());
 			
@@ -105,9 +104,15 @@ package com.pintu.widgets{
 			this.addEventListener(MouseEvent.MOUSE_OVER, displayHidePart);
 			this.addEventListener(MouseEvent.MOUSE_OUT, hideToolAndDesc);
 			
-			this.addEventListener(Event.ADDED_TO_STAGE, initDetailView);
-			//清除给模型添加的事件
+			this.addEventListener(Event.ADDED_TO_STAGE, initDetailView);			
 			this.addEventListener(Event.REMOVED_FROM_STAGE, cleanUp);
+		}
+		
+		/**
+		 * 给PicDOBuilder使用，用来在查看详情时可以返回画廊
+		 */ 
+		public function set showBackBtn(v:Boolean):void{
+			_showBackBtn = v;
 		}
 		
 		private function initDetailView(evt:Event):void{
@@ -117,16 +122,16 @@ package com.pintu.widgets{
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.ADDVOTE, votePicHandler);
 		}
 		
-		public function set showBackBtn(v:Boolean):void{
-			_showBackBtn = v;
-		}
-		//清空模型引用
+		/**
+		 * 清除给模型添加的事件
+		 * 清空模型引用
+		 */ 
 		private function cleanUp(evt:Event):void{
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.ADDVOTE, votePicHandler);
-			//这个是复制出来的，一定要消耗
+			//这个是复制出来的，一定要销毁
 			_clonedModel.destory();
 			_clonedModel = null;
 		}
@@ -311,7 +316,7 @@ package com.pintu.widgets{
 						
 			imgLoadedFlag = true;
 			
-			//通知外围，渲染完成
+			//图片加载结束，第一次通知外围，渲染完成
 			rendered();		
 		}
 		
@@ -702,13 +707,14 @@ package com.pintu.widgets{
 		}
 		
 		/**
-		 * 五次改变详情视图高度的渲染事件：
-		 * 1. 点击评论按钮增加输入框和按钮，addComment触发
-		 * 2. 同时，获取评论列表结果，createCommentList个数大于0时触发
-		 * 3. 输入框高度发生变化，relayoutComments派发
-		 * 4. 提交评论成功后，新评论置顶，relayoutComments再次派发
-		 * 5. 再次点击评论按钮，收回评论内容，addComment触发
-		 * 
+		 * 6次改变详情视图高度的渲染事件：
+		 * 1. 图片加载完成通知渲染，imgLoaded触发
+		 * 2. 点击评论按钮增加输入框和按钮，addComment触发
+		 * 3. 再次点击评论按钮，收回评论内容，addComment触发
+		 * 4. 同时，获取评论列表结果，createCommentList个数大于0时触发
+		 * 5. 输入框高度发生变化，relayoutComments派发
+		 * 6. 提交评论成功后，新评论置顶，relayoutComments再次派发
+		 *
 		 */ 
 		private function rendered():void{
 			//派发尺寸改变事件	

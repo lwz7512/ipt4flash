@@ -61,6 +61,26 @@ package com.pintu.modules
 		
 		
 		public function menuHandler(operation:String, extra:String):void{
+			//随机模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_RANDOM_TBMODE){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;
+			}
+			//TODO, 缩略图模式
+			
+			
+			//TODO, 大图列表模式
+			
+			
+			//TODO, 热点模式
+			
+			
+			//TODO, 经典模式
+			
+			
+			//TODO, 最近收藏模式
+			
 			
 		}
 		

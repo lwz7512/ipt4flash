@@ -76,7 +76,6 @@ package com.pintu.controller{
 			//如果不是运行时切换，就直接显示下一个
 			//比如一上来显示未登录状态，或者登录状态
 			if(!prev) {
-//				next.alpha = 1;
 				//保存第一次展示的模块
 				_currentModule = next;
 				_canvas.addChild(_currentModule);
@@ -89,10 +88,12 @@ package com.pintu.controller{
 			//这些模块都是IDestroyableModule
 			IDestroyableModule(_currentModule).killMe();
 			
-			//然后淡入下一个
-			_canvas.addChild(next);	
-			next.alpha = 1;
-			TweenLite.from(next, 0.6, {alpha:0});	
+			//准备显示下一个
+			_canvas.addChild(next);
+			//然后淡入
+			next.alpha = 0;
+			TweenLite.to(next, 0.6, {alpha:1});	
+			
 			//记下当前模块
 			_currentModule = next;
 		}

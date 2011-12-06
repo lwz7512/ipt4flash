@@ -41,9 +41,9 @@ package com.pintu.modules{
 			
 			
 			mainDisplayArea = new MainDisplayArea(_model);
-			//默认缩略图模式画廊
-			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;	
-			
+			//设置即将执行的查询模式：缩略图模式画廊
+			//TODO, 后面如果保存了浏览模式，就要修改这里的值
+			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;				
 			this.addChild(mainDisplayArea);
 			
 			slideToolBar = new SlideToolBar();
@@ -79,12 +79,49 @@ package com.pintu.modules{
 			TweenLite.to(picEditWin, 0.6, {y:endY});
 		}
 		
-		
+		/**
+		 * 在Main中的browseTypeChanged监听器中调用该方法
+		 */ 
 		public function menuHandler(operation:String, extra:String):void{
+			//随机模式
 			if(operation==PintuEvent.BROWSE_CHANGED 
 				&& extra==BrowseMode.CATEGORY_RANDOM_TBMODE){
 				//告诉显示区，按照随机模式查询
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;
+			}
+			//缩略图模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_GALLERY_TBMODE){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;
+			}
+			
+			//大图列表模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_GALLERY_BPMODE){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_BPMODE;
+			}
+			
+			//热点模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_HOT){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_HOT;
+			}
+			
+			//经典模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_CLASSICAL){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_CLASSICAL;
+			}
+			
+			//最近收藏模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_FAVORED){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_FAVORED;
 			}
 			
 		}

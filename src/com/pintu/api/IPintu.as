@@ -4,6 +4,9 @@ package com.pintu.api
 	
 	import org.httpclient.HttpClient;
 	
+	/**
+	 * 大部分的查询内容方法，都在主显示区调用
+	 */ 
 	public interface IPintu{	
 		
 		/**
@@ -28,13 +31,10 @@ package com.pintu.api
 		/**
 		 * 单独操作，不存在并发请求
 		 */ 
-		function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void;
-				
+		function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void;				
 		
-		function getGalleryByTime(startTime:String, endTime:String):void;
-		
-		function getPicDetail(tpId:String):void;
-		
+		function getGalleryByTime(startTime:String, endTime:String):void;		
+		function getPicDetail(tpId:String):void;		
 		function getGalleryForWeb(pageNum:String):void;
 		function getRandomGallery():void;
 		function getHotPicture():void;
