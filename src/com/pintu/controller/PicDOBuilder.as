@@ -64,6 +64,7 @@ package com.pintu.controller
 		private var bigPicViews:Array;
 			
 		public function PicDOBuilder(container:CasaSprite, model:IPintu){
+			//图片容器在原点
 			_context = container;
 			_model = model;
 			//缩略图详情响应
@@ -238,6 +239,9 @@ package com.pintu.controller
 			Logger.debug(".... to relayout... ");
 			_context.removeEventListener(Event.ENTER_FRAME, relayout);
 			
+			//这个检查非常必要，否则会引起JSON解析异常
+			if(!stageAvailable()) return;
+			
 			var localStartY:Number = _drawStartY;
 			for(var i:int=0; i<bigPicViews.length; i++){
 				var bigPicView:PicDetailView = bigPicViews[i];				
@@ -247,6 +251,8 @@ package com.pintu.controller
 				localStartY += bigPicView.height+verticalGap;
 			}
 		}
+		
+		
 		
 		private function cleanUp():void{
 			_context.graphics.clear();
@@ -296,6 +302,18 @@ package com.pintu.controller
 		public function cleanUpListener():void{
 			PintuImpl(_model).removeEventListener(ApiMethods.GETPICDETAIL,detailPicHandler);
 			bigPicViews = null;
+		}
+		
+		/**
+		 * 该方法与stage.invalidate()同时使用
+		 * 当调用invalidate一次后，舞台将暂时失效
+		 */ 
+		private function stageAvailable():Boolean{
+			if(_context.stage){
+				return true;
+			}else{
+				return false;
+			}
 		}
 		
 	}

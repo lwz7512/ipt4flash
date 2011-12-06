@@ -16,6 +16,7 @@ package com.pintu.widgets{
 	import com.sibirjak.asdpc.button.ButtonEvent;
 	
 	import flash.display.DisplayObject;
+	import flash.geom.Point;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.globalization.Collator;
@@ -60,7 +61,9 @@ package com.pintu.widgets{
 		//图片占位最小宽度，也是工具栏的宽度
 		private var defaultImgWidth:Number = 440;
 		//描述内容高度
-		private var defaultDescTextHeight:Number = 80;					
+		private var defaultDescTextHeight:Number = 80;	
+		//工具栏高度
+		private var toolbarHeight:Number = InitParams.TREEITEM_HEIGHT;
 		
 		//图片未展示前出现
 		private var mobImgPlaceHolder:DashedLine;
@@ -70,7 +73,6 @@ package com.pintu.widgets{
 		private var mobImage:SimpleImage;
 		private var toolHolder:CasaSprite;
 		private var imgInfoHolder:CasaSprite;
-		private var imgDescText:CasaSprite;
 		
 		//评论相关内容
 		private var commentsHolder:CasaSprite;
@@ -78,6 +80,10 @@ package com.pintu.widgets{
 		private var cmtInput:TextArea;		
 		//评论提交和查询进度条
 		private var cmtLoading:BusyIndicator;
+		//鼠标如果在工具栏区域，显示工具栏
+		private var mouseOnToolZone:Boolean;
+		
+		
 		
 		
 		/*
@@ -86,10 +92,9 @@ package com.pintu.widgets{
 		public function PicDetailView(data:TPicData, model:IPintu){
 			_data = data;
 			if(!_data) return;
+			
 			//每个视图中，都有各自不同的模型，这样就不会干扰了
-			_clonedModel = model.clone();			
-			//或者可以考虑liteclient，但是稍微麻烦点
-//			_miniClient = new LiteHttpClient(ModelBase(model).getServiceUrl());
+			_clonedModel = model.clone();						
 			
 			//draw image place hoder
 			drawImgePlaceHolder();			
@@ -244,39 +249,43 @@ package com.pintu.widgets{
 		private function displayHidePart(evt:MouseEvent):void{
 			if(!imgLoadedFlag) return;
 			
-			if(toolHolder){
-				TweenLite.to(toolHolder, 0.3, {alpha: 1});
-			}
-			//显示图片描述
-			if(imgDescText){	
-				//向上走，并长高
-				TweenLite.to(imgDescText, 0.3,
-					{y: _yStartOffset+_mobImgHeight-defaultDescTextHeight, scaleY:1, 
-						onComplete: showDescTxt });
-			}
+			this.addEventListener(MouseEvent.MOUSE_MOVE, checkMousePosition);
+			
 		}
 		
-		private  function showDescTxt():void{			
-			imgDescText.getChildAt(0).visible = true;
-		}
 		
 		private function hideToolAndDesc(evt:MouseEvent):void{
 			if(!imgLoadedFlag) return;
 			
+			this.removeEventListener(MouseEvent.MOUSE_MOVE, checkMousePosition);
+			//鼠标离开后，隐藏工具栏
 			if(toolHolder){
 				TweenLite.to(toolHolder, 0.3, {alpha: 0});
 			}
-			//隐藏图片描述
-			if(imgDescText){
-				//向下走，并缩小
-				TweenLite.to(imgDescText, 0.3, {y: (_yStartOffset+_mobImgHeight), scaleY:0,
-					onStart: hideDescTxt });
-			}
+
 		}	
 		
-		private  function hideDescTxt():void{
-			imgDescText.getChildAt(0).visible = false;
+		private function checkMousePosition(evt:MouseEvent):void{
+			//必须都按照全局坐标计算才行
+			var globalMouseY:Number = evt.stageY;
+			//当前视图由于有滚动操作，所以必须转换为全局位置
+			var diffY:Number = globalMouseY-this.localToGlobal(new Point(0,0)).y;				
+			
+			if(diffY<2*toolbarHeight){
+				mouseOnToolZone = true;				
+				if(toolHolder){
+					//显示工具栏				
+					TweenLite.to(toolHolder, 0.3, {alpha: 1});
+				}
+			}else{
+				mouseOnToolZone = false;				
+				if(toolHolder){
+					//隐藏工具栏					
+					TweenLite.to(toolHolder, 0.3, {alpha: 0});
+				}
+			}
 		}
+		
 		
 		private function drawLoadingText():void{
 			imgLoading = new CasaTextField();			
@@ -309,7 +318,7 @@ package com.pintu.widgets{
 			buildPicRelateInfo();
 			
 			//在图片底部上下滑动展示的文字描述内容
-			bulidSlideDescription();			
+//			bulidSlideDescription();			
 			
 			//最后创建图片工具栏，使其浮在顶部
 			buildPicOperaTools(_mobImgWidth);		
@@ -340,9 +349,9 @@ package com.pintu.widgets{
 		 * 是否原创、标签、评论数目、描述摘要6个字
 		 */ 
 		private function buildPicRelateInfo():void{
-			var startX:Number = _mobImgWidth+4;			
-			var startY:Number = 4;	
-			
+			var marging:Number = 4;
+			var startX:Number = _mobImgWidth+marging;			
+			var startY:Number = marging;	
 			var textItemVGap:Number = 26;
 			var avatarSize:Number = 64;
 			var avatarToTextGap:Number = 4;
@@ -415,15 +424,18 @@ package com.pintu.widgets{
 			var origDescContent:String = _data.description;
 			var descStr:String;
 			//描述摘要最多10个字
-			if(origDescContent.length>10){
-				origDescContent = origDescContent.substr(0,10);
-				descStr = origDescContent+"...";
-			}else{
-				descStr = origDescContent;
-			}			
-			var descTF:SimpleText = new SimpleText(descStr,green);
+//			if(origDescContent.length>10){
+//				origDescContent = origDescContent.substr(0,10);
+//				descStr = origDescContent+"...";
+//			}else{
+//				descStr = origDescContent;
+//			}
+			//描述是多行文本，全部显示
+			var descTF:SimpleText = new SimpleText(origDescContent,green);
 			descTF.x = startX;
 			descTF.y = likeTF.y+textItemVGap;
+			descTF.width = InitParams.GALLERY_WIDTH - startX-marging;
+			descTF.height = _mobImgHeight-descTF.y-marging;
 			imgInfoHolder.addChild(descTF);			
 						
 		}
@@ -440,30 +452,30 @@ package com.pintu.widgets{
 		 * 描述内容完整部分
 		 * 默认是隐藏的，鼠标滑过时显示，与工具栏同时出现
 		 */ 
-		private function bulidSlideDescription():void{
-			imgDescText = new CasaSprite();
-			
-			imgDescText.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
-			imgDescText.graphics.drawRect(0,0,
-				InitParams.GALLERY_WIDTH-2, defaultDescTextHeight);
-			imgDescText.graphics.endFill();
-			//先放在图片底部
-			imgDescText.y = _yStartOffset+_mobImgHeight;
-			imgDescText.x = _xStartOffset;
-			//初始化高度为0
-			imgDescText.scaleY = 0;			
-			this.addChild(imgDescText);
-			
-			//描述完整文字
-			var green:uint = StyleParams.GREEN_TEXT_COLOR;
-			var descContent:SimpleText = new SimpleText(_data.description,green,12);
-			descContent.width = InitParams.GALLERY_WIDTH-2*_xStartOffset;
-			descContent.height = defaultDescTextHeight;
-			imgDescText.addChild(descContent);
-			//初始隐藏，动画结束显示
-			descContent.visible = false;
-			
-		}
+//		private function bulidSlideDescription():void{
+//			imgDescText = new CasaSprite();
+//			
+//			imgDescText.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
+//			imgDescText.graphics.drawRect(0,0,
+//				InitParams.GALLERY_WIDTH-2, defaultDescTextHeight);
+//			imgDescText.graphics.endFill();
+//			//先放在图片底部
+//			imgDescText.y = _yStartOffset+_mobImgHeight;
+//			imgDescText.x = _xStartOffset;
+//			//初始化高度为0
+//			imgDescText.scaleY = 0;			
+//			this.addChild(imgDescText);
+//			
+//			//描述完整文字
+//			var green:uint = StyleParams.GREEN_TEXT_COLOR;
+//			var descContent:SimpleText = new SimpleText(_data.description,green,12);
+//			descContent.width = InitParams.GALLERY_WIDTH-2*_xStartOffset;
+//			descContent.height = defaultDescTextHeight;
+//			imgDescText.addChild(descContent);
+//			//初始隐藏，动画结束显示
+//			descContent.visible = false;
+//			
+//		}
 		
 		/**
 		 * 5项操作：
@@ -493,14 +505,14 @@ package com.pintu.widgets{
 			toolbg.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
 			//与图片左对齐
 			toolbg.graphics.drawRect(_xStartOffset, _yStartOffset,
-				_toolBGWidth, InitParams.TREEITEM_HEIGHT);
+				_toolBGWidth, toolbarHeight);
 			toolbg.graphics.endFill();
 			toolHolder.addChild(toolbg);
 			
 			//ADD COMMENT BUTTON			
 			//提交评论成功后，在客户端评论列表顶部增加刚才发送的评论
 			//再次点击，恢复原状，图片复位，评论收起			
-			var comment:IconButton = new IconButton(26,26);
+			var comment:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			comment.iconPath = "assets/comment.png";
 			comment.addEventListener(MouseEvent.CLICK, addComment);
 			comment.x = drawStartX;
@@ -510,7 +522,7 @@ package com.pintu.widgets{
 			toolHolder.addChild(comment);
 			
 			//ADD TO FAVORITE
-			var favorite:IconButton = new IconButton(26,26);
+			var favorite:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			favorite.iconPath = "assets/favorite.png";
 			favorite.addEventListener(MouseEvent.CLICK, addToFavorite);
 			favorite.x = comment.x +iconHGap;
@@ -520,7 +532,7 @@ package com.pintu.widgets{
 			toolHolder.addChild(favorite);
 			
 			//喜欢投票
-			var like:IconButton = new IconButton(26,26);
+			var like:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			like.iconPath = "assets/heart.png";
 			like.addEventListener(MouseEvent.CLICK, likeIt);
 			like.x = favorite.x +iconHGap;
@@ -531,7 +543,7 @@ package com.pintu.widgets{
 			
 			
 			//SAVE TO LOCAL BUTTON
-			var save:IconButton = new IconButton(26,26);
+			var save:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			save.iconPath = "assets/save.png";
 			save.addEventListener(MouseEvent.CLICK, saveToLocal);
 			save.x = like.x +iconHGap;
@@ -541,7 +553,7 @@ package com.pintu.widgets{
 			toolHolder.addChild(save);
 			
 			//FORWAR TO WEIBO BUTTON
-			var forward:IconButton = new IconButton(26,26);
+			var forward:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			forward.iconPath = "assets/forward.png";
 			forward.addEventListener(MouseEvent.CLICK, todo);
 			forward.x = save.x +iconHGap;
@@ -552,7 +564,7 @@ package com.pintu.widgets{
 			toolHolder.addChild(forward);
 			
 			//REPORT TO ADMIN BUTTON
-			var report:IconButton = new IconButton(26,26);
+			var report:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			report.iconPath = "assets/report.png";
 			report.addEventListener(MouseEvent.CLICK, todo);
 			report.x = forward.x +iconHGap;
