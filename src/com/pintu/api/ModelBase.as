@@ -15,7 +15,12 @@ package com.pintu.api{
 		
 		protected var client:SimpleHttpClient;		
 		
-		private  var _currentUser:String;		
+		private  var _currentUser:String;	
+		/**
+		 * HTTP任务队列，每隔100毫秒去检查一下
+		 * 如果客户端空闲就执行第一个
+		 * 执行完就移除队列的第一个
+		 */ 
 		private var taskQueue:ArrayList;
 		private var taskTimer:Timer;
 				
@@ -31,8 +36,14 @@ package com.pintu.api{
 			client.addEventListener("complete",clearHeaderTask);
 			
 			taskQueue = new ArrayList();
+			
 			//慎用啊，销毁时一定要停掉
-			taskTimer = new Timer(10);
+			//这个时间间距挺合适，别再改了
+			//再小了会因其生成视图发生异常
+			//大图列表如果操作快的话，时间间隔10毫秒的话就会产生JSON解析异常
+			//怀疑跟这个时间间隔有关，改成100就没问题了
+			//2011/12/06
+			taskTimer = new Timer(100);
 			taskTimer.addEventListener(TimerEvent.TIMER, excuteTaskQueue);
 			taskTimer.start();			
 			

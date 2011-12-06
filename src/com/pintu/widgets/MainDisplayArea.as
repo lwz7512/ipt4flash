@@ -1,6 +1,7 @@
 package com.pintu.widgets{
 
-
+	import com.adobe.utils.StringUtil;
+	
 	import com.pintu.api.ApiMethods;
 	import com.pintu.api.IPintu;
 	import com.pintu.api.PintuImpl;
@@ -244,9 +245,11 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-				Logger.debug("to create big gallery...");				
-				var galleryData:String = ResponseEvent(event).data;
-				Logger.debug("big gallery data: \n"+galleryData);
+//				Logger.debug("to create big gallery...");		
+				
+				var galleryData:String = ResponseEvent(event).data;				
+//				Logger.debug("big gallery data: \n"+galleryData);
+				
 				_picBuilder.createScrollableBigGallery(galleryData);
 			}
 			if(event is PTErrorEvent){

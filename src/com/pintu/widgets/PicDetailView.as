@@ -307,8 +307,8 @@ package com.pintu.widgets{
 			_mobImgWidth = mobImage.bitmap.width;
 			_mobImgHeight = mobImage.bitmap.height;			
 			
-			Logger.debug("_mobImgWidth: "+_mobImgWidth);
-			Logger.debug("_mobImgHeight: "+_mobImgHeight);								
+//			Logger.debug("_mobImgWidth: "+_mobImgWidth);
+//			Logger.debug("_mobImgHeight: "+_mobImgHeight);								
 			
 			//右侧详情所在背景
 			buildPicInfoBlackBG();
@@ -331,7 +331,7 @@ package com.pintu.widgets{
 		
 		private function buildPicInfoBlackBG():void{
 			imgInfoHolder = new CasaSprite();
-			imgInfoHolder.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
+			imgInfoHolder.graphics.beginFill(StyleParams.PICDETAIL_BACKGROUND);
 			//右侧相关信息占位宽度
 			var rightBlackColumnWidth:Number = 
 				InitParams.GALLERY_WIDTH - _mobImgWidth;

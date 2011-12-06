@@ -63,10 +63,10 @@ package com.pintu.api
 		//2011/11/29
 		private function responseHander(event:Event):void{
 			if(event is PTStatusEvent){
-				Logger.debug("*** Model to dispatch PTStatusEvent event ***");
+//				Logger.debug("*** Model to dispatch PTStatusEvent event ***");
 			}
 			if(event is ResponseEvent){
-				Logger.debug("*** Model to dispatch ResponseEvent event ***");
+//				Logger.debug("*** Model to dispatch ResponseEvent event ***");
 			}
 			//通知使用模型的模块
 			dispatchEvent(event);
@@ -98,13 +98,7 @@ package com.pintu.api
 		}		
 		
 		public function logon(account:String, password:String):void{
-			var params:Array = [{name:"account",value:account},{name:"password",value:password}];			
-//			var myClient:SimpleHttpClient = new SimpleHttpClient(getServiceUrl(),this.currentUser);
-//			myClient.addEventListener(ApiMethods.LOGON,responseHander);
-//			myClient.addEventListener("complete",function():void{
-//				myClient.disconnect();
-//			});		
-//			myClient.post(params, ApiMethods.LOGON);		
+			var params:Array = [{name:"account",value:account},{name:"password",value:password}];
 			addHttpTask(params, ApiMethods.LOGON);
 		}
 		

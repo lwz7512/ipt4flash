@@ -43,10 +43,9 @@ package com.pintu.widgets{
 		
 		//画廊移动速度
 		private var _galleryMoveYSpeed:Number = 0;
-		//摩擦力系数，越小移动越快
-		private var _frictionFactor:int = 15;
+		
 		//加速度系数
-		private var _acceleration:int = 30;
+		private var _acceleration:int = 60;
 		//保留上次鼠标位置以判断移动方向
 		private var _lastMouseY:Number = 0;		
 		
@@ -180,7 +179,8 @@ package com.pintu.widgets{
 				_galleryMoveYSpeed = 0;
 				return;
 			}
-			
+			//摩擦力系数，越小移动越快
+			var frictionFactor:int = 15;
 			var relativeMouseY:Number = event.stageY - drawStartY;
 			var isMoveDown:Boolean = (relativeMouseY-_lastMouseY)>0?true:false;			
 			if(isMoveDown){				
@@ -190,7 +190,7 @@ package com.pintu.widgets{
 					if(_picsContainer.y>galleryMoveEndY && _picsContainer.y<=galleryMoveStartY){
 						//与底部越近，速度越快，这个速度是负值，以使画廊向上移动
 						//中部时，速度为0
-						_galleryMoveYSpeed = (-relativeMouseY+displayAreaHeight/2)/_frictionFactor;						
+						_galleryMoveYSpeed = (-relativeMouseY+displayAreaHeight/2)/frictionFactor;						
 					}
 				}
 			}else{//Move up				
@@ -200,7 +200,7 @@ package com.pintu.widgets{
 					if(_picsContainer.y>=galleryMoveEndY && _picsContainer.y<galleryMoveStartY){
 						//越与顶部接近，速度越快，这个速度是正值，以使画廊向下移动
 						//中部时，速度为0
-						_galleryMoveYSpeed = (-relativeMouseY+displayAreaHeight/2)/_frictionFactor;						
+						_galleryMoveYSpeed = (-relativeMouseY+displayAreaHeight/2)/frictionFactor;						
 					}
 				}
 			}

@@ -191,13 +191,12 @@ package com.pintu.controller
 			var tpId:String = event.data;
 			_model.getPicDetail(tpId);
 		}
-
-		//TODO, ...
+		
 		/**
 		 * 创建列表式大图画廊，创建多个PicDetailView
 		 */ 
-		public function createScrollableBigGallery(json:String):void{
-			var detailObjs:Array = JSON.decode(json) as Array;					
+		public function createScrollableBigGallery(json:String):void{			
+			var detailObjs:Array = JSON.decode(json) as Array;										
 			
 			//大图数据列表
 			var tpicDatas:Array = [];

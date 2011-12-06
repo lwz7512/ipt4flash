@@ -28,6 +28,9 @@ package com.pintu.config
 		//黯：深黑色、泛指黑色
 		public static const HEADERBAR_BOTTOM_LIGHTGREEN:uint = 0x41555D;
 		
+		//黛蓝：深蓝色
+		public static const PICDETAIL_BACKGROUND:uint = 0x425066;
+		
 		/**
 		 * Header menu style
 		 */ 
