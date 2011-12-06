@@ -1,6 +1,7 @@
 package com.pintu.api
 {
-	import flash.net.FileReference;	
+	import flash.net.FileReference;
+	
 	import org.httpclient.HttpClient;
 	
 	public interface IPintu{	
@@ -10,8 +11,11 @@ package com.pintu.api
 		 */ 
 		//client是否空闲
 		function get isIdle():Boolean;
-		//停止队列
+		/**
+		 * 停止队列和计时器，这个很重要，必须在视图移除时调用
+		 */
 		function destory():void;
+		
 		//登录成功更新用户
 		function updateUser(userId:String):void;	
 		//服务地址
@@ -43,10 +47,15 @@ package com.pintu.api
 		/**
 		 * 这里可以不用传userId值，client已经有该参数值了
 		 */ 
-		function markThePic(userId:String, picId:String):void
-		function postVote(receiver:String, follow:String, type:String, amount:String):void
+		function markThePic(userId:String, picId:String):void;
+		function postVote(receiver:String, follow:String, type:String, amount:String):void;
 		
-		function getUserDetail(userId:String):void
+		function getUserDetail(userId:String):void;
+		
+		/**
+		 * 多个视图用到同样的模型，为了防止事件监听干扰，各自使用各自的模型 
+		 */
+		function clone():IPintu;
 		
 	}
 }

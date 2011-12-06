@@ -57,20 +57,7 @@ package com.pintu.api
 			//TODO, ADD OTHER LISTENER...
 			
 		}
-		
-		/**
-		 * 必须加个事件监听阻止方法，放置重复对模型添加事件监听
-		 * 所有的重复事件，可能就是没有这个处理引起的
-		 */
-		override public function addEventListener(type:String, listener:Function, userCapture:Boolean=false,priority:int=0,useWeakReference:Boolean=false):void{
-			if(this.hasEventListener(type)){
-				Logger.warn(" Duplicate event listener registration, for : "+type);
-				return;
-			}
-			super.addEventListener(type,listener);
-		}
-		
-		
+				
 		//这里指定泛型事件，因为可能是ResponseEvent，也可能是PTErrorEvent
 		//也有可能是状态事件PTStatusEvent，用于提交动作的响应
 		//2011/11/29
@@ -187,6 +174,22 @@ package com.pintu.api
 
 		
 		
+		
+		/**
+		 * 必须加个事件监听阻止方法，放置重复对模型添加事件监听
+		 * 所有的重复事件，可能就是没有这个处理引起的
+		 */
+		override public function addEventListener(type:String, listener:Function, userCapture:Boolean=false,priority:int=0,useWeakReference:Boolean=false):void{
+			if(this.hasEventListener(type)){
+				Logger.warn(" Duplicate event listener registration, for : "+type);
+				return;
+			}
+			super.addEventListener(type,listener);
+		}
+		
+		public function clone():IPintu{
+			return new PintuImpl(currentUser);
+		}
 		
 	} //end of class
 }

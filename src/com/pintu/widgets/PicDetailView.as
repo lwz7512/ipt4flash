@@ -8,6 +8,7 @@ package com.pintu.widgets{
 	import com.pintu.config.*;
 	import com.pintu.controller.GlobalController;
 	import com.pintu.events.*;
+	import com.pintu.http.LiteHttpClient;
 	import com.pintu.utils.*;
 	import com.pintu.vos.CmntData;
 	import com.pintu.vos.TPicData;
@@ -27,6 +28,7 @@ package com.pintu.widgets{
 	import org.casalib.load.ImageLoad;
 	
 	/**
+	 * 图片详情对象，大图模式下，多个详情有同时出现的情况
 	 * 包括内容：可浮动的工具栏、图片及相关信息、评论列表以及评论发表	
 	 * 
 	 * 由PicDOBuilder中的detailPicHandler方法创建
@@ -35,7 +37,8 @@ package com.pintu.widgets{
 		
 		//当前图片详情对应数据
 		private var _data:TPicData;
-		private var _model:IPintu;	
+		private var _clonedModel:IPintu;	
+//		private var _miniClient:LiteHttpClient;
 		
 		//看查看缩略图详情的返回按钮让位
 		//正常的大图列表是不需要此设置的
@@ -83,8 +86,11 @@ package com.pintu.widgets{
 		public function PicDetailView(data:TPicData, model:IPintu){
 			_data = data;
 			if(!_data) return;
+			//每个视图中，都有各自不同的模型，这样就不会干扰了
+			_clonedModel = model.clone();
 			
-			_model = model;			
+			//或者可以考虑liteclient，但是稍微麻烦点
+//			_miniClient = new LiteHttpClient(ModelBase(model).getServiceUrl());
 			
 			//draw image place hoder
 			drawImgePlaceHolder();			
@@ -105,10 +111,10 @@ package com.pintu.widgets{
 		}
 		
 		private function initDetailView(evt:Event):void{
-			PintuImpl(_model).addEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
-			PintuImpl(_model).addEventListener(ApiMethods.ADDVOTE, votePicHandler);
+			PintuImpl(_clonedModel).addEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
+			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
+			PintuImpl(_clonedModel).addEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
+			PintuImpl(_clonedModel).addEventListener(ApiMethods.ADDVOTE, votePicHandler);
 		}
 		
 		public function set showBackBtn(v:Boolean):void{
@@ -116,11 +122,13 @@ package com.pintu.widgets{
 		}
 		//清空模型引用
 		private function cleanUp(evt:Event):void{
-			PintuImpl(_model).removeEventListener(ApiMethods.ADDSTORY, cmntPostHandler)
-			PintuImpl(_model).removeEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler)
-			PintuImpl(_model).removeEventListener(ApiMethods.MARKTHEPIC, markPicHandler)
-			PintuImpl(_model).removeEventListener(ApiMethods.ADDVOTE, votePicHandler)
-			_model = null;
+			PintuImpl(_clonedModel).removeEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
+			PintuImpl(_clonedModel).removeEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
+			PintuImpl(_clonedModel).removeEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
+			PintuImpl(_clonedModel).removeEventListener(ApiMethods.ADDVOTE, votePicHandler);
+			//这个是复制出来的，一定要消耗
+			_clonedModel.destory();
+			_clonedModel = null;
 		}
 		
 		private function cmntPostHandler(evt:Event):void{								
@@ -609,7 +617,7 @@ package com.pintu.widgets{
 			
 			//如果评论数大于0，获取评论列表，评论获得后增加视图高度	
 			if(Number(_data.commentsNum)){
-				_model.getComments(_data.id);
+				_clonedModel.getComments(_data.id);
 			}
 			//通知外围，渲染完成
 			rendered();		
@@ -662,13 +670,13 @@ package com.pintu.widgets{
 		private function postComment(evt:ButtonEvent):void{
 			var cmtTxt:String = cmtInput.text;
 			if(cmtTxt.length>0){
-				_model.postComment(_data.id, cmtTxt);
+				_clonedModel.postComment(_data.id, cmtTxt);
 				showCmntLoading();
 			}
 		}
 		
 		private function addToFavorite(evt:MouseEvent):void{			
-			_model.markThePic(null,_data.id);
+			_clonedModel.markThePic(null,_data.id);
 		}
 		
 		//保存原图到本地，在HomePage中处理该事件
@@ -680,11 +688,11 @@ package com.pintu.widgets{
 		
 		private function likeIt(evt:MouseEvent):void{		
 			
-			if(_data.owner == PintuImpl(_model).currentUser){
+			if(_data.owner == PintuImpl(_clonedModel).currentUser){
 				//在主显示区弹出提示
 				this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "不能给自己投票哟"));
 			}else{
-				_model.postVote(_data.owner, _data.id, "cool", "1");							
+				_clonedModel.postVote(_data.owner, _data.id, "cool", "1");							
 			}
 		}
 		

@@ -51,8 +51,11 @@ package com.pintu.api{
 			return _currentUser;
 		}
 		
+		//被克隆出来的模型实例，必须各自销毁
+		//全局模型不需要销毁
 		public function destory():void{
-			taskTimer.stop();
+			if(client) client.disconnect();
+			if(taskTimer) taskTimer.stop();
 			taskTimer = null;
 		}
 		
@@ -83,6 +86,7 @@ package com.pintu.api{
 			if(taskQueue.size>0 && !client.isRunning()){
 				var method:String = taskQueue.first.method;
 				var params:Array = taskQueue.first.params;
+				
 				client.post(params, method);
 				Logger.debug("Start Execute: "+method);
 			}

@@ -22,6 +22,8 @@ package com.pintu.http
 		
 		private var _serviceUrl:String;
 		private var _userId:String;
+		//延迟生成，不在构造函数中生成
+		//方便在销毁时判断
 		private var _client:HttpClient;
 		
 		private var _isRuning:Boolean;
@@ -29,8 +31,7 @@ package com.pintu.http
 		public function SimpleHttpClient(serviceUrl:String, userId:String)
 		{
 			this._serviceUrl = serviceUrl;
-			this._userId = userId;
-			this._client = new HttpClient();			
+			this._userId = userId;			
 		}
 		
 		public function set userId(userId:String):void{
@@ -45,7 +46,7 @@ package com.pintu.http
 		}
 		
 		public function disconnect():void{
-			_client.close();
+			if(_client) _client.close();			
 		}
 		
 		/**
@@ -53,8 +54,10 @@ package com.pintu.http
 		 * [{name:"key1", value:"FirstName1"}, {name:"key2", value: "LastName1"}];
 		 */ 
 		public function post(params:Array, method:String):void{
-			
+			//服务
 			var uri:URI = new URI(_serviceUrl);
+			//延迟生成客户端
+			if(!_client) this._client = new HttpClient();
 			
 			params = params.concat([ {name:"method", value: method}]);
 			params = params.concat([ {name:"userId", value: _userId}]);
@@ -139,7 +142,10 @@ package com.pintu.http
 			parts.push(user);
 			parts.push(source);
 			parts.push(image);
-						
+			
+			//延迟生成客户端
+			if(!_client) this._client = new HttpClient();
+			
 			_client.listener.onComplete = function(event:HttpResponseEvent):void {
 				// Notified when complete (after status and data)
 				var response:String = event.response.message;

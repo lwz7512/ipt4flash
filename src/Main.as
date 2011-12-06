@@ -201,5 +201,12 @@ package{
 			Toast.getInstance(this).show(hint,middleX,middleY);
 		}
 		
+		
+		
+		
+		
+		
+		
+		
 	} //end of class
 }

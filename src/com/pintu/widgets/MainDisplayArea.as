@@ -405,6 +405,7 @@ package com.pintu.widgets{
 			PintuImpl(_model).removeEventListener(ApiMethods.CLASSICALSTATISTICS,classicHandler);
 			PintuImpl(_model).removeEventListener(ApiMethods.COLLECTSTATISTICS,favoredPicHandler);
 			PintuImpl(_model).removeEventListener(ApiMethods.GETTHUMBNAILSBYTAG,tagPicHandler);
+			
 		}
 		
 		private function scrollGallery(event:MouseEvent):void{

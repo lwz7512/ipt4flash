@@ -92,7 +92,8 @@ package com.pintu.widgets{
 				bitmap.height = 100;					
 			
 			_initialized = true;
-			this.removeChild(tf);
+			
+			if(this.contains(tf)) this.removeChild(tf);
 		}
 		
 		private function _onError(event:IOErrorEvent):void{
@@ -103,7 +104,7 @@ package com.pintu.widgets{
 			//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
 			this.graphics.lineStyle(1,0xC2CCD0,1,true);
 			//黑色背景，这样暗示详情背景是黑色的
-			this.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
+			this.graphics.beginFill(StyleParams.FOOTER_SOLID_GRAY);
 			//稍微宽点容纳图片
 			this.graphics.drawRoundRect(0,0,101,100,_roundRadius,_roundRadius);
 			this.graphics.endFill();

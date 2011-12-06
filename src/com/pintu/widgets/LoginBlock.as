@@ -63,7 +63,7 @@ package com.pintu.widgets
 			PintuImpl(_model).addEventListener(ApiMethods.LOGON, logonHandler);
 		}
 		private function cleanUp(evt:Event):void{
-			PintuImpl(_model).removeEventListener(ApiMethods.LOGON, logonHandler);
+			PintuImpl(_model).removeEventListener(ApiMethods.LOGON, logonHandler);			
 		}
 		
 		private function logonHandler(event:Event):void{
