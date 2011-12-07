@@ -186,17 +186,17 @@ package com.pintu.widgets{
 					break;
 				
 				case CategoryTree.CATEGORY_HOT:					
-//					_model.getHotPicture();
+					_model.getHotPicture();
 					
 					break;
 				
 				case CategoryTree.CATEGORY_CLASSICAL:					
-//					_model.getClassicalPics();
+					_model.getClassicalPics();
 					
 					break;
 				
 				case CategoryTree.CATEGORY_FAVORED:					
-//					_model.getFavoredPics();
+					_model.getFavoredPics();
 					
 					break;
 				
@@ -215,6 +215,9 @@ package com.pintu.widgets{
 			
 		}		
 		
+		/**
+		 * 默认的查询方式，查询最近6小时画廊数据
+		 */ 
 		private function latestGalleryHandler(event:Event):void{						
 			//移除进度条
 			hideMiddleLoading();
@@ -236,7 +239,7 @@ package com.pintu.widgets{
 			if(event is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.GETGALLERYBYTIME);
 			}
-						
+
 		}
 		
 		
@@ -256,42 +259,62 @@ package com.pintu.widgets{
 				Logger.error("Error in calling: "+ApiMethods.GETGALLERYFORWEB);
 			}			
 		}	
+		
 		private function hotPicHandler(event:Event):void{
+			//移除进度条
+			hideMiddleLoading();
+			
 			if(event is ResponseEvent){
-				Logger.debug("to create hot gallery...");
+//				Logger.debug("to create hotPic gallery...");		
 				
+				var galleryData:String = ResponseEvent(event).data;				
+//				Logger.debug("hotPic data: \n"+galleryData);
 				
+				_picBuilder.createScrollableBigGallery(galleryData);
 			}
 			if(event is PTErrorEvent){
-				
-			}			
+				Logger.error("Error in calling: "+ApiMethods.GETHOTPICTURE);
+			}		
 		}	
+		
 		private function classicHandler(event:Event):void{
 			//移除进度条
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-				Logger.debug("to create classic gallery...");
+				Logger.debug("to create classic gallery...");		
 				
+				var galleryData:String = ResponseEvent(event).data;				
+				Logger.debug("classic data: \n"+galleryData);
 				
+				_picBuilder.createScrollableBigGallery(galleryData);
 			}
 			if(event is PTErrorEvent){
-				
-			}			
+				Logger.error("Error in calling: "+ApiMethods.CLASSICALSTATISTICS);
+			}
 		}	
+		
 		private function favoredPicHandler(event:Event):void{
 			//移除进度条
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-				Logger.debug("to create favorite gallery...");
+				Logger.debug("to create favored gallery...");		
 				
+				var galleryData:String = ResponseEvent(event).data;				
+				Logger.debug("favored data: \n"+galleryData);
 				
+				_picBuilder.createScrollableBigGallery(galleryData);
 			}
 			if(event is PTErrorEvent){
-				
-			}			
-		}	
+				Logger.error("Error in calling: "+ApiMethods.COLLECTSTATISTICS);
+			}		
+		}
+		
+		
+		/**
+		 * 这个数据结构类似缩略图，用画廊方式呈现
+		 */ 
 		private function tagPicHandler(event:Event):void{
 			//移除进度条
 			hideMiddleLoading();

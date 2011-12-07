@@ -2,10 +2,10 @@ package com.pintu.widgets{
 	
 	import com.greensock.TweenLite;
 	import com.greensock.easing.Strong;
-	
 	import com.pintu.api.IPintu;
 	import com.pintu.common.*;
 	import com.pintu.config.*;
+	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
 	
 	import flash.events.Event;
@@ -45,7 +45,7 @@ package com.pintu.widgets{
 		private var _galleryMoveYSpeed:Number = 0;
 		
 		//加速度系数
-		private var _acceleration:int = 60;
+		private var _acceleration:int = 40;
 		//保留上次鼠标位置以判断移动方向
 		private var _lastMouseY:Number = 0;		
 		
@@ -68,7 +68,8 @@ package com.pintu.widgets{
 			
 			//滚轮处理画廊移动
 			this.addEventListener(MouseEvent.MOUSE_WHEEL,scrollGallery);	
-			
+			//监听大图派发的滚动提升图片事件，方便添加评论输入
+			this.addEventListener(PintuEvent.SCROLL_UP, raiseUpGallery);
 			
 			Logger.debug("Create MainDisplayBase once...");
 		}
@@ -135,10 +136,13 @@ package com.pintu.widgets{
 			//向后滚，负值，向前滚，正值
 			var moveDirection:int = event.delta;
 			_galleryMoveYSpeed = moveDirection*_acceleration;
-			moveGallery(null);
+			moveGallery();
 		}
 		
-		private function moveGallery(event:Event):void{	
+		/**
+		 * 鼠标滚轮滚动画廊
+		 */ 
+		private function moveGallery():void{	
 			//画廊默认位置
 			var galleryHeight:Number = _picsContainer.height;
 			var galleryMoveStartY:Number = 0;			
@@ -159,6 +163,16 @@ package com.pintu.widgets{
 			if(_picsContainer.y<galleryMoveEndY){
 				TweenLite.to(_picsContainer,0.4,{y:galleryMoveEndY,ease:Strong.easeOut});
 			}
+		}
+		
+		/**
+		 * 向上滚动，y值减小diff
+		 */ 
+		private function raiseUpGallery(evt:PintuEvent):void{
+			var diff:Number = Number(evt.data);
+			var origPicsContainerY:Number = _picsContainer.y;
+			var galleryMoveEndY:Number = origPicsContainerY-diff;
+			TweenLite.to(_picsContainer,0.4,{y:galleryMoveEndY,ease:Strong.easeOut});
 		}
 		
 

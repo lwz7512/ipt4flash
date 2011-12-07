@@ -16,9 +16,9 @@ package com.pintu.widgets{
 	import com.sibirjak.asdpc.button.ButtonEvent;
 	
 	import flash.display.DisplayObject;
-	import flash.geom.Point;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.geom.Point;
 	import flash.globalization.Collator;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
@@ -227,7 +227,7 @@ package com.pintu.widgets{
 		
 		private function drawImgePlaceHolder():void{
 			//draw mobile image placeholder...
-			mobImgPlaceHolder = new DashedLine(1,0x333333,[6,2,6,2]);
+			mobImgPlaceHolder = new DashedLine(1,0xCCCCCC,[6,2,6,2]);
 			//起点
 			mobImgPlaceHolder.moveTo(_xStartOffset, _yStartOffset);
 			//填充
@@ -300,12 +300,18 @@ package com.pintu.widgets{
 		
 		private function imgLoaded(evt:PintuEvent):void{			
 			
-			removeChild(mobImgPlaceHolder);
+//			removeChild(mobImgPlaceHolder);
 			removeChild(imgLoading);
 			
 			//获得图片大小
-			_mobImgWidth = mobImage.bitmap.width;
-			_mobImgHeight = mobImage.bitmap.height;			
+//			_mobImgWidth = mobImage.bitmap.width;
+			//FIXME, 固定图片宽度为默认宽度让文字都能对齐
+			_mobImgWidth = InitParams.DEFAULT_BIGPIC_WIDTH;
+			_mobImgHeight = mobImage.bitmap.height;
+			//FIXME, 如果图片宽度不够440，让图片居中
+			if(mobImage.bitmap.width<InitParams.DEFAULT_BIGPIC_WIDTH){
+				mobImage.x = (InitParams.DEFAULT_BIGPIC_WIDTH-mobImage.bitmap.width)/2;
+			}
 			
 //			Logger.debug("_mobImgWidth: "+_mobImgWidth);
 //			Logger.debug("_mobImgHeight: "+_mobImgHeight);								
@@ -582,7 +588,16 @@ package com.pintu.widgets{
 		 * 如果没有就创建，如果有了销毁
 		 */ 
 		private function addComment(evt:MouseEvent):void{
-						
+			//点击评论按钮，画廊图片滚动使图片置顶
+			var picGlobalY:Number = this.localToGlobal(new Point(0,0)).y;	
+			//当前视图由于有滚动操作，所以必须转换为全局位置
+			var galleryGlobalY:Number = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;			
+			var diffY:Number = picGlobalY-galleryGlobalY;
+			if(diffY>0){
+				var scrollup:PintuEvent = new PintuEvent(PintuEvent.SCROLL_UP, diffY.toString());
+				this.dispatchEvent(scrollup);
+			}			
+			
 			//初始化
 			if(!commentsHolder) commentsHolder = new CasaSprite();
 			//如果存在就销毁
@@ -600,19 +615,19 @@ package com.pintu.widgets{
 			}
 			//输入框改变大小时跟这个比较得到增减的大小
 			//从而改变评论列表的位置
-			var origInputHeight:Number;
+			//两行高度正好42
+			var origInputHeight:Number = 42;
 			
 			//创建评论输入框，和提交按钮
 			cmtInput = new TextArea();
 			cmtInput.text = "";
-			cmtInput.setSize(InitParams.GALLERY_WIDTH-4, 24);
+			cmtInput.setSize(InitParams.GALLERY_WIDTH-4, origInputHeight);
 			cmtInput.autoStretchHeight = true;			
-			cmtInput.autoFocus = true;	
-			//记录下来
-			origInputHeight = cmtInput.height;
+			cmtInput.autoFocus = true;				
 			
 			cmtInput.addEventListener(TextArea.RESIZED, function():void{
 				cmtSubmit.y = cmtInput.height+2;
+				trace("input area height: "+cmtInput.height);
 				//每次换行或者缩进都要调整评论列表的位置
 				var diff:Number = cmtInput.height-origInputHeight;
 				//如果下面有评论就往下移动

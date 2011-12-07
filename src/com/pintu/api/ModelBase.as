@@ -41,9 +41,9 @@ package com.pintu.api{
 			//这个时间间距挺合适，别再改了
 			//再小了会因其生成视图发生异常
 			//大图列表如果操作快的话，时间间隔10毫秒的话就会产生JSON解析异常
-			//怀疑跟这个时间间隔有关，改成100就没问题了
+			//怀疑跟这个时间间隔有关，改成200就没问题了
 			//2011/12/06
-			taskTimer = new Timer(100);
+			taskTimer = new Timer(200);
 			taskTimer.addEventListener(TimerEvent.TIMER, excuteTaskQueue);
 			taskTimer.start();			
 			

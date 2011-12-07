@@ -197,6 +197,15 @@ package com.pintu.controller
 		 */ 
 		public function createScrollableBigGallery(json:String):void{			
 			var detailObjs:Array = JSON.decode(json) as Array;										
+			//画廊没新图片
+			if(detailObjs.length==0){
+				var hintEvt:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "没有最新的图片，不然随便看看？");
+				_owner.dispatchEvent(hintEvt);				
+				return;
+			}			
+			
+			//准备生成画廊
+			cleanUp();
 			
 			//大图数据列表
 			var tpicDatas:Array = [];

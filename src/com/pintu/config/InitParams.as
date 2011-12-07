@@ -5,6 +5,9 @@ package com.pintu.config
 		public function InitParams(){}
 		
 		
+		//默认大图图片宽度
+		public static var DEFAULT_BIGPIC_WIDTH:Number = 440;
+		
 		//运行时初始化参数		
 		public static var appWidth:Number = 0;
 		public static var appHeight:Number = 0;				
