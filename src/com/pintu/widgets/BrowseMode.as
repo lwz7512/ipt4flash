@@ -80,34 +80,43 @@ package com.pintu.widgets{
 			var shadow:DropShadowFilter = new DropShadowFilter(2,45,0x999999,0.6);
 			shadowLayer.filters = [shadow];
 			
+			var menuIndex:int = 0;
+			
+			randomMenu = new IconMenuItem("随便看看");
+			randomMenu.y = menuIndex*menuItemHeight;
+			randomMenu.addEventListener(MouseEvent.CLICK, randomClickHandler);
+			this.addChild(randomMenu);
+			
+			menuIndex ++;
 			thumbnailMenu = new IconMenuItem("最新画廊");
+			thumbnailMenu.y = menuIndex*menuItemHeight;
 			thumbnailMenu.addEventListener(MouseEvent.CLICK, thumbnailClickHandler);
 			this.addChild(thumbnailMenu);
 			
+			menuIndex ++;
 			bigPicListMenu = new IconMenuItem("大图列表");
-			bigPicListMenu.y = menuItemHeight;
+			bigPicListMenu.y = menuIndex*menuItemHeight;
 			bigPicListMenu.addEventListener(MouseEvent.CLICK, bigPicListClickHandler);
 			this.addChild(bigPicListMenu);
 			
+			menuIndex ++;
 			hotPicsMenu = new IconMenuItem("热点图片");
-			hotPicsMenu.y = 2*menuItemHeight;
+			hotPicsMenu.y = menuIndex*menuItemHeight;
 			hotPicsMenu.addEventListener(MouseEvent.CLICK, hotPicsClickHandler);
 			this.addChild(hotPicsMenu);
 			
+			menuIndex ++;
 			classicalMenu = new IconMenuItem("经典图片");
-			classicalMenu.y = 3*menuItemHeight;
+			classicalMenu.y = menuIndex*menuItemHeight;
 			classicalMenu.addEventListener(MouseEvent.CLICK, classicalClickHandler);
 			this.addChild(classicalMenu);
 			
+			menuIndex ++;
 			favoredMenu = new IconMenuItem("最近收藏");
-			favoredMenu.y = 4*menuItemHeight;
+			favoredMenu.y = menuIndex*menuItemHeight;
 			favoredMenu.addEventListener(MouseEvent.CLICK, favoredClickHandler);
 			this.addChild(favoredMenu);
-			
-			randomMenu = new IconMenuItem("随便看看");
-			randomMenu.y = 5*menuItemHeight;
-			randomMenu.addEventListener(MouseEvent.CLICK, randomClickHandler);
-			this.addChild(randomMenu);
+						
 			
 			//监听鼠标动作
 			this.addEventListener(MouseEvent.MOUSE_OVER, function():void{

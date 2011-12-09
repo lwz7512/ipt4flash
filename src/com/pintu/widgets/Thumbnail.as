@@ -34,6 +34,8 @@ package com.pintu.widgets{
 		
 		private var _roundRadius:int = 6;
 		
+		private var defaultThumbnailPath:String = "assets/defaultImage100.png";
+		
 		public function Thumbnail(data:TPicDesc){
 			_data = data;
 			//LOAD PIC BY URL...
@@ -79,17 +81,24 @@ package com.pintu.widgets{
 		}
 		
 		private function _onComplete(e:LoadEvent):void {
-			var bitmap:Bitmap = this._imgLoader.contentAsBitmap;	
-			bitmap.x = 1;
-			bitmap.y = 1;
-			this.addChild(bitmap);
+			//第一次载人的图片
+			var bitmap:Bitmap = _imgLoader.contentAsBitmap;				
+			var imgContainer:CasaSprite = this;
 			
-			//如果比缩略图默认尺寸大，就按默认尺寸设置
+			//如果比缩略图默认尺寸大，就按默认图显示，这可能是不合法图片
 			//这样防止缓动效果出问题
-			if(bitmap.width>100)
-				bitmap.width = 100;
-			if(bitmap.height>100)
-				bitmap.height = 100;					
+			if(bitmap.width>100 || bitmap.height>100){//异常图片使用默认的
+				_imgLoader = new ImageLoad(defaultThumbnailPath);
+				_imgLoader.addEventListener(LoadEvent.COMPLETE, function():void{
+					imgContainer.addChild(_imgLoader.contentAsBitmap);
+				});
+				//获取默认缩略图
+				_imgLoader.start();
+			}else{//正常图片显示
+				bitmap.x = 1;
+				bitmap.y = 1;
+				imgContainer.addChild(bitmap);
+			}						
 			
 			_initialized = true;
 			

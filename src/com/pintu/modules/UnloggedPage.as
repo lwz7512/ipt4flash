@@ -59,7 +59,9 @@ package com.pintu.modules
 		
 		
 		
-		
+		/**
+		 * 在Main中的browseTypeChanged监听器中调用该方法
+		 */ 
 		public function menuHandler(operation:String, extra:String):void{
 			//随机模式
 			if(operation==PintuEvent.BROWSE_CHANGED 
@@ -67,21 +69,40 @@ package com.pintu.modules
 				//告诉显示区，按照随机模式查询
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;
 			}
-			//TODO, 缩略图模式
+			//缩略图模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_GALLERY_TBMODE){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;
+			}
 			
+			//大图列表模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_GALLERY_BPMODE){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_BPMODE;
+			}
 			
-			//TODO, 大图列表模式
+			//热点模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_HOT){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_HOT;
+			}
 			
+			//经典模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_CLASSICAL){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_CLASSICAL;
+			}
 			
-			//TODO, 热点模式
-			
-			
-			//TODO, 经典模式
-			
-			
-			//TODO, 最近收藏模式
-			
-			
+			//最近收藏模式
+			if(operation==PintuEvent.BROWSE_CHANGED 
+				&& extra==BrowseMode.CATEGORY_FAVORED){
+				//告诉显示区，按照随机模式查询
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_FAVORED;
+			}
 		}
 		
 		//重写销毁函数

@@ -37,7 +37,10 @@ package com.pintu.controller
 		
 		//所创建内容的显示容器
 		private var _context:CasaSprite;
-		//拥有本实例的对象，用来调用显示进度条和提示方法
+		
+		/**
+		 * 拥有本实例的对象，用来调用显示进度条和提示方法
+		 */ 
 		private var _owner:MainDisplayArea;
 		
 		/**
@@ -65,6 +68,8 @@ package com.pintu.controller
 		
 		//大图模式下生成的列表对象，缓存下来用来重新排列位置
 		private var bigPicViews:Array;
+		
+		private var pathShape:CasaShape;
 			
 		public function PicDOBuilder(container:CasaSprite, model:IPintu){
 			//图片容器在原点
@@ -206,6 +211,9 @@ package com.pintu.controller
 		public function createScrollableBigGallery(json:String):void{			
 			var detailObjs:Array;
 			var hintEvt:PintuEvent;
+			
+//			Logger.debug("pic details: \n"+json);
+			
 			//捕捉解析异常
 			try{
 				detailObjs = JSON.decode(json);
@@ -225,25 +233,16 @@ package com.pintu.controller
 			//准备生成画廊
 			cleanUp();
 			
-			//图片背景上画根竖线，当做Path
-			//2011/12/09
-			var pathShape:CasaShape = new CasaShape();
-			_context.addChild(pathShape);
-			var pathLineX:Number = _drawStartX+InitParams.DEFAULT_BIGPIC_WIDTH+20;
-			var pathStartY:Number = _drawStartY+4;
-			var pathEndY:Number = detailObjs.length*InitParams.DEFAULT_BIGPIC_WIDTH;
-			var pathThickness:int = 4;
-			pathShape.graphics.lineStyle(pathThickness, StyleParams.PICDETAIL_BACKGROUND_GRAY, 1, true, "normal", JointStyle.BEVEL);
-			pathShape.graphics.moveTo(pathLineX, pathStartY);
-			pathShape.graphics.lineTo(pathLineX, pathEndY);
-			
+			//先把路径线放在底部，然后放图片			
+			drawPath(InitParams.DEFAULT_BIGPIC_WIDTH);
+						
 			//大图数据列表
 			var tpicDatas:Array = [];
 			for(var i:int=0; i<detailObjs.length; i++){
 				var tpidData:TPicData = objToTPicData(detailObjs[i]);
 				tpicDatas.push(tpidData);
 			}
-						
+								
 			//初始化视图容器
 			bigPicViews = [];
 			for(var j:int=0; j<tpicDatas.length; j++){				
@@ -260,7 +259,7 @@ package com.pintu.controller
 				bigPicViews.push(picDetails);
 			}
 						
-		}
+		}		
 		
 		/**
 		 * 每个详情视图发生内容变化时，整个列表项的位置都要发生重排
@@ -275,11 +274,11 @@ package com.pintu.controller
 				_context.addEventListener(Event.ENTER_FRAME, relayout);
 		}
 		private function relayout(evt:Event):void{
-			Logger.debug(".... to relayout... ");
+//			Logger.debug(".... to relayout... ");
 			_context.removeEventListener(Event.ENTER_FRAME, relayout);
 			
-			//这个检查非常必要，否则会引起JSON解析异常
-			if(!stageAvailable()) return;
+			//这时有高度了，重绘			
+			drawPath(_context.height);
 			
 			var localStartY:Number = _drawStartY;
 			for(var i:int=0; i<bigPicViews.length; i++){
@@ -291,7 +290,23 @@ package com.pintu.controller
 			}
 		}
 		
-		
+		/**
+		 * 图片背景上画根竖线，当做Path
+		 * 2011/12/09
+		 */ 
+		private function drawPath(picsHeight:Number):void{
+			if(!pathShape )pathShape = new CasaShape();			
+			if(!_context.contains(pathShape))_context.addChild(pathShape);
+			
+			var pathLineX:Number = _drawStartX+InitParams.DEFAULT_BIGPIC_WIDTH+20;
+			var pathStartY:Number = _drawStartY+4;
+			var pathEndY:Number = picsHeight;
+			var pathThickness:int = 4;
+			pathShape.graphics.clear();
+			pathShape.graphics.lineStyle(pathThickness, StyleParams.PICDETAIL_BACKGROUND_GRAY, 1, true, "normal", JointStyle.BEVEL);
+			pathShape.graphics.moveTo(pathLineX, pathStartY);
+			pathShape.graphics.lineTo(pathLineX, pathEndY);
+		}
 		
 		private function cleanUp():void{
 			_context.graphics.clear();
@@ -343,17 +358,6 @@ package com.pintu.controller
 			bigPicViews = null;
 		}
 		
-		/**
-		 * 该方法与stage.invalidate()同时使用
-		 * 当调用invalidate一次后，舞台将暂时失效
-		 */ 
-		private function stageAvailable():Boolean{
-			if(_context.stage){
-				return true;
-			}else{
-				return false;
-			}
-		}
 		
 	}
 }

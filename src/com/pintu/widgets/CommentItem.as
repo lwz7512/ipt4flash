@@ -54,8 +54,8 @@ package com.pintu.widgets{
 			this.addChild(bottomLine);
 			
 			
-			//画评论背景，在黑色背景上
-			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR);
+			//画评论背景，在黑色背景上，半透明色，这样才能露出path线来
+			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR, 0.6);
 			this.graphics.drawRect(0,0,InitParams.GALLERY_WIDTH-4, drawStartY+4);
 			this.graphics.endFill();
 		}
