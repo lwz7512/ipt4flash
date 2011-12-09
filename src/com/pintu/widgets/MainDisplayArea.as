@@ -285,7 +285,7 @@ package com.pintu.widgets{
 				Logger.debug("to create classic gallery...");		
 				
 				var galleryData:String = ResponseEvent(event).data;				
-				Logger.debug("classic data: \n"+galleryData);
+//				Logger.debug("classic data: \n"+galleryData);
 				
 				_picBuilder.createScrollableBigGallery(galleryData);
 			}
@@ -302,7 +302,7 @@ package com.pintu.widgets{
 				Logger.debug("to create favored gallery...");		
 				
 				var galleryData:String = ResponseEvent(event).data;				
-				Logger.debug("favored data: \n"+galleryData);
+//				Logger.debug("favored data: \n"+galleryData);
 				
 				_picBuilder.createScrollableBigGallery(galleryData);
 			}
@@ -313,7 +313,7 @@ package com.pintu.widgets{
 		
 		
 		/**
-		 * 这个数据结构类似缩略图，用画廊方式呈现
+		 * 这个数据结构？
 		 */ 
 		private function tagPicHandler(event:Event):void{
 			//移除进度条

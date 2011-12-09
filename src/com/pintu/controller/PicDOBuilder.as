@@ -1,6 +1,7 @@
 package com.pintu.controller
 {
 	import com.adobe.serialization.json.JSON;
+	import com.adobe.serialization.json.JSONParseError;
 	import com.pintu.api.*;
 	import com.pintu.common.IconButton;
 	import com.pintu.config.*;
@@ -14,6 +15,7 @@ package com.pintu.controller
 	import com.pintu.widgets.Thumbnail;
 	
 	import flash.display.DisplayObject;
+	import flash.display.JointStyle;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
@@ -23,6 +25,7 @@ package com.pintu.controller
 	import org.as3commons.ui.layout.HLayout;
 	import org.as3commons.ui.layout.constants.Align;
 	import org.as3commons.ui.layout.framework.IDisplay;
+	import org.casalib.display.CasaShape;
 	import org.casalib.display.CasaSprite;
 
 	/**
@@ -58,7 +61,7 @@ package com.pintu.controller
 		private var _margin:int = 10;		
 		
 		//大图之间的间距
-		private	var verticalGap:Number = 1;
+		private	var verticalGap:Number = 4;
 		
 		//大图模式下生成的列表对象，缓存下来用来重新排列位置
 		private var bigPicViews:Array;
@@ -194,18 +197,45 @@ package com.pintu.controller
 		
 		/**
 		 * 创建列表式大图画廊，创建多个PicDetailView
+		 * 
+		 * 解析json字符串可能异常，可能是由于其中有windows下图片路径反斜杠字符串
+		 * 造成转义字符解析异常，偶尔出现，现在还没找到明确原因
+		 * 后台已经去除了数据中的关于图片路径属性，但是该方法还是该捕捉这个异常
+		 * 2011/12/8
 		 */ 
 		public function createScrollableBigGallery(json:String):void{			
-			var detailObjs:Array = JSON.decode(json) as Array;										
+			var detailObjs:Array;
+			var hintEvt:PintuEvent;
+			//捕捉解析异常
+			try{
+				detailObjs = JSON.decode(json);
+			}catch(e:JSONParseError){
+				hintEvt = new PintuEvent(PintuEvent.HINT_USER, ">>>data parse error!");
+				_owner.dispatchEvent(hintEvt);				
+				return;
+			}
+			
 			//画廊没新图片
 			if(detailObjs.length==0){
-				var hintEvt:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "没有最新的图片，不然随便看看？");
+				hintEvt = new PintuEvent(PintuEvent.HINT_USER, "没有最新的图片，不然随便看看？");
 				_owner.dispatchEvent(hintEvt);				
 				return;
 			}			
 			
 			//准备生成画廊
 			cleanUp();
+			
+			//图片背景上画根竖线，当做Path
+			//2011/12/09
+			var pathShape:CasaShape = new CasaShape();
+			_context.addChild(pathShape);
+			var pathLineX:Number = _drawStartX+InitParams.DEFAULT_BIGPIC_WIDTH+20;
+			var pathStartY:Number = _drawStartY+4;
+			var pathEndY:Number = detailObjs.length*InitParams.DEFAULT_BIGPIC_WIDTH;
+			var pathThickness:int = 4;
+			pathShape.graphics.lineStyle(pathThickness, StyleParams.PICDETAIL_BACKGROUND_GRAY, 1, true, "normal", JointStyle.BEVEL);
+			pathShape.graphics.moveTo(pathLineX, pathStartY);
+			pathShape.graphics.lineTo(pathLineX, pathEndY);
 			
 			//大图数据列表
 			var tpicDatas:Array = [];
@@ -229,6 +259,7 @@ package com.pintu.controller
 				//存一份视图引用
 				bigPicViews.push(picDetails);
 			}
+						
 		}
 		
 		/**

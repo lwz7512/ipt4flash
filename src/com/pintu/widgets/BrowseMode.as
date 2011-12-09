@@ -3,6 +3,7 @@ package com.pintu.widgets{
 	import com.greensock.TweenLite;
 	import com.pintu.common.IconMenuItem;
 	import com.pintu.config.InitParams;
+	import com.pintu.config.StyleParams;
 	import com.pintu.events.PintuEvent;
 	
 	import flash.events.Event;
@@ -55,7 +56,7 @@ package com.pintu.widgets{
 		private var _initY:Number = 0;
 		
 		private var menuItemHeight:Number = 28;
-		private var menuGroupWidth:Number = 100;
+		private var menuGroupWidth:Number = 101;
 		
 		//鼠标还在触发该子菜单的主菜单上吗
 		private var mouseInOwner:Boolean = false;		
@@ -69,10 +70,11 @@ package com.pintu.widgets{
 		
 		public function BrowseMode(){
 			
-			//阴影层放在最底下
+			//菜单边框层放在最底下
 			var shadowLayer:CasaShape = new CasaShape();
-			shadowLayer.graphics.lineStyle(1,0xC2CCD0, 1);
-			shadowLayer.graphics.drawRect(0,0,menuGroupWidth,menuItemHeight*6);
+			shadowLayer.graphics.lineStyle(1,StyleParams.DARKER_BORDER_COLOR, 1);
+			//比菜单项稍微宽点
+			shadowLayer.graphics.drawRect(-1,0,menuGroupWidth,menuItemHeight*6);
 			this.addChild(shadowLayer);	
 			//加个阴影是不是好看点
 			var shadow:DropShadowFilter = new DropShadowFilter(2,45,0x999999,0.6);

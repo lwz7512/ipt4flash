@@ -11,6 +11,17 @@ package com.pintu.api{
 	
 	import org.as3commons.collections.ArrayList;
 	
+	/**
+	 * 服务类的基础类，主要是对SimpleHttpClient的封装
+	 * 以实现一个任务队列，来解决并发查询的问题
+	 * 
+	 * 其他功能还有：
+	 * client状态检查、服务类销毁、用户更新
+	 * 
+	 * 该类不做任何与业务有关的事情
+	 * 
+	 * 2011/12/08
+	 */ 
 	public class ModelBase extends EventDispatcher{
 		
 		protected var client:SimpleHttpClient;		
@@ -37,13 +48,8 @@ package com.pintu.api{
 			
 			taskQueue = new ArrayList();
 			
-			//慎用啊，销毁时一定要停掉
-			//这个时间间距挺合适，别再改了
-			//再小了会因其生成视图发生异常
-			//大图列表如果操作快的话，时间间隔10毫秒的话就会产生JSON解析异常
-			//怀疑跟这个时间间隔有关，改成200就没问题了
-			//2011/12/06
-			taskTimer = new Timer(200);
+			//慎用啊，销毁时一定要停掉			
+			taskTimer = new Timer(100);
 			taskTimer.addEventListener(TimerEvent.TIMER, excuteTaskQueue);
 			taskTimer.start();			
 			

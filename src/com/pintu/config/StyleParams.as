@@ -9,7 +9,8 @@ package com.pintu.config
 		public static const DARKER_BORDER_COLOR:uint = 0x758A99;
 		//默认背景色，荼白：如荼之白色
 		public static const DEFAULT_FILL_COLOR:uint = 0xF3F9F1;
-		
+		//深绿色，黛绿：墨绿
+		public static const DEFAULT_DARK_GREEN:uint = 0x426666;
 		
 		//迷你工具栏，图片详情时操作
 		public static const MINI_TOOLBAR_FILLCOLOR:uint = 0x50616D;
@@ -28,8 +29,19 @@ package com.pintu.config
 		//黯：深黑色、泛指黑色
 		public static const HEADERBAR_BOTTOM_LIGHTGREEN:uint = 0x41555D;
 		
-		//黛蓝：深蓝色
-		public static const PICDETAIL_BACKGROUND:uint = 0x425066;
+		//图片详情文字背景，苍色：即各种颜色掺入黑色后的颜色
+		//这个是目前为止唯一觉得比较合适的颜色
+		//2011/12/08
+		public static const PICDETAIL_BACKGROUND_DARK:uint = 0x75878A;
+		//银灰色
+		public static const PICDETAIL_BACKGROUND_GRAY:uint = 0xC2CCD0;
+		//亮棕绿色
+		public static const PICDETAIL_BACKGROUND_BROWN:uint = 0xA3B2AD;
+		//第三方建议
+		public static const PICDETAIL_BACKGROUND_THIRD:uint = 0xEEEEEE;
+		
+		//图片占位区域背景，霜色：白霜的颜色
+		public static const PICTURE_HOLDER_BACKGROUND:uint = 0xE9F1F6;
 		
 		/**
 		 * Header menu style
@@ -87,11 +99,14 @@ package com.pintu.config
 		
 		public static const SEARCHINPUT_FONTSIZE:int = 14;
 		public static const TEXTINPUT_FONTSIZE:int = 14;
+		
 		//黯：深黑色、泛指黑色
 		public static const DEFAULT_TEXT_COLOR:uint = 0x41555D;		
 		//黑色背景上使用的文字颜色：油绿：光润而浓绿的颜色
 		public static const GREEN_TEXT_COLOR:uint = 0x00BC12;
-			
+		//老银：金属氧化后的色彩
+		public static const GRAY_TEXT_COLOR:uint = 0xBACAC6;			
+		public static const WHITE_TEXT_COLOR:uint = 0xFFFFFF;			
 			
 		//标准红色，大红：正红色，三原色中的红，传统的中国红，又称绛色
 		public static const DEFAULT_ERROR_RED:uint = 0xFF2121;

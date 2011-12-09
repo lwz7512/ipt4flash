@@ -21,6 +21,10 @@ package com.pintu.widgets
 	
 	import org.casalib.display.CasaSprite;
 	
+	/**
+	 * 已经废弃的部件，但是不要删除，这里有对Tree组件的使用方法
+	 * 2011/12/09
+	 */ 
 	[Event(name="browseChanged", type="com.pintu.events.PintuEvent")]
 	public class CategoryTree extends CasaSprite{
 		
