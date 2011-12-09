@@ -67,6 +67,8 @@ package com.pintu.widgets{
 		//鼠标如果在工具栏区域，显示工具栏
 		private var mouseOnToolZone:Boolean;
 		
+		private var commentsTF:SimpleLinkTxt;
+		
 		public function PicDetailBase(data:TPicData){
 			_data = data;
 			if(!_data) return;
@@ -382,9 +384,10 @@ package com.pintu.widgets{
 			
 			//评论数目
 			var commentsStr:String = "评论个数 "+_data.commentsNum;
-			var commentsTF:SimpleText = new SimpleText(commentsStr,dark, normaTXTSize);
+			commentsTF = new SimpleLinkTxt(commentsStr,dark, normaTXTSize);
 			commentsTF.x = browseCountTF.x+browseCountTF.textWidth+textItemHGap;
 			commentsTF.y = isOriginalTF.y+textItemVGap;
+			commentsTF.addEventListener(MouseEvent.CLICK, addComment);
 			imgInfoHolder.addChild(commentsTF);
 			
 			//喜欢人数
