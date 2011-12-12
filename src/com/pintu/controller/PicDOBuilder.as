@@ -72,9 +72,12 @@ package com.pintu.controller
 		private var pathShape:CasaShape;
 			
 		public function PicDOBuilder(container:CasaSprite, model:IPintu){
+			_model = model;
 			//图片容器在原点
 			_context = container;
-			_model = model;
+			//每次渲染事件都重新排列位置
+			_context.addEventListener(Event.RENDER, delayRelayoutBigPicList);
+			
 			//缩略图详情响应
 			PintuImpl(_model).addEventListener(ApiMethods.GETPICDETAIL,detailPicHandler);
 		}
@@ -129,17 +132,21 @@ package com.pintu.controller
 		}
 
 		
-		//给MainDisplayArea调用
-		public function createScrollableMiniGallery(json:String):void{			
+		/**
+		 * 给MainDisplayArea调用
+		 * @param json 生成画廊的数据
+		 * @return 生成画廊缩略图的个数
+		 */ 
+		public function createScrollableMiniGallery(json:String):int{			
 			
 			var thumnails:Array = JSON.decode(json) as Array;
-			if(!thumnails) return;
+			if(!thumnails) return 0;
 			
 			//画廊没新图片
 			if(thumnails.length==0){
 				var hintEvt:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "没有最新的图片，不然随便看看？");
 				_owner.dispatchEvent(hintEvt);				
-				return;
+				return 0;
 			}
 			
 			//准备生成画廊
@@ -154,7 +161,8 @@ package com.pintu.controller
 			
 			//布局缩略图
 			layoutThumbnails();
-					
+			
+			return thumnails.length;
 		}
 		
 		private function layoutThumbnails():void{
@@ -249,9 +257,7 @@ package com.pintu.controller
 				var picDetails:PicDetailView = new PicDetailView(tpicDatas[j], _model);
 				picDetails.x = _drawStartX;
 				//按照每个详情高度往下排，初始高度是一样的
-				picDetails.y = _drawStartY+picDetails.height*j+verticalGap;
-				//每次渲染事件都重新排列位置
-				picDetails.addEventListener(Event.RENDER, delayRelayoutBigPicList);
+				picDetails.y = _drawStartY+picDetails.height*j+verticalGap;				
 				//显示空容器
 				_context.addChild(picDetails);	
 				
@@ -276,6 +282,8 @@ package com.pintu.controller
 		private function relayout(evt:Event):void{
 //			Logger.debug(".... to relayout... ");
 			_context.removeEventListener(Event.ENTER_FRAME, relayout);
+			
+			if(!bigPicViews) return;
 			
 			//这时有高度了，重绘			
 			drawPath(_context.height);
@@ -353,7 +361,9 @@ package com.pintu.controller
 			return pic;
 		}
 		
-		public function cleanUpListener():void{
+		
+		public function destroy():void{
+			_context.removeEventListener(Event.RENDER, delayRelayoutBigPicList);
 			PintuImpl(_model).removeEventListener(ApiMethods.GETPICDETAIL,detailPicHandler);
 			bigPicViews = null;
 		}

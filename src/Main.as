@@ -109,7 +109,7 @@ package{
 			
 			//画纹理背景
 			var usePaperBG:Boolean = GlobalController.usePaperTile;
-			if(usePaperBG) drawPaperBackground();
+//			if(usePaperBG) drawPaperBackground();
 			
 			//全局模块固定不变
 			buildHeaderMenu(isLogged);			

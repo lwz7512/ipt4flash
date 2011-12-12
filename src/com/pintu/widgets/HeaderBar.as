@@ -8,6 +8,7 @@ package com.pintu.widgets
 	import com.sibirjak.asdpc.textfield.TextInput;
 	import com.sibirjak.asdpc.textfield.TextInputEvent;
 	
+	import flash.display.Bitmap;
 	import flash.display.GradientType;
 	import flash.display.Loader;
 	import flash.display.Sprite;
@@ -44,8 +45,9 @@ package com.pintu.widgets
 		private var downColors:Array;		
 	
 		private var logoLoader:ImageLoad;
+		private var logoBitmap:Bitmap;
 		private var version:TextField;
-		private var logoPath:String = "assets/logo36.png";
+		private var logoPath:String = "assets/logo.png";
 		private var versionText:String = "爱品图 v1.0";		
 		private var logoVersionGap:Number = 36;
 		private var versionHomeGap:Number = 100;
@@ -78,24 +80,15 @@ package com.pintu.widgets
 			//主菜单内容后放，在上面
 			mainMenuContainer = new CasaSprite();
 			this.addChild(mainMenuContainer);
-			//加个阴影是不是好看点
-			var shadow:DropShadowFilter = new DropShadowFilter(4,45,0x666666,0.8);
-			mainMenuContainer.filters = [shadow];
-			
 			//画在主容器中
-			drawBackground();				
-			showLogo();			
-			showVersion();	
-			//主菜单，都在主容器中
-			createMainMenus();					
-			createSearchInput();	
-			createFeedbackMenu();
-			createExitMenu();	
+			drawBackground();
+			//加个阴影是不是好看点
+//			var shadow:DropShadowFilter = new DropShadowFilter(4,45,0x666666,0.8);
+//			mainMenuContainer.filters = [shadow];			
 			
-			//子菜单都画在子容器中
-			//放在HeaderBar后面隐藏，鼠标点击菜单滑出
-			createSubMenus();
+			showLogo();		
 			
+//			showVersion();						
 
 		}
 		
@@ -171,7 +164,7 @@ package com.pintu.widgets
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR);
 			homeMenu.label = "首页";
-			homeMenu.x = version.x+versionHomeGap;
+			homeMenu.x = logoBitmap.x+logoBitmap.width+100;
 			homeMenu.y = 0;
 			homeMenu.selected = true;
 			homeMenu.addEventListener(MouseEvent.MOUSE_OVER, onHomeMenuOver);
@@ -313,8 +306,20 @@ package com.pintu.widgets
 		}
 		
 		private function onLoaded(e:LoadEvent):void {
-			mainMenuContainer.addChild(this.logoLoader.contentAsBitmap);
-			this.logoLoader.contentAsBitmap.x = elementStartX;
+			logoBitmap = this.logoLoader.contentAsBitmap;
+			mainMenuContainer.addChild(logoBitmap);
+			logoBitmap.x = elementStartX-100;
+			logoBitmap.y = 2;			
+			
+			//主菜单，都在主容器中
+			createMainMenus();					
+			createSearchInput();	
+			createFeedbackMenu();
+			createExitMenu();	
+			
+			//子菜单都画在子容器中
+			//放在HeaderBar后面隐藏，鼠标点击菜单滑出
+			createSubMenus();
 			
 		}
 		

@@ -1,7 +1,6 @@
 package com.pintu.widgets{
 
 	import com.adobe.utils.StringUtil;
-	
 	import com.pintu.api.ApiMethods;
 	import com.pintu.api.IPintu;
 	import com.pintu.api.PintuImpl;
@@ -221,15 +220,18 @@ package com.pintu.widgets{
 		private function latestGalleryHandler(event:Event):void{						
 			//移除进度条
 			hideMiddleLoading();
-						
+			
 			if(event is ResponseEvent){				
 				var galleryData:String = ResponseEvent(event).data;
+				var thumbnails:int;
 //				Logger.debug("thumbnail data: \n"+galleryData);										
 				if(!galleryCreated){
 //					Logger.debug("to create mini gallery...");
+					
 					//创建画廊
-					_picBuilder.createScrollableMiniGallery(galleryData);
+					thumbnails = _picBuilder.createScrollableMiniGallery(galleryData);
 					galleryCreated = true;
+										
 				}
 				
 				//TODO, CHECK THE LAST GALLERY RECORD TIME...
@@ -253,7 +255,7 @@ package com.pintu.widgets{
 				var galleryData:String = ResponseEvent(event).data;				
 //				Logger.debug("big gallery data: \n"+galleryData);
 				
-				_picBuilder.createScrollableBigGallery(galleryData);
+				_picBuilder.createScrollableBigGallery(galleryData);				
 			}
 			if(event is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.GETGALLERYFORWEB);
@@ -287,6 +289,7 @@ package com.pintu.widgets{
 				var galleryData:String = ResponseEvent(event).data;				
 //				Logger.debug("classic data: \n"+galleryData);
 				
+				//渲染事件在PicDetailView中派发
 				_picBuilder.createScrollableBigGallery(galleryData);
 			}
 			if(event is PTErrorEvent){
@@ -334,12 +337,22 @@ package com.pintu.widgets{
 			return (endTime-6*60*60*1000).toString();			 
 		}
 		
+		protected function rendered():void{
+			//派发尺寸改变事件	
+			if(this.stage) {
+				this.stage.invalidate();	
+//				Logger.debug("pic detail view rendered...");
+			}else{
+				Logger.warn("stage in pic Main Display Area lost!");
+			}
+		}
+		
 				
 		//重写销毁函数
 		//凡是在本类中，对_model加过事件监听的都要在这里置空
 		override public  function destroy():void{
 			super.destroy();
-			_picBuilder.cleanUpListener();
+			_picBuilder.destroy();
 			_picBuilder = null;
 			galleryCreated = false;
 			this.removeChildren(true,true);

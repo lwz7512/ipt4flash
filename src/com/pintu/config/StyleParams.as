@@ -37,7 +37,9 @@ package com.pintu.config
 		public static const PICDETAIL_BACKGROUND_GRAY:uint = 0xC2CCD0;
 		//亮棕绿色
 		public static const PICDETAIL_BACKGROUND_BROWN:uint = 0xA3B2AD;
-		//第三方建议
+		/**
+		 * 柔和的灰色，由专业人士建议
+		 */  
 		public static const PICDETAIL_BACKGROUND_THIRD:uint = 0xEEEEEE;
 		
 		//图片占位区域背景，霜色：白霜的颜色

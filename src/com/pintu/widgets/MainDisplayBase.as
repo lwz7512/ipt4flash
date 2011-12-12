@@ -30,20 +30,20 @@ package com.pintu.widgets{
 		
 		// 使用增强的显示对象CasaSprite，以更好的管理子对象	
 		//画廊图片容器，也是被滚动对象
-		protected var _picsContainer:CasaSprite;
+		protected var _picsContainer:CasaSprite;					
 		//查询保护装置，2秒内不允许重复查询
 		protected var queryAvailableTimer:Timer;
 		//查询状态开关
 		protected var isRunning:Boolean;
 		
+		//滚动条
+		private var _scrollbar:ScrollBar;
 		//画廊遮罩，别动
 		private var _clip:CasaShape;	
 		//加载进度条
-		private var loading:BusyIndicator;			
-		
+		private var loading:BusyIndicator;					
 		//画廊移动速度
-		private var _galleryMoveYSpeed:Number = 0;
-		
+		private var _galleryMoveYSpeed:Number = 0;		
 		//加速度系数
 		private var _acceleration:int = 40;
 		//保留上次鼠标位置以判断移动方向
@@ -59,19 +59,30 @@ package com.pintu.widgets{
 			drawMainDisplayBackground();
 			//生成裁剪区域
 			createClipMask();								
-			
-			this._picsContainer = new CasaSprite();
+			//画廊容器
+			_picsContainer = new CasaSprite();
 			addChild(_picsContainer);
+			//TODO, 滚动条			
+			_scrollbar = new ScrollBar(_picsContainer,displayAreaHeight);
+			_scrollbar.x = drawStartX+displayAreaWidth-_scrollbar.width;
+			_scrollbar.y = drawStartY;
+			addChild(_scrollbar);
 			
 			//2秒内运行检查，类型设置时启动
 			queryAvailableTimer = new Timer(2000,1);
 			
+			//内容高度发生变化监听
+			this.addEventListener(Event.RENDER, updateScrollbar);			
 			//滚轮处理画廊移动
 			this.addEventListener(MouseEvent.MOUSE_WHEEL,scrollGallery);	
 			//监听大图派发的滚动提升图片事件，方便添加评论输入
 			this.addEventListener(PintuEvent.SCROLL_UP, raiseUpGallery);
 			
-			Logger.debug("Create MainDisplayBase once...");
+		}
+		
+		private function updateScrollbar(evt:Event):void{
+			Logger.debug("to resize scrollbar...");
+//			_scrollbar.updateScrollBar();
 		}
 		
 		/**
@@ -97,6 +108,8 @@ package com.pintu.widgets{
 			isRunning = false;
 			//这时查询开关打开
 			queryAvailableTimer.stop();
+			//重绘滚动条
+//			_scrollbar.resetScrollBar();
 		}
 		
 		private function initDrawPoint():void{
@@ -136,6 +149,7 @@ package com.pintu.widgets{
 			var moveDirection:int = event.delta;
 			_galleryMoveYSpeed = moveDirection*_acceleration;
 			moveGallery();
+//			_scrollbar.updateScrollBar();
 		}
 		
 		/**
@@ -172,7 +186,18 @@ package com.pintu.widgets{
 			var origPicsContainerY:Number = _picsContainer.y;
 			var galleryMoveEndY:Number = origPicsContainerY-diff;
 			TweenLite.to(_picsContainer,0.4,{y:galleryMoveEndY,ease:Strong.easeOut});
+//			_scrollbar.updateScrollBar();
 		}
+		
+		
+		override public function destroy():void{
+			super.destroy();
+			queryAvailableTimer.stop();
+			queryAvailableTimer = null;
+			
+		}
+		
+		
 		
 
 		/**

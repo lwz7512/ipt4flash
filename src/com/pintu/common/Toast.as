@@ -75,13 +75,12 @@ package com.pintu.common{
 			if(_parent){
 				return _instance;				
 			}else{
+				throw new Error("NO TOAST CONTAINER ASSIGNED! ");
 				return null;
 			}
 		}
 		
-		public function show(text:String, toastX:Number, toastY:Number):void{
-			//如果已经显示了，就不再显示
-			if(_parent.contains(this)) return;			
+		public function show(text:String, toastX:Number, toastY:Number):void{			
 			
 			//创建文字
 			if(!_text){
@@ -91,9 +90,11 @@ package com.pintu.common{
 			}else{
 				//新的内容来了
 				_text.text = text;
+				//重绘背景
+				drawBackground(null);
 			}
 						
-			if(_parent)
+			if(!_parent.contains(this))
 				_parent.addChild(this);
 			
 			//居中显示
@@ -106,9 +107,8 @@ package com.pintu.common{
 			//FIXME, 我擦，还得必须设定下初始的透明度
 			//否则动画会有问题，第二次就不出来了
 			//2011/11/23
-			this.alpha = 1;
-			
-			TweenLite.from(this, 0.6, {alpha:0});
+			this.alpha = 0;			
+			TweenLite.to(this, 0.6, {alpha:1});
 		}
 		
 	} //end of class

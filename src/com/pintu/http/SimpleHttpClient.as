@@ -1,6 +1,7 @@
 package com.pintu.http
 {
 	import com.adobe.net.URI;
+	import com.adobe.utils.StringUtil;
 	import com.pintu.events.PTErrorEvent;
 	import com.pintu.events.PTStatusEvent;
 	import com.pintu.events.ResponseEvent;
@@ -75,6 +76,7 @@ package com.pintu.http
 			_client.listener.onData = function(event:HttpDataEvent):void {
 				// For string data
 				var result:String = event.readUTFBytes();
+				result = StringUtil.trim(result);
 				var dataEvent:ResponseEvent = new ResponseEvent(method,result);
 				dispatchEvent(dataEvent);
 //				Logger.debug("Method: "+method+"\n"+"result: "+result);	
