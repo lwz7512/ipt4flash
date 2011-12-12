@@ -25,7 +25,7 @@ package com.pintu.modules{
 		
 		private var userDetails:UserDetailsBlock;
 		private var andiAssets:AndiBlock;
-		private var weiboFriends:WeiboFriendsBlock;
+		private var weiboFriends:HotTags;
 		
 		private var picEditWin:PicEditWin;
 		
@@ -51,9 +51,11 @@ package com.pintu.modules{
 			
 			userDetails = new UserDetailsBlock(_model);
 			this.addChild(userDetails);
+			
 			andiAssets = new AndiBlock();
 			this.addChild(andiAssets);
-			weiboFriends = new WeiboFriendsBlock(_model);
+			
+			weiboFriends = new HotTags(_model);
 			this.addChild(weiboFriends);
 			
 		}

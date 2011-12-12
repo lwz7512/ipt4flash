@@ -11,6 +11,8 @@ package com.pintu.config
 		public static const DEFAULT_FILL_COLOR:uint = 0xF3F9F1;
 		//深绿色，黛绿：墨绿
 		public static const DEFAULT_DARK_GREEN:uint = 0x426666;
+		//黛蓝
+		public static const DEFAULT_DARK_BLUE:uint = 0x425066;
 		
 		//迷你工具栏，图片详情时操作
 		public static const MINI_TOOLBAR_FILLCOLOR:uint = 0x50616D;

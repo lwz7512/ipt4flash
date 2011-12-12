@@ -60,8 +60,16 @@ package com.pintu.utils{
 		}
 		
 		
-		public function PintuUtils(){
+		public static function getRelativeTimeByMiliSeconds(milisecond:int):String{
+			var pubTime:Date = new Date();
+			pubTime.setTime(milisecond);			
+			var simpleTime:String = pubTime.fullYear+"-"+(pubTime.month+1)+"-"+pubTime.date;
+			simpleTime += " "+pubTime.hours+":"+pubTime.minutes+":"+pubTime.seconds;
+			
+			return getRelativeTimeFromNow(simpleTime);
 		}
+		
+		
 		
 	} //end of class
 }

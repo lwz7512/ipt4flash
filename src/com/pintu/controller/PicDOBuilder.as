@@ -117,6 +117,11 @@ package com.pintu.controller
 			back.y = _drawStartY+2;
 			back.textOnRight = true;
 			back.label = "返回";
+			back.setLabelStyle(null, 12, 
+				StyleParams.HEADERBAR_TOP_LIGHTGREEN, 
+				StyleParams.HEADERBAR_TOP_LIGHTGREEN, 
+				StyleParams.HEADERBAR_TOP_LIGHTGREEN);
+			
 			_context.addChild(back);
 			
 			//移除进度条
@@ -154,7 +159,7 @@ package com.pintu.controller
 			//记下画廊行数以计算画廊高度
 			rowNum = Math.floor(thumnails.length/_miniGalleryColumnNum)+1;
 			
-			//解析Json字符串为对象
+			//存下来，返回时好重绘
 			tpics = objToTPicDescArray(thumnails);	
 			//颠倒下顺序，好让最近的放在最前面
 			tpics = tpics.reverse();

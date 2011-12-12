@@ -61,6 +61,8 @@ package com.pintu.config
 		public static const ANDI_ASSETS_WIDTH:Number = 200;
 		//andi assets height
 		public static const ANDI_ASSETS_HEIGHT:Number = 120;
+		//title height
+		public static const ANDI_TITLE_HEIGHT:Number = 26;
 		
 		
 		public static function startDrawingX():Number{

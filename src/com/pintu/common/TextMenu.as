@@ -151,6 +151,10 @@ package com.pintu.common
 		 */ 
 		private var _label:TextField; //currently displayed text
 		
+		/**
+		 * up状态的皮肤透明度
+		 */ 
+		private var _upSkinAlpha:Number = 0;
 		
 		/**
 		 *********** Construction **********************************************
@@ -209,7 +213,9 @@ package com.pintu.common
 					: STATE_OVER : STATE_UP : STATE_DISABLED;				
 			}
 			
-			if (state == _state) return;			
+			//这里表示不画初始状态皮肤
+//			if (state == _state) return;		
+			
 			_state = state;
 						
 			//draw component appearance at runtime...
@@ -252,8 +258,9 @@ package com.pintu.common
 			}
 		}
 		
-		private function drawUpSkin():void{
-			drawGradientRec(this.upSkinColors,0);
+		private function drawUpSkin():void{			
+			//默认都是透明的
+			drawGradientRec(this.upSkinColors,_upSkinAlpha);
 			updateLabelColor(this.upLabelColor);
 		}
 		private function drawDownSkin():void{
@@ -618,6 +625,10 @@ package com.pintu.common
 			
 			this.downLabelColor = downColor;
 			
+		}
+		
+		public function set upAlpha(v:Number):void{
+			_upSkinAlpha = v;
 		}
 		
 		override public function get width():Number{
