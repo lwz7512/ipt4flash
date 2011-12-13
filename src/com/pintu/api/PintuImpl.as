@@ -53,6 +53,7 @@ package com.pintu.api
 			client.addEventListener(ApiMethods.ADDVOTE,responseHander);
 			
 			client.addEventListener(ApiMethods.GETUSERDETAIL,responseHander);
+			client.addEventListener(ApiMethods.GETUSERESTATE,responseHander);
 			
 			//TODO, ADD OTHER LISTENER...
 			
@@ -165,7 +166,10 @@ package com.pintu.api
 			addHttpTask(params,ApiMethods.GETUSERDETAIL);
 		}
 		
-
+		public function getUserEstate(userId:String):void{
+			var params:Array = [{name:"userId",value:userId}];
+			addHttpTask(params,ApiMethods.GETUSERESTATE);
+		}
 		
 		
 		

@@ -51,6 +51,7 @@ package com.pintu.api
 		function postVote(receiver:String, follow:String, type:String, amount:String):void;
 		
 		function getUserDetail(userId:String):void;
+		function getUserEstate(userId:String):void;
 		
 		/**
 		 * 多个视图用到同样的模型，为了防止事件监听干扰，各自使用各自的模型 

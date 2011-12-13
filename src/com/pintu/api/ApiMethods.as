@@ -39,8 +39,8 @@ package com.pintu.api
 		
 		//获取用户详情
 		public static const GETUSERDETAIL:String = "getUserDetail";
-		
-		
+		//获得用户资产
+		public static const GETUSERESTATE:String = "getUserEstate";
 		
 		
 		

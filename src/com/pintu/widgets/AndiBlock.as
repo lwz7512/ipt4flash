@@ -18,13 +18,15 @@ package com.pintu.widgets{
 		private var drawStartX:Number;
 		private var drawStartY:Number;
 		
-		private var titleBackgroudColor:uint = StyleParams.HEADERBAR_TOP_LIGHTGREEN;
+		private var titleBackgroudColor:uint = StyleParams.ICONMENU_MOUSEOVER_TOP;
 		private var titleBackgroudHeight:int = InitParams.ANDI_TITLE_HEIGHT;
 		
 		//菜单使用颜色
 		private var upColors:Array;
 		private var overColors:Array;
 		private var downColors:Array;		
+		
+		private var myMsgs:TextMenu;
 		
 		public function AndiBlock(){
 			super();
@@ -35,7 +37,7 @@ package com.pintu.widgets{
 		}
 		
 		private function drawTitleBar():void{
-			this.graphics.beginFill(titleBackgroudColor, 0.8);
+			this.graphics.beginFill(titleBackgroudColor, 1);
 			this.graphics.drawRect(drawStartX,drawStartY,InitParams.ANDI_ASSETS_WIDTH,titleBackgroudHeight);
 			this.graphics.endFill();
 			
@@ -49,15 +51,16 @@ package com.pintu.widgets{
 			//主菜单颜色设置
 			upColors = [StyleParams.PICDETAIL_BACKGROUND_THIRD,
 				StyleParams.PICDETAIL_BACKGROUND_THIRD];
-			overColors = [StyleParams.ICONMENU_MOUSEOVER_BOTTOM,
-				StyleParams.ICONMENU_MOUSEOVER_BOTTOM];
-			downColors = [StyleParams.DARKER_BORDER_COLOR,
-				StyleParams.DARKER_BORDER_COLOR];
+			overColors = [StyleParams.HEADER_MENU_MOUSEOVER,
+				StyleParams.HEADER_MENU_MOUSEOVER];
+			downColors = [StyleParams.HEADERBAR_NEARBOTTOM_LIGHTGREEN,
+				StyleParams.HEADERBAR_NEARBOTTOM_LIGHTGREEN];
 			
 			var menuVGap:Number = 2;
 			var menuStartX:Number = drawStartX+1;
 			var menuStartY:Number = drawStartY+titleBackgroudHeight+menuVGap;
 			var menuWidth:Number = InitParams.ANDI_ASSETS_WIDTH-1;
+			
 			//我的贴图
 			var myPics:TextMenu = new TextMenu(menuWidth, titleBackgroudHeight);
 			myPics.setSkinStyle(upColors,overColors,downColors);
@@ -73,10 +76,32 @@ package com.pintu.widgets{
 			this.addChild(myPics);
 			
 			//我的收藏
-			
+			var myFavorites:TextMenu = new TextMenu(menuWidth, titleBackgroudHeight);
+			myFavorites.setSkinStyle(upColors,overColors,downColors);
+			myFavorites.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+				StyleParams.DEFAULT_TEXT_FONTSIZE,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				0xFFFFFF);
+			myFavorites.upAlpha = 1;
+			myFavorites.label = "收藏";
+			myFavorites.x = menuStartX;
+			myFavorites.y = menuStartY+titleBackgroudHeight+menuVGap;
+			this.addChild(myFavorites);
 			
 			//我的消息
-			
+			myMsgs = new TextMenu(menuWidth, titleBackgroudHeight);
+			myMsgs.setSkinStyle(upColors,overColors,downColors);
+			myMsgs.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+				StyleParams.DEFAULT_TEXT_FONTSIZE,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				0xFFFFFF);
+			myMsgs.upAlpha = 1;
+			myMsgs.label = "消息";
+			myMsgs.x = menuStartX;
+			myMsgs.y = menuStartY+2*titleBackgroudHeight+2*menuVGap;
+			this.addChild(myMsgs);
 			
 			
 		}

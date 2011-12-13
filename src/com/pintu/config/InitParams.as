@@ -60,7 +60,7 @@ package com.pintu.config
 		//andi assets width
 		public static const ANDI_ASSETS_WIDTH:Number = 200;
 		//andi assets height
-		public static const ANDI_ASSETS_HEIGHT:Number = 120;
+		public static const ANDI_ASSETS_HEIGHT:Number = 110;
 		//title height
 		public static const ANDI_TITLE_HEIGHT:Number = 26;
 		

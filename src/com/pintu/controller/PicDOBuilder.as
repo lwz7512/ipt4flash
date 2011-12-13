@@ -335,7 +335,8 @@ package com.pintu.controller
 				var tpic:TPicDesc = new TPicDesc();
 				tpic.tpId = thumbnail["tpId"];
 				tpic.thumbnailId = thumbnail["thumbnailId"];
-				tpic.creationTime = Number(thumbnail["creationTime"]);
+				var creationLongTime:String = thumbnail["creationTime"];				
+				tpic.creationTime = Number(creationLongTime);
 				tpic.url = _model.composeImgUrlById(thumbnail["thumbnailId"]);
 				tpics.push(tpic);
 			}

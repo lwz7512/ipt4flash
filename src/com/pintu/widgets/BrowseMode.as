@@ -82,16 +82,17 @@ package com.pintu.widgets{
 			
 			var menuIndex:int = 0;
 			
-			randomMenu = new IconMenuItem("随便看看");
-			randomMenu.y = menuIndex*menuItemHeight;
-			randomMenu.addEventListener(MouseEvent.CLICK, randomClickHandler);
-			this.addChild(randomMenu);
 			
-			menuIndex ++;
 			thumbnailMenu = new IconMenuItem("最新画廊");
 			thumbnailMenu.y = menuIndex*menuItemHeight;
 			thumbnailMenu.addEventListener(MouseEvent.CLICK, thumbnailClickHandler);
 			this.addChild(thumbnailMenu);
+			
+			menuIndex ++;
+			randomMenu = new IconMenuItem("随便看看");
+			randomMenu.y = menuIndex*menuItemHeight;
+			randomMenu.addEventListener(MouseEvent.CLICK, randomClickHandler);
+			this.addChild(randomMenu);						
 			
 			menuIndex ++;
 			bigPicListMenu = new IconMenuItem("大图列表");

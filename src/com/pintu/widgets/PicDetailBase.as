@@ -66,8 +66,7 @@ package com.pintu.widgets{
 		private var cmtLoading:BusyIndicator;
 		//鼠标如果在工具栏区域，显示工具栏
 		private var mouseOnToolZone:Boolean;
-		
-		private var commentsTF:SimpleLinkTxt;
+
 		
 		public function PicDetailBase(data:TPicData){
 			_data = data;
@@ -384,7 +383,7 @@ package com.pintu.widgets{
 			
 			//评论数目
 			var commentsStr:String = "评论个数 "+_data.commentsNum;
-			commentsTF = new SimpleLinkTxt(commentsStr,dark, normaTXTSize);
+			var commentsTF:SimpleLinkTxt = new SimpleLinkTxt(commentsStr,dark, normaTXTSize);
 			commentsTF.x = browseCountTF.x+browseCountTF.textWidth+textItemHGap;
 			commentsTF.y = isOriginalTF.y+textItemVGap;
 			commentsTF.addEventListener(MouseEvent.CLICK, addComment);
@@ -427,7 +426,7 @@ package com.pintu.widgets{
 				imgWidth = defaultImgWidth;
 			}
 			var iconYOffset:int = 2;
-			var iconHGap:int = 66;
+			var iconHGap:int = 60;
 			
 			var drawStartX:Number = 0;
 			//如果是看单个缩略图的详情，就要给返回按钮让位
@@ -448,8 +447,7 @@ package com.pintu.widgets{
 				_toolBGWidth, toolbarHeight);
 			toolbg.graphics.endFill();
 			toolHolder.addChild(toolbg);
-			
-			//ADD COMMENT BUTTON			
+						
 			//提交评论成功后，在客户端评论列表顶部增加刚才发送的评论
 			//再次点击，恢复原状，图片复位，评论收起			
 			var comment:IconButton = new IconButton(toolbarHeight,toolbarHeight);
@@ -461,7 +459,7 @@ package com.pintu.widgets{
 			comment.label = "评论";			
 			toolHolder.addChild(comment);
 			
-			//ADD TO FAVORITE
+			//收藏按钮
 			var favorite:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			favorite.iconPath = "assets/favorite.png";
 			favorite.addEventListener(MouseEvent.CLICK, addToFavorite);
@@ -482,7 +480,7 @@ package com.pintu.widgets{
 			toolHolder.addChild(like);
 			
 			
-			//SAVE TO LOCAL BUTTON
+			//保存图片
 			var save:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			save.iconPath = "assets/save.png";
 			save.addEventListener(MouseEvent.CLICK, saveToLocal);
@@ -492,7 +490,7 @@ package com.pintu.widgets{
 			save.label = "保存";			
 			toolHolder.addChild(save);
 			
-			//FORWAR TO WEIBO BUTTON
+			//TODO, FORWAR TO WEIBO BUTTON
 			var forward:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			forward.iconPath = "assets/forward.png";
 			forward.addEventListener(MouseEvent.CLICK, todo);
@@ -503,7 +501,7 @@ package com.pintu.widgets{
 			forward.enabled = false;
 			toolHolder.addChild(forward);
 			
-			//REPORT TO ADMIN BUTTON
+			//TODO, REPORT TO ADMIN BUTTON
 			var report:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			report.iconPath = "assets/report.png";
 			report.addEventListener(MouseEvent.CLICK, todo);

@@ -72,8 +72,7 @@ package{
 			SWFWheel.initialize(stage);
 			SWFWheel.browserScroll = false;
 			//舞台准备好后创建应用
-			this.addEventListener(Event.ADDED_TO_STAGE, buildApp);	
-			
+			this.addEventListener(Event.ADDED_TO_STAGE, buildApp);						
 		}
 		
 		/**
@@ -108,7 +107,7 @@ package{
 			navigator = new GlobalNavigator(this,model);	
 			
 			//画纹理背景
-			var usePaperBG:Boolean = GlobalController.usePaperTile;
+//			var usePaperBG:Boolean = GlobalController.usePaperTile;
 //			if(usePaperBG) drawPaperBackground();
 			
 			//全局模块固定不变
@@ -182,10 +181,7 @@ package{
 		}
 		
 		private function hintTextHandler(evt:PintuEvent):void{
-			hintToUser(evt.data);
-		}
-		
-		private  function hintToUser(hint:String):void{
+			var hint:String = evt.data;
 			var drawStartX:Number = InitParams.startDrawingX();				
 			var drawStartY:Number = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;
 			//默认高度，也是最小高度
@@ -202,9 +198,7 @@ package{
 			var middleY:Number = drawStartY+displayAreaHeight/2;
 			Toast.getInstance(this).show(hint,middleX,middleY);
 		}
-		
-		
-		
+			
 		
 		
 		

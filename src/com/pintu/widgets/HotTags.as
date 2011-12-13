@@ -19,12 +19,33 @@ package com.pintu.widgets{
 		private var blockWidth:Number;
 		private var blockHeight:Number;
 		
+		private var titleBackgroudColor:uint = StyleParams.ICONMENU_MOUSEOVER_TOP;
+		private var titleBackgroudHeight:int = InitParams.ANDI_TITLE_HEIGHT;
+		
+		//菜单使用颜色
+		private var upColors:Array;
+		private var overColors:Array;
+		private var downColors:Array;		
+		
 		public function HotTags(model:IPintu){			
 			super();
 			_model = model;
 			
 			drawLoginBackGround();
 			
+			drawTitleBar();
+			
+		}
+		
+		private function drawTitleBar():void{
+			this.graphics.beginFill(titleBackgroudColor, 1);
+			this.graphics.drawRect(drawStartX,drawStartY,InitParams.ANDI_ASSETS_WIDTH,titleBackgroudHeight);
+			this.graphics.endFill();
+			
+			var title:SimpleText = new SimpleText("热门标签", 0xFFFFFF, 13);
+			title.x = drawStartX+(InitParams.ANDI_ASSETS_WIDTH-title.textWidth)/2;
+			title.y = drawStartY+4;
+			this.addChild(title);
 		}
 		
 		private function drawLoginBackGround():void{

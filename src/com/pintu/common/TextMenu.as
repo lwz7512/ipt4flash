@@ -424,7 +424,7 @@ package com.pintu.common
 		}
 		//for subclass to call...
 		protected function moveLabelX(x:Number):void{
-			_label.x += x;
+			_label.x = x;
 		}
 		
 		/**
@@ -534,6 +534,7 @@ package com.pintu.common
 		public function get label() : String {
 			return _labelText;
 		}
+	
 		
 		/**
 		 * @inheritDoc

@@ -64,7 +64,7 @@ package com.pintu.controller{
 			m_download.download( m_downloadURL, m_fileName);
 		}
 		
-		//TODO, ...
+		//PicEditWin调用
 		public function uploadPicture(isOriginal:Boolean, tags:String, desc:String):void{
 			_model.postPicture(m_upload,tags,desc,isOriginal?"1":"0");
 		}

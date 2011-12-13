@@ -8,16 +8,17 @@ package com.pintu.modules{
 	import com.pintu.utils.Logger;
 	import com.pintu.widgets.*;
 	
+	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	
-	import org.casalib.display.CasaSprite;	
+	import org.casalib.display.CasaSprite;
 	
 	
 	public class HomePage extends CasaSprite implements IDestroyableModule, IMenuClickResponder{		
 		
 		private var _model:IPintu;
-		private var _fileManager:FileManager;
-		
+		private var _fileManager:FileManager;		
 		
 		private var categoryTree:CategoryTree;		
 		private var mainDisplayArea:MainDisplayArea;
@@ -36,10 +37,10 @@ package com.pintu.modules{
 			
 			//PicDetailView派发的保存事件
 			this.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);				
-			//用户工具栏派发的事件
+			//UserDetailsBlock派发的贴图事件
 			this.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);						
 			
-			
+			//呈现图片的主要区域，大部分逻辑都在这里
 			mainDisplayArea = new MainDisplayArea(_model);
 			//设置即将执行的查询模式：缩略图模式画廊
 			//TODO, 后面如果保存了浏览模式，就要修改这里的值
@@ -68,14 +69,18 @@ package com.pintu.modules{
 		
 		
 		private function editPic(evt:PintuEvent):void{
+			
 			if(!picEditWin){
-				picEditWin = new PicEditWin(this, _fileManager);
+				//只生成一次，必须添加在舞台上，这样才产生全局的Mask
+				picEditWin = new PicEditWin(this.stage, _fileManager);				
 			}
 			
 			picEditWin.x = (InitParams.appWidth-picEditWin.width)/2;
 			//屏幕上方
 			picEditWin.y = -picEditWin.height;
-			this.addChild(picEditWin);
+			//添加在顶级
+			this.stage.addChild(picEditWin);
+			
 			var endY:Number = (InitParams.appHeight-picEditWin.height)/2;
 			//动画切入
 			TweenLite.to(picEditWin, 0.6, {y:endY});
@@ -94,35 +99,35 @@ package com.pintu.modules{
 			//缩略图模式
 			if(operation==PintuEvent.BROWSE_CHANGED 
 				&& extra==BrowseMode.CATEGORY_GALLERY_TBMODE){
-				//告诉显示区，按照随机模式查询
+				//告诉显示区，按照最新画廊模式查询
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;
 			}
 			
 			//大图列表模式
 			if(operation==PintuEvent.BROWSE_CHANGED 
 				&& extra==BrowseMode.CATEGORY_GALLERY_BPMODE){
-				//告诉显示区，按照随机模式查询
+				//告诉显示区，按照大图模式查询
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_BPMODE;
 			}
 			
 			//热点模式
 			if(operation==PintuEvent.BROWSE_CHANGED 
 				&& extra==BrowseMode.CATEGORY_HOT){
-				//告诉显示区，按照随机模式查询
+				//告诉显示区，按照热图模式查询
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_HOT;
 			}
 			
 			//经典模式
 			if(operation==PintuEvent.BROWSE_CHANGED 
 				&& extra==BrowseMode.CATEGORY_CLASSICAL){
-				//告诉显示区，按照随机模式查询
+				//告诉显示区，按照经典模式查询
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_CLASSICAL;
 			}
 			
 			//最近收藏模式
 			if(operation==PintuEvent.BROWSE_CHANGED 
 				&& extra==BrowseMode.CATEGORY_FAVORED){
-				//告诉显示区，按照随机模式查询
+				//告诉显示区，按照最近收藏模式查询
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_FAVORED;
 			}
 			

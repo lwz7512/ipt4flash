@@ -35,6 +35,10 @@ package com.pintu.widgets{
 		private var _roundRadius:int = 4;
 		
 		private var defaultThumbnailPath:String = "assets/defaultImage100.png";
+		//如果丢失了图片，不能进行点击
+		private var isLost:Boolean;
+		
+		private var timeBarHeight:int = 24;
 		
 		public function Thumbnail(data:TPicDesc){
 			_data = data;
@@ -61,6 +65,7 @@ package com.pintu.widgets{
 		}
 		
 		private function getDetails(event:MouseEvent):void{
+			if(isLost) return;
 			dispatchEvent(new PintuEvent(PintuEvent.GETPICDETAILS,_data.tpId));
 		}
 		
@@ -81,7 +86,7 @@ package com.pintu.widgets{
 			tf.x = 30;
 			tf.y = 40;
 			tf.autoSize = "left";
-			tf.defaultTextFormat = new TextFormat(null,12, 0xFFFFFF);
+			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.DEFAULT_TEXT_COLOR);
 			
 			tf.text = "loading...";
 			this.addChild(tf);
@@ -94,14 +99,15 @@ package com.pintu.widgets{
 			var canvas:CasaShape = new CasaShape();
 			this.addChild(canvas);
 			//重设样式
-			tf.defaultTextFormat = new TextFormat(null,12, 0xFFFFFF);
+			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.GREEN_TEXT_COLOR);
 			
 			//如果比缩略图默认尺寸大，就按默认图显示，这可能是不合法图片
 			//这样防止缓动效果出问题
 			if(bitmap.width>100 || bitmap.height>100){//异常图片使用默认的				
 				tf.text = "it's lost...";
 				tf.x = (100-tf.textWidth)/2;
-				tf.y = 78;				
+				tf.y = 78;		
+				isLost = true;
 			}else{//正常图片显示
 				bitmap.x = 1;
 				bitmap.y = 1;
@@ -115,7 +121,9 @@ package com.pintu.widgets{
 			}						
 			
 			_initialized = true;
+			//文字置顶
 			imgContainer.setChildIndex(tf, imgContainer.numChildren-1);
+			//画文字所在背景，及边框
 			drawBackground(canvas);		
 		}
 		
@@ -124,15 +132,15 @@ package com.pintu.widgets{
 		}
 		
 		private function drawBackground(cavas:CasaShape):void{
-			//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
-			cavas.graphics.lineStyle(1,StyleParams.PICDETAIL_BACKGROUND_BROWN,1,true);
-			cavas.graphics.drawRect(0, 0, 100, 100);
-			
 			//黑色背景，这样暗示详情背景是黑色的
 			cavas.graphics.beginFill(StyleParams.DEFAULT_TEXT_COLOR, 0.8);
 			//稍微宽点容纳图片
-			cavas.graphics.drawRoundRect(0, 70,101,30,_roundRadius,_roundRadius);
+			cavas.graphics.drawRect(0, (100-timeBarHeight),100,timeBarHeight);
 			cavas.graphics.endFill();					
+			
+			//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
+			cavas.graphics.lineStyle(1,StyleParams.PICDETAIL_BACKGROUND_BROWN,1,true);
+			cavas.graphics.drawRect(0, 0, 100, 100);
 		}
 		
 	} //end of class
