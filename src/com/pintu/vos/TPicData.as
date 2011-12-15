@@ -38,6 +38,9 @@ package com.pintu.vos{
 		//是否允许品图，这个比较重要
 		public var isOriginal:String;
 		
+		//图片发送来源客户端
+		public var source:String;
+		
 		//生成的移动图ID，这个ID是由pId+"_Mob"构成
 		public var mobImgId:String;
 		

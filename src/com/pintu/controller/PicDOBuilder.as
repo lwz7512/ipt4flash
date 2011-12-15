@@ -142,10 +142,16 @@ package com.pintu.controller
 		 * @param json 生成画廊的数据
 		 * @return 生成画廊缩略图的个数
 		 */ 
-		public function createScrollableMiniGallery(json:String):int{			
-			
-			var thumnails:Array = JSON.decode(json) as Array;
-			if(!thumnails) return 0;
+		public function createScrollableMiniGallery(json:String):int{		
+			var thumnails:Array;
+			//捕捉解析异常
+			try{
+				thumnails = JSON.decode(json) as Array;
+			}catch(e:JSONParseError){
+				hintEvt = new PintuEvent(PintuEvent.HINT_USER, ">>>data parse error!");
+				_owner.dispatchEvent(hintEvt);				
+				return 0;
+			}					
 			
 			//画廊没新图片
 			if(thumnails.length==0){
@@ -225,7 +231,7 @@ package com.pintu.controller
 			var detailObjs:Array;
 			var hintEvt:PintuEvent;
 			
-//			Logger.debug("pic details: \n"+json);
+			Logger.debug("big gallery: \n"+json);
 			
 			//捕捉解析异常
 			try{
@@ -359,6 +365,7 @@ package com.pintu.controller
 			pic.tags = details["tags"];
 			pic.description = details["description"];
 			pic.isOriginal = details["isOriginal"];
+			pic.source = details["source"];
 			pic.mobImgUrl =  _model.composeImgUrlById(details["mobImgId"]);
 			pic.rawImgUrl =  _model.composeImgUrlById(details["rawImgId"]);
 			pic.commentsNum = details["storiesNum"];

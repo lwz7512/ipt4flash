@@ -12,7 +12,7 @@ package com.pintu.controller{
 	public class GlobalController{
 		
 		//是否为调试模式
-		public static const isDebug:Boolean = true;		
+		public static const isDebug:Boolean = false;		
 		//默认来宾账号
 		private static const GUEST_USER_ACCOUNT:String = "a6c7897a988870d8";
 		

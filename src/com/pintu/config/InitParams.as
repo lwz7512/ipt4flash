@@ -14,10 +14,10 @@ package com.pintu.config
 		
 		//应用缺省宽度和高度
 		public static const MINAPP_WIDTH:Number = 980;
-		public static const MINAPP_HEIGHT:Number = 620;
+		public static const MINAPP_HEIGHT:Number = 640;
 		
 		//App section gap
-		public static const TOP_BOTTOM_GAP:Number = 6;
+		public static const TOP_BOTTOM_GAP:Number = 4;
 		public static const DEFAULT_GAP:Number = 4;
 		
 		//Header footer height

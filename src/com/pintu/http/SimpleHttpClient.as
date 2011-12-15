@@ -7,10 +7,7 @@ package com.pintu.http
 	import com.pintu.events.ResponseEvent;
 	import com.pintu.utils.Logger;
 	
-	import flash.events.ErrorEvent;
-	import flash.events.Event;
-	import flash.events.EventDispatcher;
-	import flash.events.StatusEvent;
+	import flash.events.*;
 	import flash.net.FileReference;
 	import flash.utils.ByteArray;
 	
@@ -96,12 +93,25 @@ package com.pintu.http
 			
 			_client.listener.onError = function(event:ErrorEvent):void {
 				var errorMessage:String = event.text;
-//				Logger.error("Method: "+method+" , error: "+errorMessage);
+				Logger.error("Method: "+method+" , error: "+errorMessage);
 				var errorEvent:PTErrorEvent = new PTErrorEvent(method,errorMessage);
 				dispatchEvent(errorEvent);
 				//提交结束
 				_isRuning = false;
 			};  					
+			
+			_client.addEventListener(HttpErrorEvent.ERROR,function(evt:HttpErrorEvent):void{
+				Logger.error("Method:"+method+" , error: "+evt.text);
+			});
+			_client.addEventListener(HttpErrorEvent.TIMEOUT_ERROR,function(evt:HttpErrorEvent):void{
+				Logger.error("Method:"+method+" , error: "+evt.text);
+			});
+			_client.addEventListener(IOErrorEvent.IO_ERROR,function(evt:IOErrorEvent):void{
+				Logger.error("Method:"+method+" , error: "+evt.text);
+			});
+			_client.addEventListener(SecurityErrorEvent.SECURITY_ERROR,function(evt:SecurityErrorEvent):void{
+				Logger.error("Method:"+method+" , error: "+evt.text);
+			});
 			
 			//提交
 			_client.postFormData(uri, params);	

@@ -1,5 +1,7 @@
 package com.pintu.utils
 {
+	import com.gaiaframework.debug.GaiaDebug;
+	
 	public class Logger
 	{
 		public function Logger()
@@ -7,15 +9,16 @@ package com.pintu.utils
 		}
 		
 		public static function debug(info:String):void{
-			trace(">D>: "+info);
+			GaiaDebug.log(">D>: "+info);
+//			trace(">D>: "+info);
 		}
 		
 		public static function warn(info:String):void{
-			trace(">W>: "+info);
+			GaiaDebug.warn(">W>: "+info);
 		}
 		
 		public static function error(info:String):void{
-			trace(">E>: "+info);
+			GaiaDebug.error(">E>: "+info);
 		}
 		
 	}

@@ -26,7 +26,7 @@ package com.pintu.modules{
 		
 		private var userDetails:UserDetailsBlock;
 		private var andiAssets:AndiBlock;
-		private var weiboFriends:HotTags;
+		private var hotTags:HotTags;
 		
 		private var picEditWin:PicEditWin;
 		
@@ -56,8 +56,8 @@ package com.pintu.modules{
 			andiAssets = new AndiBlock();
 			this.addChild(andiAssets);
 			
-			weiboFriends = new HotTags(_model);
-			this.addChild(weiboFriends);
+			hotTags = new HotTags(_model);
+			this.addChild(hotTags);
 			
 		}
 		
@@ -135,14 +135,13 @@ package com.pintu.modules{
 		
 		
 		public  function killMe():void{
-			//移除自己，并销毁事件监听
 			super.destroy();
 			//清除事件监听
 			_fileManager.cleanUp();
 			_fileManager = null;
 			//清空引用
 			_model = null;
-			removeChildren(true,true);		
+			removeChildren(true, true);		
 		}
 		
 		

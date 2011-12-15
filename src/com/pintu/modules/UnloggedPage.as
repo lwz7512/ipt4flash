@@ -106,8 +106,7 @@ package com.pintu.modules
 		}
 		
 		//重写销毁函数
-		public  function killMe():void{
-			//移除自己，并销毁事件监听
+		public  function killMe():void{	
 			super.destroy();
 			//清空引用
 			_model = null;

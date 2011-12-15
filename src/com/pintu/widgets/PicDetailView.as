@@ -192,11 +192,12 @@ package com.pintu.widgets{
 			});
 			commentsHolder.addChild(cmtInput);
 			
+			var cmtSubmitXoffset:Number = 70;
 			var cmtSubmit:GreenButton = new GreenButton();
 			cmtSubmit.label = "评论";
 			cmtSubmit.setSize(60,24);
 			//在输入框的下面，右端对齐
-			cmtSubmit.x = InitParams.GALLERY_WIDTH-64;
+			cmtSubmit.x = InitParams.GALLERY_WIDTH-cmtSubmitXoffset;
 			cmtSubmit.y =  cmtInput.height+2;
 			cmtSubmit.addEventListener(ButtonEvent.CLICK, postComment);
 			commentsHolder.addChild(cmtSubmit);

@@ -224,7 +224,7 @@ package com.pintu.widgets{
 			if(event is ResponseEvent){				
 				var galleryData:String = ResponseEvent(event).data;
 				var thumbnails:int;
-//				Logger.debug("thumbnail data: \n"+galleryData);
+				Logger.debug("thumbnail data: \n"+galleryData);
 				
 				if(!galleryCreated){
 //					Logger.debug("to create mini gallery...");

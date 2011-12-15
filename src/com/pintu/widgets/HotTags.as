@@ -60,10 +60,18 @@ package com.pintu.widgets{
 				+InitParams.DEFAULT_GAP;
 			
 			blockWidth = InitParams.LOGIN_FORM_WIDTH;
-			blockHeight = InitParams.appHeight
-				-drawStartY
-				-InitParams.TOP_BOTTOM_GAP
-				-InitParams.FOOTER_HEIGHT;
+			
+			if(InitParams.isStretchHeight()){
+				blockHeight = InitParams.appHeight
+					-drawStartY
+					-InitParams.TOP_BOTTOM_GAP
+					-InitParams.FOOTER_HEIGHT;
+			}else{
+				blockHeight = InitParams.MINAPP_HEIGHT
+					-drawStartY
+					-InitParams.TOP_BOTTOM_GAP
+					-InitParams.FOOTER_HEIGHT;
+			}
 			
 			this.graphics.clear();
 			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);

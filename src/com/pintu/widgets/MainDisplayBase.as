@@ -107,14 +107,17 @@ package com.pintu.widgets{
 		private function initDrawPoint():void{
 			drawStartX = InitParams.startDrawingX();				
 			drawStartY = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;
-			//默认高度，也是最小高度
-			displayAreaHeight = InitParams.CALLERY_HEIGHT;
+			
 			if(InitParams.isStretchHeight()){
 				//拉伸高度
 				displayAreaHeight = InitParams.appHeight
 					-drawStartY
 					-InitParams.TOP_BOTTOM_GAP
 					-InitParams.FOOTER_HEIGHT;
+			}else{
+				//默认高度，也是最小高度
+				displayAreaHeight = InitParams.MINAPP_HEIGHT
+					-drawStartY-InitParams.FOOTER_HEIGHT-InitParams.TOP_BOTTOM_GAP;
 			}
 			displayAreaWidth = InitParams.GALLERY_WIDTH;
 		}
@@ -182,7 +185,9 @@ package com.pintu.widgets{
 		
 		override public function destroy():void{
 			super.destroy();
-			queryAvailableTimer.stop();
+			
+			if(queryAvailableTimer)
+				queryAvailableTimer.stop();
 			queryAvailableTimer = null;
 			
 		}

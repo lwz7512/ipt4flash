@@ -23,6 +23,8 @@ package{
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
 	import flash.geom.Matrix;
+	import flash.external.ExternalInterface;
+	import flash.system.Security;
 	import flash.utils.clearInterval;
 	import flash.utils.setInterval;
 	
@@ -70,7 +72,8 @@ package{
 			this.stage.showDefaultContextMenu = false;
 			//阻止浏览器滚动条
 			SWFWheel.initialize(stage);
-			SWFWheel.browserScroll = false;
+			SWFWheel.browserScroll = false;			
+			
 			//舞台准备好后创建应用
 			this.addEventListener(Event.ADDED_TO_STAGE, buildApp);						
 		}
@@ -84,7 +87,15 @@ package{
 			if(!stage.stageWidth) {
 				Logger.warn("Stage is unavailable, stop to build app!");
 				return;
-			}	
+			}
+			
+			//移除html页面中的div logo内容
+			//这个内容是为chrome生成缩略图准备的
+			//2012/12/15
+			if(ExternalInterface.available){
+				ExternalInterface.call("removeLogo");
+			}
+			
 			
 			//主应用只监听来自headerbar退出和loginBlock的登录引起的导航事件
 			//其他系统事件一概不予处理，放在各自的模块中处理
@@ -105,10 +116,7 @@ package{
 			var currentUser:String = GlobalController.loggedUser;
 			model = new PintuImpl(currentUser);			
 			navigator = new GlobalNavigator(this,model);	
-			
-			//画纹理背景
-//			var usePaperBG:Boolean = GlobalController.usePaperTile;
-//			if(usePaperBG) drawPaperBackground();
+								
 			
 			//全局模块固定不变
 			buildHeaderMenu(isLogged);			
@@ -119,9 +127,16 @@ package{
 				_currentModule = navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
 				_currentModule = navigator.switchTo(GlobalNavigator.UNLOGGED);		
-			}				
+			}	
+			
 			//主菜单栏再顶部，好让菜单浮在画廊上面
-			moveHeaderBarTop();
+			moveHeaderBarTop();			
+			
+			var runningMode:Boolean = GlobalController.isDebug;
+			if(runningMode){
+				var hint:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "Warning, I'm running DEBUG mode!");
+				dispatchEvent(hint);
+			}
 		}		
 		
 		//运行时切换模块状态，比如从未登录到登陆

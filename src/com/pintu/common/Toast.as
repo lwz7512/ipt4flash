@@ -81,6 +81,7 @@ package com.pintu.common{
 		}
 		
 		public function show(text:String, toastX:Number, toastY:Number):void{			
+			if(_parent.contains(this)) return;
 			
 			//创建文字
 			if(!_text){

@@ -116,8 +116,7 @@ package com.pintu.widgets{
 				+InitParams.DEFAULT_GAP;
 			
 			this.graphics.clear();
-			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
-			//半透明效果似乎更好
+			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);			
 			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR, 1);
 			this.graphics.drawRect(drawStartX,drawStartY,
 				InitParams.ANDI_ASSETS_WIDTH,InitParams.ANDI_ASSETS_HEIGHT);

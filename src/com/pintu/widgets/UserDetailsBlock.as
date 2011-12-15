@@ -16,9 +16,7 @@ package com.pintu.widgets{
 	/**
 	 * 显示在应用右上角的个人详情部分
 	 */ 
-	public class UserDetailsBlock extends CasaSprite{
-		
-		private var _model:IPintu;
+	public class UserDetailsBlock extends WidgetBase{		
 		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
@@ -35,14 +33,26 @@ package com.pintu.widgets{
 		private var iconHGap:int = 58;
 		
 		public function UserDetailsBlock(model:IPintu){
-			super();
-			_model = model;
-			PintuImpl(_model).addEventListener(ApiMethods.GETUSERESTATE, userDetailHandler);
+			super(model);			
+			
+			initDrawPoint();			
 			
 			drawLoginBackGround();	
 			drawTitleBar();
+						
+		}
+		
+		override protected function addModelListener(evt:Event):void{			
+			Logger.debug("to getUserEstate...");
 			
-			this.addEventListener(Event.ADDED_TO_STAGE, queryUserInfo);
+			//获取个人信息			
+			_model.getUserEstate(PintuImpl(_model).currentUser);
+			
+			PintuImpl(_model).addEventListener(ApiMethods.GETUSERESTATE, userDetailHandler);
+		}
+
+		override protected function cleanModelListener(evt:Event):void{
+			PintuImpl(_model).removeEventListener(ApiMethods.GETUSERESTATE, userDetailHandler);
 		}
 		
 		private function drawTitleBar():void{
@@ -101,23 +111,17 @@ package com.pintu.widgets{
 			
 		}
 		
-		private function queryUserInfo(evt:Event):void{
-			//获取个人信息			
-			_model.getUserEstate(PintuImpl(_model).currentUser);
-		}
+
 		
 		private function userDetailHandler(evt:Event):void{	
-			
-			if(userDetailFetched) return;
+			Logger.debug("userDetailFetched: "+userDetailFetched);
 			
 			if(evt is ResponseEvent){
 				var jsUser:String = ResponseEvent(evt).data;
-//				Logger.debug("user info: \n"+jsUser);
+				Logger.debug("user info: \n"+jsUser);
 				
 				var objUser:Object = JSON.decode(jsUser);
-				buildUserDetails(objUser);
-				//查询完成
-				userDetailFetched = true;
+				buildUserDetails(objUser);				
 			}
 			
 			if(evt is PTErrorEvent){
@@ -135,7 +139,8 @@ package com.pintu.widgets{
 			var normalTXTSize:int = 12;
 			var bigTXTSize:int = 16;
 			var avatarToTextGap:Number = 4;
-			var textHGap:Number = 10;
+			var textHGap:Number = 10;			
+					
 			
 			//头像
 			var avatarUrl:String = _model.composeImgUrlByPath(userObj["avatar"]);
@@ -234,12 +239,7 @@ package com.pintu.widgets{
 		}
 		
 		private function drawLoginBackGround():void{
-			drawStartX = InitParams.startDrawingX()
-				+InitParams.MAINMENUBAR_WIDTH
-				+InitParams.DEFAULT_GAP;
-			drawStartY = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;
-			blockWidth = InitParams.USER_DETAIL_WIDTH;
-			blockHeight = InitParams.USER_DETAIL_HEIGHT;
+			
 			this.graphics.clear();
 			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);			
 			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR, 1);
@@ -248,6 +248,16 @@ package com.pintu.widgets{
 			
 			
 		}
+		
+		private function initDrawPoint():void{
+			drawStartX = InitParams.startDrawingX()
+				+InitParams.MAINMENUBAR_WIDTH
+				+InitParams.DEFAULT_GAP;
+			drawStartY = InitParams.HEADER_HEIGHT+InitParams.TOP_BOTTOM_GAP;
+			blockWidth = InitParams.USER_DETAIL_WIDTH;
+			blockHeight = InitParams.USER_DETAIL_HEIGHT;
+		}
+		
 		
 		
 	} //end of class

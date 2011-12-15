@@ -296,16 +296,16 @@ package com.pintu.widgets{
 			var marging:Number = 44;
 			var startX:Number = _mobImgWidth+marging;			
 			var startY:Number = 4;	
-			var textItemVGap:Number = 26;
-			var textItemHGap:Number = 26;
+			var textItemVGap:Number = 24;
+			var textItemHGap:Number = 20;
 			var avatarSize:Number = 64;
 			var avatarToTextGap:Number = 4;
 			
 			var green:uint = StyleParams.GREEN_TEXT_COLOR;
 			var white:uint = StyleParams.WHITE_TEXT_COLOR;
-			var dark:uint = StyleParams.DEFAULT_BLACK_COLOR;
+			var dark:uint = StyleParams.DEFAULT_TEXT_COLOR;
 			var gray:uint = StyleParams.GRAY_TEXT_COLOR;
-			var normaTXTSize:int = 12;
+			var normalTXTSize:int = 12;
 			var bigTXTSize:int = 16;
 			
 			//头像
@@ -325,7 +325,7 @@ package com.pintu.widgets{
 			
 			//积分
 			var scoreStr:String = "积分 "+_data.score;
-			var scoreTF:SimpleText = new SimpleText(scoreStr, dark, normaTXTSize);
+			var scoreTF:SimpleText = new SimpleText(scoreStr, dark, normalTXTSize);
 			scoreTF.x = userNameTF.x;
 			scoreTF.y = userNameTF.y+46;
 			imgInfoHolder.addChild(scoreTF);
@@ -337,7 +337,7 @@ package com.pintu.widgets{
 			var origFontSize:int;
 			if( !isOriginal){//非原创
 				origColor = dark;
-				origFontSize = normaTXTSize;
+				origFontSize = normalTXTSize;
 			}else{//原创
 				origColor = green;
 				origFontSize = bigTXTSize;
@@ -366,39 +366,49 @@ package com.pintu.widgets{
 			imgInfoHolder.graphics.lineStyle(2, 0xFFFFFF);
 			imgInfoHolder.graphics.drawCircle(origCircleX, origCircleY, origCircleRadius-2);						
 			
-			
 			//发布时间，靠右边放置，这点跟手机版类似
 			var pubTimeStr:String = PintuUtils.getRelativeTimeFromNow(_data.publishTime);
-			var pubTimeTF:SimpleText = new SimpleText(pubTimeStr,dark, normaTXTSize);
+			var pubTimeTF:SimpleText = new SimpleText(pubTimeStr,dark, normalTXTSize);
 			pubTimeTF.x = InitParams.GALLERY_WIDTH - pubTimeTF.textWidth-textItemHGap;
 			pubTimeTF.y = scoreTF.y+textItemVGap;
 			imgInfoHolder.addChild(pubTimeTF);
+						
 			
 			//浏览次数
-			var browseCountStr:String = "浏览次数 "+_data.browseCount;
-			var browseCountTF:SimpleText = new SimpleText(browseCountStr,dark, normaTXTSize);
+			var browseCountStr:String = "浏览 "+_data.browseCount;
+			var browseCountTF:SimpleText = new SimpleText(browseCountStr,dark, normalTXTSize);
 			browseCountTF.x = startX;
 			browseCountTF.y = isOriginalTF.y+textItemVGap;
 			imgInfoHolder.addChild(browseCountTF);									
 			
 			//评论数目
-			var commentsStr:String = "评论个数 "+_data.commentsNum;
-			var commentsTF:SimpleLinkTxt = new SimpleLinkTxt(commentsStr,dark, normaTXTSize);
+			var commentsStr:String = "评论 "+_data.commentsNum;
+			var commentColor:uint = dark;
+			//如果有评论，就变成绿色字
+			if(Number(_data.commentsNum)) commentColor = StyleParams.GREEN_TEXT_COLOR;
+			var commentsTF:SimpleLinkTxt = new SimpleLinkTxt(commentsStr,commentColor, normalTXTSize);
 			commentsTF.x = browseCountTF.x+browseCountTF.textWidth+textItemHGap;
 			commentsTF.y = isOriginalTF.y+textItemVGap;
 			commentsTF.addEventListener(MouseEvent.CLICK, addComment);
 			imgInfoHolder.addChild(commentsTF);
 			
 			//喜欢人数
-			var likeNumStr:String = "喜欢人数 "+_data.coolCount;
-			var likeTF:SimpleText = new SimpleText(likeNumStr, dark, normaTXTSize);
+			var likeNumStr:String = "喜欢 "+_data.coolCount;
+			var likeTF:SimpleText = new SimpleText(likeNumStr, dark, normalTXTSize);
 			likeTF.x = commentsTF.x+commentsTF.textWidth+textItemHGap;
 			likeTF.y = isOriginalTF.y+textItemVGap;
 			imgInfoHolder.addChild(likeTF);
 			
+			//图片来源，挨着喜欢人数
+			var sourceStr:String = "来源 "+_data.source;
+			var sourceTF:SimpleText = new SimpleText(sourceStr, dark, normalTXTSize);
+			sourceTF.x = likeTF.x +likeTF.textWidth+textItemHGap;
+			sourceTF.y = isOriginalTF.y+textItemVGap;
+			imgInfoHolder.addChild(sourceTF);
+			
 			//标签
 			var tagsStr:String = "标签 "+_data.tags;
-			var tagsTF:SimpleText = new SimpleText(tagsStr,dark, normaTXTSize);
+			var tagsTF:SimpleText = new SimpleText(tagsStr,dark, normalTXTSize);
 			tagsTF.x = startX;
 			tagsTF.y = browseCountTF.y+textItemVGap;
 			imgInfoHolder.addChild(tagsTF);
@@ -407,7 +417,7 @@ package com.pintu.widgets{
 			var origDescContent:String = _data.description;	
 			origDescContent = "描述 "+origDescContent;
 			//描述是多行文本，全部显示
-			var descTF:SimpleText = new SimpleText(origDescContent,dark, normaTXTSize);
+			var descTF:SimpleText = new SimpleText(origDescContent,dark, normalTXTSize);
 			descTF.x = startX;
 			descTF.y = tagsTF.y+textItemVGap;
 			descTF.width = InitParams.GALLERY_WIDTH - startX-marging;
