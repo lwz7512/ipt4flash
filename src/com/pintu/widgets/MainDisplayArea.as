@@ -69,11 +69,16 @@ package com.pintu.widgets{
 			this._picBuilder.owner = this;
 			
 			//初始化添加模型监听
-			this.addEventListener(Event.ADDED_TO_STAGE, initDisplayStage);
+			this.addEventListener(Event.ADDED_TO_STAGE, initModelListener);
 			//销毁时，移除模型监听
-			this.addEventListener(Event.REMOVED_FROM_STAGE, destroyDisplayStage);											
+			this.addEventListener(Event.REMOVED_FROM_STAGE, removeModelListener);											
 					
-		}			
+		}
+		
+		public function createUserMsgs(msgs:Array):void{
+			//放心创建吧，外面校验过了
+			_picBuilder.createMsgList(msgs);
+		}
 		
 	
 		/**
@@ -108,7 +113,7 @@ package com.pintu.widgets{
 			invalidate();
 		}							
 		
-		private function initDisplayStage(event:Event):void{
+		private function initModelListener(event:Event):void{
 			_initialized = true;
 			
 			//按照HomePage设置的模式进行查询			
@@ -123,7 +128,7 @@ package com.pintu.widgets{
 			PintuImpl(_model).addEventListener(ApiMethods.GETTHUMBNAILSBYTAG,tagPicHandler);
 		}
 		
-		private function destroyDisplayStage(event:Event):void{			
+		private function removeModelListener(event:Event):void{			
 			PintuImpl(_model).removeEventListener(ApiMethods.GETGALLERYBYTIME,latestGalleryHandler);
 			PintuImpl(_model).removeEventListener(ApiMethods.GETGALLERYRANDOM,latestGalleryHandler);
 			PintuImpl(_model).removeEventListener(ApiMethods.GETGALLERYFORWEB,bigPicHandler);

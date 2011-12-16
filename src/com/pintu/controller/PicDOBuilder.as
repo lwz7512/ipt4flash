@@ -8,9 +8,12 @@ package com.pintu.controller
 	import com.pintu.events.PintuEvent;
 	import com.pintu.events.ResponseEvent;
 	import com.pintu.utils.Logger;
+	import com.pintu.utils.PintuUtils;
+	import com.pintu.vos.TPMessage;
 	import com.pintu.vos.TPicData;
 	import com.pintu.vos.TPicDesc;
 	import com.pintu.widgets.MainDisplayArea;
+	import com.pintu.widgets.MessageItem;
 	import com.pintu.widgets.PicDetailView;
 	import com.pintu.widgets.Thumbnail;
 	
@@ -92,51 +95,6 @@ package com.pintu.controller
 			_owner = o;
 		}
 		
-		private function detailPicHandler(event:Event):void{	
-			//只处理结果事件，不处理状态事件
-			if(!(event is ResponseEvent)) return;
-						
-			//展示详情前，先清理
-			cleanUp();					
-			Logger.debug("pic details: \n"+ResponseEvent(event).data);
-			//CREATE PIC DETAILS...
-			var details:Object =  JSON.decode(ResponseEvent(event).data) as Object;
-			var picDetails:PicDetailView = new PicDetailView(objToTPicData(details), _model);
-			picDetails.x = _drawStartX;
-			picDetails.y = _drawStartY;
-			//工具栏左侧给返回按钮让位
-			picDetails.showBackBtn = true;
-			_context.addChild(picDetails);					
-			
-			//BACK BUTTON
-			var back:IconButton = new IconButton(26,26);
-			back.iconPath = "assets/back.png";
-			back.addEventListener(MouseEvent.CLICK, restoreGallery);
-			back.x = _drawStartX+2;
-			//往下移动下跟工具栏对齐
-			back.y = _drawStartY+2;
-			back.textOnRight = true;
-			back.label = "返回";
-			back.setLabelStyle(null, 12, 
-				StyleParams.HEADERBAR_TOP_LIGHTGREEN, 
-				StyleParams.HEADERBAR_TOP_LIGHTGREEN, 
-				StyleParams.HEADERBAR_TOP_LIGHTGREEN);
-			
-			_context.addChild(back);
-			
-			//移除进度条
-			_owner.hideMiddleLoading();
-			
-		}
-		
-
-		
-		private function restoreGallery(evt:MouseEvent):void{
-			cleanUp();
-			layoutThumbnails();		
-		}
-
-		
 		/**
 		 * 给MainDisplayArea调用
 		 * @param json 生成画廊的数据
@@ -175,6 +133,148 @@ package com.pintu.controller
 			
 			return thumnails.length;
 		}
+		
+		/**
+		 * 创建列表式大图画廊，创建多个PicDetailView
+		 * 
+		 * 解析json字符串可能异常，可能是由于其中有windows下图片路径反斜杠字符串
+		 * 造成转义字符解析异常，偶尔出现，现在还没找到明确原因
+		 * 后台已经去除了数据中的关于图片路径属性，但是该方法还是该捕捉这个异常
+		 * 2011/12/8
+		 */ 
+		public function createScrollableBigGallery(json:String):void{			
+			var detailObjs:Array;
+			var hintEvt:PintuEvent;
+			
+//			Logger.debug("big gallery: \n"+json);
+			
+			//捕捉解析异常
+			try{
+				detailObjs = JSON.decode(json);
+			}catch(e:JSONParseError){
+				hintEvt = new PintuEvent(PintuEvent.HINT_USER, ">>>data parse error!");
+				_owner.dispatchEvent(hintEvt);				
+				return;
+			}
+			
+			//画廊没新图片
+			if(detailObjs.length==0){
+				hintEvt = new PintuEvent(PintuEvent.HINT_USER, "没有最新的图片，不然随便看看？");
+				_owner.dispatchEvent(hintEvt);				
+				return;
+			}			
+			
+			//准备生成画廊
+			cleanUp();
+			
+			//先把路径线放在底部，然后放图片			
+			drawPath(InitParams.DEFAULT_BIGPIC_WIDTH);
+			
+			//大图数据列表
+			var tpicDatas:Array = [];
+			for(var i:int=0; i<detailObjs.length; i++){
+				var tpidData:TPicData = objToTPicData(detailObjs[i]);
+				tpicDatas.push(tpidData);
+			}
+			
+			//初始化视图容器
+			bigPicViews = [];
+			for(var j:int=0; j<tpicDatas.length; j++){				
+				var picDetails:PicDetailView = new PicDetailView(tpicDatas[j], _model);
+				picDetails.x = _drawStartX;
+				//按照每个详情高度往下排，初始高度是一样的
+				picDetails.y = _drawStartY+picDetails.height*j+verticalGap;				
+				//显示空容器
+				_context.addChild(picDetails);	
+				
+				//存一份视图引用
+				bigPicViews.push(picDetails);
+			}
+			
+		}
+		
+		/**
+		 * 唯一一个创建非图片类内容的方法
+		 * 放心的去创建，不需要校验数据
+		 */
+		public function createMsgList(msgs:Array):void{
+			//先清理舞台
+			cleanUp();			
+			
+			var msgVOs:Array = [];
+			//转换对象
+			for each(var msg:Object in msgs){
+				var tpMsg:TPMessage = new TPMessage();
+				tpMsg.id = msg["id"];
+				tpMsg.sender = msg["sender"];
+				tpMsg.senderName = PintuUtils.getShowUserName(msg["senderName"]);
+				tpMsg.content = msg["content"];
+				tpMsg.msgType = msg["msgType"];
+				tpMsg.reference = msg["reference"];
+				tpMsg.writeTime = PintuUtils.getRelativeTimeFromNow(msg["writeTime"]);
+				tpMsg.senderAvatarUrl = _model.composeImgUrlByPath(msg["senderAvatar"]);
+				msgVOs.push(tpMsg);
+			}
+			
+			//创建消息列表					
+			var msgStartX:Number = _drawStartX;
+			var msgStartY:Number = _drawStartY;
+			for(var i:int = 0; i<msgVOs.length; i++){
+				var msgView:MessageItem = new MessageItem(msgVOs[i]);
+				msgView.x = msgStartX;
+				msgView.y = msgStartY;				
+				_context.addChild(msgView);				
+				msgStartY += msgView.height;
+			}
+						
+		}
+		
+		private function detailPicHandler(event:Event):void{	
+			//只处理结果事件，不处理状态事件
+			if(!(event is ResponseEvent)) return;
+						
+			//展示详情前，先清理
+			cleanUp();					
+//			Logger.debug("pic details: \n"+ResponseEvent(event).data);
+			//CREATE PIC DETAILS...
+			var details:Object =  JSON.decode(ResponseEvent(event).data) as Object;
+			var picDetails:PicDetailView = new PicDetailView(objToTPicData(details), _model);
+			picDetails.x = _drawStartX;
+			picDetails.y = _drawStartY;
+			//工具栏左侧给返回按钮让位
+			picDetails.showBackBtn = true;
+			_context.addChild(picDetails);					
+			
+			//BACK BUTTON
+			var back:IconButton = new IconButton(26,26);
+			back.iconPath = "assets/back.png";
+			back.addEventListener(MouseEvent.CLICK, restoreGallery);
+			back.x = _drawStartX+2;
+			//往下移动下跟工具栏对齐
+			back.y = _drawStartY+2;
+			back.textOnRight = true;
+			back.label = "返回";
+			back.setLabelStyle(null, 12, 
+				StyleParams.HEADERBAR_TOP_LIGHTGREEN, 
+				StyleParams.HEADERBAR_TOP_LIGHTGREEN, 
+				StyleParams.HEADERBAR_TOP_LIGHTGREEN);
+			
+			_context.addChild(back);
+			
+			//移除进度条
+			_owner.hideMiddleLoading();
+			
+		}
+		
+
+		
+		private function restoreGallery(evt:MouseEvent):void{
+			cleanUp();
+			layoutThumbnails();		
+		}
+
+		
+
 		
 		private function layoutThumbnails():void{
 			//画廊剩余宽度减去左右边距，然后按列数平分
@@ -218,65 +318,7 @@ package com.pintu.controller
 			var tpId:String = event.data;
 			_model.getPicDetail(tpId);
 		}
-		
-		/**
-		 * 创建列表式大图画廊，创建多个PicDetailView
-		 * 
-		 * 解析json字符串可能异常，可能是由于其中有windows下图片路径反斜杠字符串
-		 * 造成转义字符解析异常，偶尔出现，现在还没找到明确原因
-		 * 后台已经去除了数据中的关于图片路径属性，但是该方法还是该捕捉这个异常
-		 * 2011/12/8
-		 */ 
-		public function createScrollableBigGallery(json:String):void{			
-			var detailObjs:Array;
-			var hintEvt:PintuEvent;
-			
-			Logger.debug("big gallery: \n"+json);
-			
-			//捕捉解析异常
-			try{
-				detailObjs = JSON.decode(json);
-			}catch(e:JSONParseError){
-				hintEvt = new PintuEvent(PintuEvent.HINT_USER, ">>>data parse error!");
-				_owner.dispatchEvent(hintEvt);				
-				return;
-			}
-			
-			//画廊没新图片
-			if(detailObjs.length==0){
-				hintEvt = new PintuEvent(PintuEvent.HINT_USER, "没有最新的图片，不然随便看看？");
-				_owner.dispatchEvent(hintEvt);				
-				return;
-			}			
-			
-			//准备生成画廊
-			cleanUp();
-			
-			//先把路径线放在底部，然后放图片			
-			drawPath(InitParams.DEFAULT_BIGPIC_WIDTH);
-						
-			//大图数据列表
-			var tpicDatas:Array = [];
-			for(var i:int=0; i<detailObjs.length; i++){
-				var tpidData:TPicData = objToTPicData(detailObjs[i]);
-				tpicDatas.push(tpidData);
-			}
-								
-			//初始化视图容器
-			bigPicViews = [];
-			for(var j:int=0; j<tpicDatas.length; j++){				
-				var picDetails:PicDetailView = new PicDetailView(tpicDatas[j], _model);
-				picDetails.x = _drawStartX;
-				//按照每个详情高度往下排，初始高度是一样的
-				picDetails.y = _drawStartY+picDetails.height*j+verticalGap;				
-				//显示空容器
-				_context.addChild(picDetails);	
 				
-				//存一份视图引用
-				bigPicViews.push(picDetails);
-			}
-						
-		}		
 		
 		/**
 		 * 每个详情视图发生内容变化时，整个列表项的位置都要发生重排
@@ -300,6 +342,7 @@ package com.pintu.controller
 			drawPath(_context.height);
 			
 			var localStartY:Number = _drawStartY;
+			//重新排列所有的图片
 			for(var i:int=0; i<bigPicViews.length; i++){
 				var bigPicView:PicDetailView = bigPicViews[i];				
 				//按照每个详情高度往下排，初始高度是一样的

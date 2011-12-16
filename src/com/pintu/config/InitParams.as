@@ -75,6 +75,11 @@ package com.pintu.config
 			return startX;
 		}
 		
+		/**
+		 * 如果实际舞台高度小于最小应用高度，返回false，即按照最小高度绘制
+		 * 如果实际舞台高度大于最小应用高度，返回true，即按照实际高度绘制
+		 * 2011/12/15
+		 */ 
 		public static function isStretchHeight():Boolean{
 			return InitParams.MINAPP_HEIGHT<InitParams.appHeight?true:false;
 		}

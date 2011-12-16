@@ -67,11 +67,7 @@ package com.pintu.common{
 			_bitmap.x = 2;
 			_bitmap.y = 2;
 			var ratio:Number = _bitmap.width/_bitmap.height;
-			//宽度不限制
-//			if(_bitmap.width>_maxsize){
-//				_bitmap.width = _maxsize;
-//				_bitmap.height = _maxsize/ratio;
-//			}
+			
 			if(_maxsize>0 && _bitmap.height>_maxsize){
 				_bitmap.height = _maxsize;
 				_bitmap.width = _maxsize*ratio;

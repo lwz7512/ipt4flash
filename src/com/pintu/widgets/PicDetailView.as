@@ -35,10 +35,9 @@ package com.pintu.widgets{
 			super(data);
 			//每个视图中，都有各自不同的模型，这样就不会干扰了
 			_clonedModel = model.clone();						
-			
-			
-			this.addEventListener(Event.ADDED_TO_STAGE, initDetailView);			
-			this.addEventListener(Event.REMOVED_FROM_STAGE, cleanUp);
+						
+			this.addEventListener(Event.ADDED_TO_STAGE, addModelListeners);			
+			this.addEventListener(Event.REMOVED_FROM_STAGE, cleanUpClonedModel);
 		}
 		
 		/**
@@ -48,7 +47,7 @@ package com.pintu.widgets{
 			_showBackBtn = v;
 		}
 		
-		private function initDetailView(evt:Event):void{
+		private function addModelListeners(evt:Event):void{
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
@@ -59,7 +58,7 @@ package com.pintu.widgets{
 		 * 清除给模型添加的事件
 		 * 清空模型引用
 		 */ 
-		private function cleanUp(evt:Event):void{
+		private function cleanUpClonedModel(evt:Event):void{
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
@@ -284,7 +283,7 @@ package com.pintu.widgets{
 		}
 		
 		override protected function todo(evt:MouseEvent):void{
-			//TODO, ADD COMMENT...
+			//TODO, ADD FORWARD TO WEIBO,  AND REPORT ...
 			
 		}
 		

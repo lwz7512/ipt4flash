@@ -53,8 +53,16 @@ package com.pintu.api
 		function getUserDetail(userId:String):void;
 		function getUserEstate(userId:String):void;
 		
+		function postMsg(receiverId:String, content:String):void;
+		function getUserMsgs():void;
+		function markMsgReaded(msgIds:String):void;
+		
+		
+		
 		/**
 		 * 多个视图用到同样的模型，为了防止事件监听干扰，各自使用各自的模型 
+		 * 比如在PicDetailView组件中，多个图片都要有各自的动作，都要用到模型
+		 * 2011/12/06
 		 */
 		function clone():IPintu;
 		

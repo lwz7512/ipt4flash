@@ -56,6 +56,7 @@ package com.pintu.http
 			var uri:URI = new URI(_serviceUrl);
 			//延迟生成客户端
 			if(!_client) this._client = new HttpClient();
+			if(!params) params = [];
 			
 			params = params.concat([ {name:"method", value: method}]);
 			params = params.concat([ {name:"userId", value: _userId}]);

@@ -69,7 +69,12 @@ package com.pintu.utils{
 			return getRelativeTimeFromNow(simpleTime);
 		}
 		
-		
+		public static  function getShowUserName(account:String):String{			
+			if(account.indexOf("@")>-1){
+				return account.split("@")[0];
+			}
+			return account;
+		}
 		
 	} //end of class
 }

@@ -6,12 +6,10 @@
 package{
 	
 	import com.pintu.api.*;
-	import com.pintu.common.BusyIndicator;
 	import com.pintu.common.Toast;
 	import com.pintu.config.InitParams;
 	import com.pintu.controller.*;
 	import com.pintu.events.PintuEvent;
-	import com.pintu.modules.IDestroyableModule;
 	import com.pintu.modules.IMenuClickResponder;
 	import com.pintu.utils.Logger;
 	import com.pintu.widgets.FooterBar;
@@ -22,15 +20,10 @@ package{
 	import flash.display.StageAlign;
 	import flash.display.StageScaleMode;
 	import flash.events.Event;
-	import flash.geom.Matrix;
 	import flash.external.ExternalInterface;
-	import flash.system.Security;
-	import flash.utils.clearInterval;
-	import flash.utils.setInterval;
 	
 	import org.casalib.events.LoadEvent;
 	import org.casalib.load.ImageLoad;
-	import org.casalib.util.ColorUtil;
 	import org.libspark.ui.SWFWheel;
 		
 	public class Main extends Sprite{
@@ -91,11 +84,11 @@ package{
 			
 			//移除html页面中的div logo内容
 			//这个内容是为chrome生成缩略图准备的
+			//生产模式下使用
 			//2012/12/15
-			if(ExternalInterface.available){
+			if(ExternalInterface.available && !GlobalController.isDebug){
 				ExternalInterface.call("removeLogo");
-			}
-			
+			}			
 			
 			//主应用只监听来自headerbar退出和loginBlock的登录引起的导航事件
 			//其他系统事件一概不予处理，放在各自的模块中处理
@@ -114,9 +107,11 @@ package{
 			var isLogged:Boolean = GlobalController.isLogged;
 			
 			var currentUser:String = GlobalController.loggedUser;
-			model = new PintuImpl(currentUser);			
-			navigator = new GlobalNavigator(this,model);	
-								
+			model = new PintuImpl(currentUser);
+			//后台错误提示
+			PintuImpl(model).addEventListener(PintuEvent.HINT_USER, hintTextHandler);
+			
+			navigator = new GlobalNavigator(this,model);
 			
 			//全局模块固定不变
 			buildHeaderMenu(isLogged);			
@@ -132,6 +127,7 @@ package{
 			//主菜单栏再顶部，好让菜单浮在画廊上面
 			moveHeaderBarTop();			
 			
+			//判断运行状态
 			var runningMode:Boolean = GlobalController.isDebug;
 			if(runningMode){
 				var hint:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "Warning, I'm running DEBUG mode!");
@@ -141,7 +137,6 @@ package{
 		
 		//运行时切换模块状态，比如从未登录到登陆
 		private function navigateTo(event:PintuEvent):void{
-//			Logger.debug("To navigating ... "+event.data);			
 			
 			//进入登录状态
 			if(event.data==GlobalNavigator.HOMPAGE){

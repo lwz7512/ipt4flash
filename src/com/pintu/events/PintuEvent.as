@@ -16,12 +16,20 @@ package com.pintu.events
 		public static const UPLOAD_IMAGE:String = "uploadImage";
 		public static const DNLOAD_IMAGE:String = "dnloadImage";
 		
+		//发信
+		public static const POST_MSG:String = "writeMsg";
+		//修改用户资料
+		public static const POST_USERINFO:String = "modifyUserInfo";
+		
 		//弹出提示事件
 		public static const HINT_USER:String = "hintToUser";
 		//进度条事件
 		public static const PROGRESS:String = "progress";
 		//大图中点击评论按钮，通知画廊向上滚动事件
 		public static const SCROLL_UP:String = "scrollUp";
+		
+		//显示个人消息
+		public static const SHOW_MSGS:String = "showMsgs";
 		
 		//通常带的参数
 		public var data:String;

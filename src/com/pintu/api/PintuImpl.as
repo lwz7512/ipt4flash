@@ -24,57 +24,44 @@ package com.pintu.api
 	 * 不能在widget的构造函数中对服务事件监听
 	 * 
 	 * 约定：只有widget才能监听PintuImpl实例的服务事件ApiMethods.*
+	 * FileManager是个例外
 	 * 
 	 * 为什么要这样：
 	 * 监听器保证回收正常，不会造成到新建的同类对象重复派发事件
 	 */ 
 	public class PintuImpl extends ModelBase implements IPintu{
-				
-		private var eventSended:Event;
+						
 		
 		public function PintuImpl(userId:String){
 			super(userId);															
 			
-			client.addEventListener(ApiMethods.LOGON,responseHander);
+			addClientListener(ApiMethods.LOGON);		
 			
-			client.addEventListener(ApiMethods.GETGALLERYBYTIME,responseHander);
-			client.addEventListener(ApiMethods.GETGALLERYFORWEB,responseHander);
-			client.addEventListener(ApiMethods.GETGALLERYRANDOM,responseHander);
+			addClientListener(ApiMethods.GETGALLERYBYTIME);			
+			addClientListener(ApiMethods.GETGALLERYFORWEB);			
+			addClientListener(ApiMethods.GETGALLERYRANDOM);			
+			addClientListener(ApiMethods.GETHOTPICTURE);			
+			addClientListener(ApiMethods.CLASSICALSTATISTICS);			
+			addClientListener(ApiMethods.COLLECTSTATISTICS);			
+			addClientListener(ApiMethods.GETTHUMBNAILSBYTAG);			
+			addClientListener(ApiMethods.GETPICDETAIL);	
 			
-			client.addEventListener(ApiMethods.GETHOTPICTURE,responseHander);
-			client.addEventListener(ApiMethods.CLASSICALSTATISTICS,responseHander);
-			client.addEventListener(ApiMethods.COLLECTSTATISTICS,responseHander);
-			client.addEventListener(ApiMethods.GETTHUMBNAILSBYTAG,responseHander);
-			client.addEventListener(ApiMethods.GETPICDETAIL,responseHander);
+			addClientListener(ApiMethods.ADDSTORY);			
+			addClientListener(ApiMethods.GETSTORIESOFPIC);			
+			addClientListener(ApiMethods.MARKTHEPIC);			
+			addClientListener(ApiMethods.ADDVOTE);
 			
-			client.addEventListener(ApiMethods.ADDSTORY,responseHander);
-			client.addEventListener(ApiMethods.GETSTORIESOFPIC,responseHander);
-			client.addEventListener(ApiMethods.MARKTHEPIC,responseHander);
-			client.addEventListener(ApiMethods.ADDVOTE,responseHander);
+			addClientListener(ApiMethods.GETUSERDETAIL);			
+			addClientListener(ApiMethods.GETUSERESTATE);	
 			
-			client.addEventListener(ApiMethods.GETUSERDETAIL,responseHander);
-			client.addEventListener(ApiMethods.GETUSERESTATE,responseHander);
+			addClientListener(ApiMethods.SENDMSG);			
+			addClientListener(ApiMethods.GETUSERMSG);			
+			addClientListener(ApiMethods.CHANGEMSGSTATE);			
+			
 			
 			//TODO, ADD OTHER LISTENER...
 			
-		}
-				
-		//这里指定泛型事件，因为可能是ResponseEvent，也可能是PTErrorEvent
-		//也有可能是状态事件PTStatusEvent，用于提交动作的响应
-		//2011/11/29
-		private function responseHander(event:Event):void{
-			if(event is PTStatusEvent){
-//				Logger.debug("*** Model to dispatch PTStatusEvent event ***");
-			}
-			if(event is ResponseEvent){
-//				Logger.debug("*** Model to dispatch ResponseEvent event ***");
-			}
-			//通知使用模型的模块
-			dispatchEvent(event);
-			//remember it
-			eventSended = event;
-		}
-				
+		}		
 		
 		
 		public function composeImgUrlById(imgId:String):String{
@@ -91,7 +78,10 @@ package com.pintu.api
 			var params:Array = [{name:"tags",value:tags},{name:"description",value:description},
 											{name:"isOriginal",value:isOriginal}];				
 			var myClient:SimpleHttpClient = new SimpleHttpClient(getServiceUrl(),this.currentUser);
-			myClient.addEventListener(ApiMethods.UPLOAD,responseHander);
+			myClient.addEventListener(ApiMethods.UPLOAD,function(evt:PintuEvent):void{
+				//通知文件管理器
+				dispatchEvent(evt);	
+			});			
 			myClient.addEventListener(ApiMethods.UPLOAD,function():void{
 				myClient.disconnect();
 			});		
@@ -109,7 +99,7 @@ package com.pintu.api
 		}
 		
 		public function getRandomGallery():void{
-			addHttpTask([],ApiMethods.GETGALLERYRANDOM);
+			addHttpTask([], ApiMethods.GETGALLERYRANDOM);
 		}
 		
 		public function getGalleryForWeb(pageNum:String):void{
@@ -118,11 +108,11 @@ package com.pintu.api
 		}
 		
 		public function getHotPicture():void{
-			addHttpTask([],ApiMethods.GETHOTPICTURE);
+			addHttpTask([], ApiMethods.GETHOTPICTURE);
 		}
 		
 		public function getClassicalPics():void{
-			addHttpTask([],ApiMethods.CLASSICALSTATISTICS);
+			addHttpTask([], ApiMethods.CLASSICALSTATISTICS);
 		}
 		
 		public function getFavoredPics():void{
@@ -131,7 +121,7 @@ package com.pintu.api
 		
 		public function getThumbnailsByTag(tagId:String,pageNum:String):void{
 			var params:Array = [{name:"tagId",value:tagId},{name:"pageNum",value:pageNum}];
-			addHttpTask(params,ApiMethods.GETTHUMBNAILSBYTAG);
+			addHttpTask(params, ApiMethods.GETTHUMBNAILSBYTAG);
 		}
 		
 		public function getPicDetail(tpId:String):void{
@@ -141,35 +131,59 @@ package com.pintu.api
 		
 		public function postComment(follow:String, content:String):void{
 			var params:Array = [{name:"follow",value:follow},{name:"content",value:content}];
-			addHttpTask(params,ApiMethods.ADDSTORY);
+			addHttpTask(params, ApiMethods.ADDSTORY);
 		}
 		
 		public function getComments(tpId:String):void{
 			var params:Array = [{name:"tpId",value:tpId}];
-			addHttpTask(params,ApiMethods.GETSTORIESOFPIC);
+			addHttpTask(params, ApiMethods.GETSTORIESOFPIC);
 		}
 		
 		public function markThePic(userId:String, picId:String):void{
 			//其实在client中已经把userId传进去了
 			var params:Array = [{name:"picId",value:picId}];
-			addHttpTask(params,ApiMethods.MARKTHEPIC);
+			addHttpTask(params, ApiMethods.MARKTHEPIC);
 		}
 		
 		public function postVote(receiver:String, follow:String, type:String, amount:String):void{
 			var params:Array = [{name:"receiver",value:receiver},{name:"follow",value:follow},
 				{name:"type",value:type},{name:"amount",value:amount}];
-			addHttpTask(params,ApiMethods.ADDVOTE);
+			addHttpTask(params, ApiMethods.ADDVOTE);
 		}
 		
 		public function getUserDetail(userId:String):void{
 			var params:Array = [{name:"userId",value:userId}];
-			addHttpTask(params,ApiMethods.GETUSERDETAIL);
+			addHttpTask(params, ApiMethods.GETUSERDETAIL);
 		}
 		
 		public function getUserEstate(userId:String):void{
 			var params:Array = [{name:"userId",value:userId}];
-			addHttpTask(params,ApiMethods.GETUSERESTATE);
+			addHttpTask(params, ApiMethods.GETUSERESTATE);
 		}
+		
+		public function postMsg(receiver:String, content:String):void{
+			var params:Array = [{name:"receiver",value:receiver}, {name:"content",value:content}];
+			addHttpTask(params, ApiMethods.SENDMSG);
+		}
+		
+		public function getUserMsgs():void{
+			addHttpTask([], ApiMethods.GETUSERMSG);
+		}
+		
+		public function markMsgReaded(msgIds:String):void{
+			var params:Array = [{name:"msgIds",value:msgIds}];
+			addHttpTask(params, ApiMethods.CHANGEMSGSTATE);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		

@@ -42,6 +42,13 @@ package com.pintu.api
 		//获得用户资产
 		public static const GETUSERESTATE:String = "getUserEstate";
 		
+		//发送消息
+		public static const SENDMSG:String = "sendMsg";
+		//收消息
+		public static const GETUSERMSG:String  = "getUserMsg";
+		//更新消息状态为已读
+		public static const CHANGEMSGSTATE:String = "changeMsgState";
+		
 		
 		
 	}

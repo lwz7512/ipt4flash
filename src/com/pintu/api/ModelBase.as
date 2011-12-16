@@ -1,6 +1,8 @@
 package com.pintu.api{
 	
 	import com.pintu.controller.GlobalController;
+	import com.pintu.events.PTErrorEvent;
+	import com.pintu.events.PintuEvent;
 	import com.pintu.http.SimpleHttpClient;
 	import com.pintu.utils.Logger;
 	
@@ -68,8 +70,8 @@ package com.pintu.api{
 			return _currentUser;
 		}
 		
-		//被克隆出来的模型实例，必须各自销毁
-		//全局模型不需要销毁
+		//widget里被克隆出来的模型实例，必须各自销毁
+		//Main中的全局模型不需要销毁
 		public function destory():void{
 			if(client) client.disconnect();
 			if(taskTimer) taskTimer.stop();
@@ -83,6 +85,27 @@ package com.pintu.api{
 		public function updateUser(userId:String):void{
 			client.userId = userId;
 			_currentUser = userId;
+		}
+		
+		/**
+		 * 添加新的服务事件
+		 */ 
+		protected function addClientListener(method:String):void{
+			client.addEventListener(method,responseHander);
+		}
+		
+		//这里指定泛型事件，因为可能是ResponseEvent，也可能是PTErrorEvent
+		//也有可能是状态事件PTStatusEvent，用于提交动作的响应
+		//2011/11/29
+		private function responseHander(event:Event):void{
+			//通知使用模型的模块
+			dispatchEvent(event);	
+			
+			if(event is PTErrorEvent){
+				var errorMsg:String = PTErrorEvent(event).type+" operation failed!";
+				var hint:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, errorMsg);
+				dispatchEvent(hint);
+			}
 		}
 		
 		
@@ -101,8 +124,8 @@ package com.pintu.api{
 		 */ 
 		private function excuteTaskQueue(evt:TimerEvent):void{
 			if(taskQueue.size>0 && !client.isRunning()){
-				var method:String = taskQueue.first.method;
 				var params:Array = taskQueue.first.params;
+				var method:String = taskQueue.first.method;
 				
 				client.post(params, method);
 				Logger.debug("Start Execute: "+method);

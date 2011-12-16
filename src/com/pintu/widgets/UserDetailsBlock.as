@@ -5,7 +5,7 @@ package com.pintu.widgets{
 	import com.pintu.common.*;
 	import com.pintu.config.*;
 	import com.pintu.events.*;
-	import com.pintu.utils.Logger;
+	import com.pintu.utils.*;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
@@ -16,7 +16,7 @@ package com.pintu.widgets{
 	/**
 	 * 显示在应用右上角的个人详情部分
 	 */ 
-	public class UserDetailsBlock extends WidgetBase{		
+	public class UserDetailsBlock extends AbstractWidget{		
 		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
@@ -42,17 +42,20 @@ package com.pintu.widgets{
 						
 		}
 		
-		override protected function addModelListener(evt:Event):void{			
-			Logger.debug("to getUserEstate...");
+		override protected function initModelListener(evt:Event):void{			
+//			Logger.debug("to getUserEstate...");
 			
 			//获取个人信息			
-			_model.getUserEstate(PintuImpl(_model).currentUser);
+			_clonedModel.getUserEstate(PintuImpl(_clonedModel).currentUser);
 			
-			PintuImpl(_model).addEventListener(ApiMethods.GETUSERESTATE, userDetailHandler);
+			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETUSERESTATE, userDetailHandler);
 		}
 
-		override protected function cleanModelListener(evt:Event):void{
-			PintuImpl(_model).removeEventListener(ApiMethods.GETUSERESTATE, userDetailHandler);
+		override protected function cleanUpModelListener(evt:Event):void{
+			//先移除事件
+			PintuImpl(_clonedModel).removeEventListener(ApiMethods.GETUSERESTATE, userDetailHandler);
+			//后清空模型
+			super.cleanUpModelListener(evt);
 		}
 		
 		private function drawTitleBar():void{
@@ -78,7 +81,7 @@ package com.pintu.widgets{
 			//发消息
 			var writeMsg:IconButton = new IconButton(titleBackgroudHeight,titleBackgroudHeight);
 			writeMsg.iconPath = "assets/write_msg.png";
-			writeMsg.addEventListener(MouseEvent.CLICK, todo);
+			writeMsg.addEventListener(MouseEvent.CLICK, postMsg);
 			writeMsg.x = drawStartX+iconHGap;
 			writeMsg.y = drawStartY+iconYOffset;
 			writeMsg.textOnRight = true;
@@ -89,15 +92,13 @@ package com.pintu.widgets{
 			//修改资料
 			var updateUser:IconButton = new IconButton(titleBackgroudHeight,titleBackgroudHeight);
 			updateUser.iconPath = "assets/update_user.png";
-			updateUser.addEventListener(MouseEvent.CLICK, todo);
+			updateUser.addEventListener(MouseEvent.CLICK, postUserInfo);
 			updateUser.x = drawStartX+2*iconHGap;
 			updateUser.y = drawStartY+iconYOffset;
 			updateUser.textOnRight = true;
 			updateUser.label = "修改资料";			
 			updateUser.setSkinStyle(null,overColors,downColors);			
-			this.addChild(updateUser);
-			
-			//...
+			this.addChild(updateUser);					
 			
 		}
 		
@@ -105,20 +106,21 @@ package com.pintu.widgets{
 			//HomPage监听该事件
 			dispatchEvent(new PintuEvent(PintuEvent.UPLOAD_IMAGE,null));
 		}
-		
-		//TODO, ...
-		private function todo(evt:MouseEvent):void{
-			
+		private function postMsg(evt:MouseEvent):void{
+			//HomPage监听该事件
+			dispatchEvent(new PintuEvent(PintuEvent.POST_MSG,null));
+		}
+		private function postUserInfo(evt:MouseEvent):void{
+			//HomPage监听该事件
+			dispatchEvent(new PintuEvent(PintuEvent.POST_USERINFO,null));
 		}
 		
-
 		
 		private function userDetailHandler(evt:Event):void{	
-			Logger.debug("userDetailFetched: "+userDetailFetched);
 			
 			if(evt is ResponseEvent){
 				var jsUser:String = ResponseEvent(evt).data;
-				Logger.debug("user info: \n"+jsUser);
+//				Logger.debug("user info: \n"+jsUser);
 				
 				var objUser:Object = JSON.decode(jsUser);
 				buildUserDetails(objUser);				
@@ -135,7 +137,7 @@ package com.pintu.widgets{
 			var xOffset:Number = 4;
 			var yOffset:Number = 4;
 			
-			var dark:uint = StyleParams.DEFAULT_TEXT_COLOR;
+			var dark:uint = StyleParams.BROWN_GRAY_COLOR;
 			var normalTXTSize:int = 12;
 			var bigTXTSize:int = 16;
 			var avatarToTextGap:Number = 4;
@@ -143,7 +145,7 @@ package com.pintu.widgets{
 					
 			
 			//头像
-			var avatarUrl:String = _model.composeImgUrlByPath(userObj["avatar"]);
+			var avatarUrl:String = _clonedModel.composeImgUrlByPath(userObj["avatar"]);
 			var avatarImg:SimpleImage = new SimpleImage(avatarUrl);
 			avatarImg.x = startX;
 			avatarImg.y = startY;	
@@ -151,7 +153,7 @@ package com.pintu.widgets{
 			this.addChild(avatarImg);
 			
 			//用户名
-			var userNameStr:String = getShowUserName(userObj["account"]);
+			var userNameStr:String = PintuUtils.getShowUserName(userObj["account"]);
 			var userNameTF:SimpleText = new SimpleText(userNameStr,dark,bigTXTSize,true);
 			userNameTF.x = startX+xOffset;
 			userNameTF.y = startY+yOffset+avatarImg.maxSize;
@@ -231,12 +233,6 @@ package com.pintu.widgets{
 			
 		}
 		
-		private function getShowUserName(account:String):String{			
-			if(account.indexOf("@")>-1){
-				return account.split("@")[0];
-			}
-			return account;
-		}
 		
 		private function drawLoginBackGround():void{
 			

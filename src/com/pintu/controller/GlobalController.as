@@ -12,16 +12,17 @@ package com.pintu.controller{
 	public class GlobalController{
 		
 		//是否为调试模式
-		public static const isDebug:Boolean = false;		
+		public static const isDebug:Boolean = true;	
+		//默认收信人，客服
+		public static const KEFU_ID:String = "b8931b314c24dca4";
+		public static const KEFU_NAME:String = "客服小辣椒";
+		
 		//默认来宾账号
-		private static const GUEST_USER_ACCOUNT:String = "a6c7897a988870d8";
-		
+		private static const GUEST_USER_ACCOUNT:String = "a6c7897a988870d8";		
 		//持久化存储对象
-		private static var cs:SharedObject;	
-		
+		private static var cs:SharedObject;			
 		//运行时判断，主应用负责初始化
-		private static var _isLogged:Boolean = false;					
-		
+		private static var _isLogged:Boolean = false;							
 		//默认是guest账号，登录后更新此记录，并更新缓存
 		private static var userId:String = "a6c7897a988870d8";
 		//默认是来宾角色

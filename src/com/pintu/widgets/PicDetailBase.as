@@ -94,9 +94,11 @@ package com.pintu.widgets{
 		 * -----mobImgPlaceHolder-----
 		 * -----mobImage-----
 		 * -----toolHolder-----
+		 * 2012/12/15
 		 */ 
-		private function imgLoaded(evt:PintuEvent):void{			
-			
+		private function imgLoaded(evt:PintuEvent):void{	
+			//先都移除掉，重新绘制重新排列层级关系
+			removeChild(mobImage);
 			removeChild(mobImgPlaceHolder);
 			removeChild(imgLoading);
 			
@@ -105,26 +107,28 @@ package com.pintu.widgets{
 			_mobImgWidth = InitParams.DEFAULT_BIGPIC_WIDTH;
 			_mobImgHeight = mobImage.bitmap.height;	
 			
-			//右侧详情所在背景，先放让它能位于图的底部，使得图片的一部分绘制内容能露出来
+			//----------- imgInfoHolder ----------------
+			//右侧详情所在背景，先放让它能位于图的底部，使得图片的一部分绘制内容能露出来			
 			buildPicInfoBlackBG();
+			//图片相关内容：靠右侧放置，只有展开的评论在图片下面显示			
+			buildPicRelateInfo();		
 			
+							
+			//---------------  mobImgPlaceHolder -----------------
+			//重绘占位符，因为图片高度改变了，所以占位符也要相应改变				
+			drawImgePlaceHolder();
+			
+			//----------------- mobImage -------------------------
+			//白色边框加黑色带三角形边线，指向原创			
+			drawImageTriangleBorder();
 			//如果图片宽度不够440，让图片靠右与所有的图片对齐
 			if(mobImage.bitmap.width<InitParams.DEFAULT_BIGPIC_WIDTH){
 				mobImage.x = (InitParams.DEFAULT_BIGPIC_WIDTH-mobImage.bitmap.width);
 			}
+			//这回该重新显示图片了
+			this.addChild(mobImage);						
 			
-			//白色边框加黑色带三角形边线，指向原创
-			drawImageTriangleBorder();
-			
-			//重绘占位符，因为图片高度改变了，所以占位符也要相应改变			
-			drawImgePlaceHolder();
-			//这时它位于图片上方了，要与图片交换层级
-			this.swapChildren(mobImage, mobImgPlaceHolder);			
-			
-			//图片相关内容：
-			//靠右侧放置，只有展开的评论在图片下面显示			
-			buildPicRelateInfo();				
-			
+			//-------------- toolHolder -----------------------------
 			//最后创建图片工具栏，使其浮在顶部
 			buildPicOperaTools(_mobImgWidth);		
 			
@@ -317,7 +321,7 @@ package com.pintu.widgets{
 			
 			
 			//用户名
-			var userNameStr:String = getShowUserName();
+			var userNameStr:String = PintuUtils.getShowUserName(_data.author);
 			var userNameTF:SimpleText = new SimpleText(userNameStr,dark,bigTXTSize,true);
 			userNameTF.x = startX+avatarImg.maxSize+avatarToTextGap;
 			userNameTF.y = startY;
@@ -400,7 +404,7 @@ package com.pintu.widgets{
 			imgInfoHolder.addChild(likeTF);
 			
 			//图片来源，挨着喜欢人数
-			var sourceStr:String = "来源 "+_data.source;
+			var sourceStr:String = "来自 "+_data.source;
 			var sourceTF:SimpleText = new SimpleText(sourceStr, dark, normalTXTSize);
 			sourceTF.x = likeTF.x +likeTF.textWidth+textItemHGap;
 			sourceTF.y = isOriginalTF.y+textItemVGap;
@@ -523,15 +527,7 @@ package com.pintu.widgets{
 			toolHolder.addChild(report);
 						
 		}		
-		
-		
-		private function getShowUserName():String{
-			var account:String = _data.author;
-			if(account.indexOf("@")>-1){
-				return account.split("@")[0];
-			}
-			return account;
-		}
+			
 		
 		protected function likeIt(evt:MouseEvent):void{
 			//do nothing here, for sub class to implementation

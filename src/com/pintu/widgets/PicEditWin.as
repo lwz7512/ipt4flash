@@ -1,6 +1,5 @@
 package com.pintu.widgets{
 	
-	import com.greensock.TweenLite;
 	import com.pintu.common.*;
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
@@ -8,8 +7,6 @@ package com.pintu.widgets{
 	import com.pintu.events.PintuEvent;
 	import com.sibirjak.asdpc.button.Button;
 	import com.sibirjak.asdpc.button.ButtonEvent;
-	import com.sibirjak.asdpc.button.skins.ButtonSkin;
-	import com.sibirjak.asdpc.core.constants.Position;
 	import com.sibirjak.asdpc.textfield.Label;
 	import com.sibirjak.asdpc.textfield.TextInput;
 	import com.sibirjak.asdpc.textfield.TextInputEvent;
@@ -18,13 +15,11 @@ package com.pintu.widgets{
 	import flash.display.*;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
-	import flash.filters.DropShadowFilter;
-	import flash.utils.setInterval;
 	import flash.utils.clearInterval;
 	
-	import org.casalib.display.CasaSprite;
-	
-	
+	/**
+	 * 窗口类，只初始化一个实例，并缓存
+	 */ 
 	public class PicEditWin extends EditWinBase{
 				
 		private var _manager:FileManager;				
@@ -56,7 +51,7 @@ package com.pintu.widgets{
 			_manager = manager;
 			
 			//创建界面元素
-			createFormElements();			
+			createFormElements();
 			
 			_manager.addEventListener(FileManager.IMG_INMEMLOAD, showUploadImg);
 			_manager.addEventListener(FileManager.IMG_UPLOAD_SUCCESS, uploadSuccess);
@@ -71,6 +66,39 @@ package com.pintu.widgets{
 			this.graphics.lineStyle(1, 0x666666, 1, true);
 			this.graphics.drawRect(_elementStartX, _loadImgY, _maxLoadImgWidth, _maxLoadImgHeight);
 			
+		}		
+		
+		//点击提交触发
+		override protected function submit(evt:ButtonEvent):void{			
+			//先检查内容是否合法
+			if(!_manager.availableImgData){
+				updateSuggest("先选择图像");
+				return;
+			}
+			
+			if(_tagsInput.text.length==0 || _descInput.text.length==0){
+				updateSuggest("标签和描述不能为空");
+				return;
+			}
+			
+			//然后执行父类方法
+			super.submit(evt);
+			
+			//提交图片
+			_manager.uploadPicture(_isOriginalCheck.selected, _tagsInput.text, _descInput.text);
+		}
+		
+		override protected function reset():void{
+			super.reset();
+			//清除预览图
+			if(_loadFileBitmap)
+				removeChild(_loadFileBitmap);
+			_loadFileBitmap = null;
+			
+			//清除输入框文字
+			_isOriginalCheck.selected = false;
+			_tagsInput.text = "";
+			_descInput.text = "";
 		}
 		
 		private function uploadSuccess(evt:Event):void{			
@@ -218,28 +246,6 @@ package com.pintu.widgets{
 			this.addChild(_descInput);
 		}
 		
-
-		//点击提交触发
-		override protected function submit(evt:ButtonEvent):void{			
-			//先检查内容是否合法
-			if(!_manager.availableImgData){
-				updateSuggest("先选择图像");
-				return;
-			}
-			
-			if(_tagsInput.text.length==0 || _descInput.text.length==0){
-				updateSuggest("标签和描述不能为空");
-				return;
-			}	
-			
-			//然后执行父类方法
-			super.submit(evt);
-			
-			//提交图片
-			_manager.uploadPicture(_isOriginalCheck.selected, _tagsInput.text, _descInput.text);
-		}
-		
-
 		
 		private function showUploadImg(evt:Event):void{
 			if(!_loader)
@@ -273,18 +279,6 @@ package com.pintu.widgets{
 			updateSuggest("");
 		}
 		
-		override protected function reset():void{
-			super.reset();
-			//清除预览图
-			if(_loadFileBitmap)
-				removeChild(_loadFileBitmap);
-			_loadFileBitmap = null;
-			
-			//清除输入框文字
-			_isOriginalCheck.selected = false;
-			_tagsInput.text = "";
-			_descInput.text = "";
-		}
 		
 	} //end of class
 }

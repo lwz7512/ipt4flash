@@ -2,6 +2,7 @@ package com.pintu.modules{
 
 	import com.greensock.TweenLite;
 	import com.pintu.api.*;
+	import com.pintu.common.EditWinBase;
 	import com.pintu.config.InitParams;
 	import com.pintu.controller.FileManager;
 	import com.pintu.events.PintuEvent;
@@ -12,6 +13,7 @@ package com.pintu.modules{
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	
+	import org.as3commons.ui.layout.shortcut.display;
 	import org.casalib.display.CasaSprite;
 	
 	
@@ -29,6 +31,7 @@ package com.pintu.modules{
 		private var hotTags:HotTags;
 		
 		private var picEditWin:PicEditWin;
+		private var msgEditWin:MsgEditWin;
 		
 		public function HomePage(model:IPintu){
 			super();
@@ -37,8 +40,10 @@ package com.pintu.modules{
 			
 			//PicDetailView派发的保存事件
 			this.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);				
-			//UserDetailsBlock派发的贴图事件
-			this.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);						
+			//UserDetailsBlock派发的贴图事件，不带事件参数
+			this.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);
+			this.addEventListener(PintuEvent.POST_MSG, editMsg);
+			this.addEventListener(PintuEvent.POST_USERINFO, editUserInfo);
 			
 			//呈现图片的主要区域，大部分逻辑都在这里
 			mainDisplayArea = new MainDisplayArea(_model);
@@ -53,12 +58,23 @@ package com.pintu.modules{
 			userDetails = new UserDetailsBlock(_model);
 			this.addChild(userDetails);
 			
-			andiAssets = new AndiBlock();
+			andiAssets = new AndiBlock(_model);
+			andiAssets.addEventListener(PintuEvent.SHOW_MSGS, displayMsgList);
 			this.addChild(andiAssets);
 			
 			hotTags = new HotTags(_model);
 			this.addChild(hotTags);
 			
+		}
+		
+		private function displayMsgList(evt:PintuEvent):void{
+			var msgObjs:Array = andiAssets.msgs;
+			if(msgObjs==null) return;
+			if(msgObjs.length==0) return;
+			//创建消息列表
+			mainDisplayArea.createUserMsgs(msgObjs);
+			//标识为已读
+			andiAssets.msgReaded();
 		}
 		
 		private function downLoadRawPic(evt:PintuEvent):void{
@@ -73,17 +89,46 @@ package com.pintu.modules{
 			if(!picEditWin){
 				//只生成一次，必须添加在舞台上，这样才产生全局的Mask
 				picEditWin = new PicEditWin(this.stage, _fileManager);				
+			}			
+			dropCenterWindow(picEditWin);
+		}
+		
+		private function editMsg(evt:PintuEvent):void{
+			if(!msgEditWin){
+				msgEditWin = new MsgEditWin(this.stage);
+				msgEditWin.sourceModel = _model;
 			}
+			var receiverId:String = evt.data;
+			var receiverName:String = evt.extra;
+			if(receiverId) msgEditWin.receiverId = receiverId;
+			if(receiverName) msgEditWin.receiverName = receiverName;
 			
-			picEditWin.x = (InitParams.appWidth-picEditWin.width)/2;
+			dropCenterWindow(msgEditWin);
+		}
+		
+		private function editUserInfo(evt:PintuEvent):void{
+			//TODO, ....
+		}
+		
+		/**
+		 * 向下滑出窗口
+		 */ 
+		private function dropCenterWindow(win:EditWinBase):void{
+			win.x = (InitParams.appWidth-win.width)/2;
 			//屏幕上方
-			picEditWin.y = -picEditWin.height;
-			//添加在顶级
-			this.stage.addChild(picEditWin);
+			win.y = -win.height;
 			
-			var endY:Number = (InitParams.appHeight-picEditWin.height)/2;
+			//FIXME, 注意：必须添加在顶级
+			this.stage.addChild(win);
+			
+			var endY:Number;
+			if(InitParams.isStretchHeight()){
+				endY = (InitParams.appHeight-win.height)/2;
+			}else{
+				endY = (InitParams.MINAPP_HEIGHT-win.height)/2;
+			}
 			//动画切入
-			TweenLite.to(picEditWin, 0.6, {y:endY});
+			TweenLite.to(win, 0.6, {y:endY});
 		}
 		
 		/**
@@ -139,9 +184,18 @@ package com.pintu.modules{
 			//清除事件监听
 			_fileManager.cleanUp();
 			_fileManager = null;
+			
+			//清理窗口实例
+			if(picEditWin) picEditWin.destroy();
+			picEditWin = null;
+			if(msgEditWin) msgEditWin.destroy();
+			msgEditWin = null;
+			
 			//清空引用
 			_model = null;
 			removeChildren(true, true);		
+			
+			Logger.debug("HomePage destroyed...");
 		}
 		
 		

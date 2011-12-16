@@ -14,7 +14,7 @@ package com.pintu.widgets{
 	 */ 
 	public class AbstractWidget extends CasaSprite{
 		
-		private var _clonedModel:IPintu;
+		protected var _clonedModel:IPintu;
 		
 		public function AbstractWidget(model:IPintu){
 			//每个视图中，都有各自不同的模型，这样就不会干扰了
@@ -38,7 +38,8 @@ package com.pintu.widgets{
 		 * 同时回收_clonedModel
 		 */ 
 		protected function cleanUpModelListener(evt:Event):void{
-			//TODO, TO REMOVE MODEL EVENT LISTENER...
+			//TODO, TO REMOVE MODEL EVENT LISTENER IN SUB WIDGET...
+			//THEN, USE: super.cleanUpModelListener(evt);
 			
 			//这个是复制出来的，一定要销毁
 			_clonedModel.destory();

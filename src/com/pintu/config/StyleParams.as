@@ -85,9 +85,9 @@ package com.pintu.config
 		
 		/**
 		 * FOOTER BAR SILVER style
-		 */ 
-		//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
-		public static const FOOTER_SOLID_GRAY:uint = 0xC2CCD0;
+		 */ 		
+		//银白：带银光的白色。
+		public static const FOOTER_SOLID_GRAY:uint = 0xe9e7ef;
 		
 		
 		/**
@@ -110,7 +110,12 @@ package com.pintu.config
 		public static const GREEN_TEXT_COLOR:uint = 0x00BC12;
 		//老银：金属氧化后的色彩
 		public static const GRAY_TEXT_COLOR:uint = 0xBACAC6;			
-		public static const WHITE_TEXT_COLOR:uint = 0xFFFFFF;			
+		public static const WHITE_TEXT_COLOR:uint = 0xFFFFFF;
+		//深蓝色，靛青：也叫“蓝靛”
+		public static const BLUE_TEXT_COLOR:uint = 0x177cb0;
+		//棕灰色
+		public static const BROWN_GRAY_COLOR:uint = 0x808080;
+		
 			
 		//标准红色，大红：正红色，三原色中的红，传统的中国红，又称绛色
 		public static const DEFAULT_ERROR_RED:uint = 0xFF2121;

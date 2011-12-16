@@ -12,11 +12,12 @@ package com.pintu.common
 	import flash.text.TextFormat;
 	import flash.text.TextFormatAlign;
 	
+	import org.casalib.display.CasaSprite;
+	
 	/**
 	 * 文字按钮，可作为主菜单项
 	 */ 
-	public class TextMenu extends Sprite
-	{
+	public class TextMenu extends CasaSprite{
 		
 		protected var _width:Number = 40;
 		protected var _height:Number = 20;

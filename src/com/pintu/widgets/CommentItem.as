@@ -21,7 +21,8 @@ package com.pintu.widgets{
 		public function CommentItem(data:CmntData){
 			_data = data;			
 			//靛青：也叫“蓝靛”。用蓼蓝叶泡水调和与石灰沉淀所得的蓝色染料。呈深蓝绿色
-			authorTxt = new SimpleText(getShowUserName(), 0x177cb0, 14, true);
+			var authorStr:String = PintuUtils.getShowUserName(data.author);
+			authorTxt = new SimpleText(authorStr, 0x177cb0, 14, true);
 			authorTxt.width = 200;
 			authorTxt.x = 2;
 			authorTxt.y = 0;
@@ -60,13 +61,6 @@ package com.pintu.widgets{
 			this.graphics.endFill();
 		}
 		
-		private function getShowUserName():String{
-			var account:String = _data.author;
-			if(account.indexOf("@")>-1){
-				return account.split("@")[0];
-			}
-			return account;
-		}
 		
 	} //end of class
 }

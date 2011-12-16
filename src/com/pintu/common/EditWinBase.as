@@ -1,8 +1,9 @@
 package com.pintu.common{
 	
 	import com.greensock.TweenLite;
-	import com.pintu.config.InitParams;
-	import com.pintu.config.StyleParams;
+	import com.pintu.api.IPintu;
+	import com.pintu.api.PintuImpl;
+	import com.pintu.config.*;
 	import com.pintu.controller.FileManager;
 	import com.sibirjak.asdpc.button.Button;
 	import com.sibirjak.asdpc.button.ButtonEvent;
@@ -20,7 +21,20 @@ package com.pintu.common{
 	
 	import org.casalib.display.CasaSprite;
 	
+	/**
+	 * 所有对话窗口的父类
+	 * 负责生成窗口轮廓，和全局遮罩层，以及关闭按钮
+	 * 并负责关闭时回收全局遮罩层
+	 * 
+	 * 该类的典型用法参见：MsgEditWin
+	 */ 
 	public class EditWinBase extends CasaSprite{
+		
+		/**
+		 * 通过克隆方法得到的模型，这样避免模型干扰
+		 * 在窗体销毁时，务必在子类的destroy方法中销毁这个实例
+		 */ 
+		private var _clonedModel:PintuImpl;
 		
 		protected var _elementStartX:Number = 6;
 		protected var _elementStartY:Number = 30;
@@ -33,15 +47,14 @@ package com.pintu.common{
 		private var _modalOverlay:CasaSprite;
 		private var _closemeBtn:SimpleImage;
 		
-		private var _loadingX:Number = 210;
-		private var _loadingY:Number = 366;		
+		private var _loadingX:Number = 0;
+		private var _loadingY:Number = 0;		
 		
 		private var _width:Number = 320;
 		private var _height:Number = 400;				
 		
 		private var _headerHeight:Number = 24;													
-		
-
+				
 		
 		public function EditWinBase(ctxt:Stage, w:Number=320, h:Number=400){
 			super();
@@ -50,7 +63,10 @@ package com.pintu.common{
 			if(w) _width = w;
 			if(h) _height = h;
 			
-			//大小固定了，外面就不用设置了
+			_loadingX = _width-110;
+			_loadingY = _height-36;
+			
+			//大小固定了，子类就不用设置了
 			drawBackground();
 						
 			createCloseBtn();		
@@ -106,7 +122,8 @@ package com.pintu.common{
 		}
 		
 		/**
-		 * 恢复初始状态
+		 * 关闭时执行，移除窗口，并启用按钮，消除错误内容
+		 * 子类也需要重载这个方法，来恢复初始状态
 		 */ 
 		protected function reset():void{
 			_context.removeChild(this);
@@ -137,6 +154,10 @@ package com.pintu.common{
 			this.addChild(_sendBtn);
 		}
 		
+		/**
+		 * 清除进度条和错误提示，禁用提交按钮
+		 * 子类需要重载这个方法来提交内容
+		 */ 
 		protected function submit(evt:ButtonEvent):void{
 			if(!_loading) _loading = new BusyIndicator(24);
 			_loading.x = _loadingX;
@@ -167,6 +188,13 @@ package com.pintu.common{
 			_errorHint.text = hint;
 		}
 		
+		public function set sourceModel(model:IPintu):void{
+			_clonedModel = PintuImpl(model.clone());
+		}
+		public function get cloneModel():PintuImpl{
+			return _clonedModel;
+		}
+		
 		public override function set width(w:Number):void{
 			_width = w;
 		}
@@ -182,7 +210,7 @@ package com.pintu.common{
 		public override function get height():Number{
 			return _height;
 		}
-		
+				
 		
 	} //end of class
 }
