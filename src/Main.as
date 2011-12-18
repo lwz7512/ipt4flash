@@ -116,7 +116,7 @@ package{
 			//全局模块固定不变
 			buildHeaderMenu(isLogged);			
 			buildFooterContent();			
-								
+
 			//display home page
 			if(isLogged){
 				_currentModule = navigator.switchTo(GlobalNavigator.HOMPAGE);				

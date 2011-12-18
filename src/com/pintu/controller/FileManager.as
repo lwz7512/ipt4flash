@@ -22,7 +22,9 @@ package com.pintu.controller{
 		public static const IMG_UPLOAD_SUCCESS:String = "imgUploadSucces";
 		public static const IMG_UPLOAD_FAILURE:String = "imgUploadFailure";
 		
-		//得到的图片数据，供上传窗口预览使用
+		/**
+		 * 得到的图片数据，供上传窗口预览使用
+		 */ 
 		public var availableImgData:ByteArray;
 		
 		private var m_upload:FileReference;
@@ -37,6 +39,7 @@ package com.pintu.controller{
 		public function FileManager(model:IPintu){			
 			_model = model;
 			PintuImpl(_model).addEventListener(ApiMethods.UPLOAD,uploadSuccesHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.UPLDAVATAR,uploadSuccesHandler);
 			
 			m_upload = new FileReference();
 			//上传文件已经选择
@@ -68,6 +71,10 @@ package com.pintu.controller{
 		public function uploadPicture(isOriginal:Boolean, tags:String, desc:String):void{
 			_model.postPicture(m_upload,tags,desc,isOriginal?"1":"0");
 		}
+		//UserEditWin调用
+		public function uploadAvatar(imgData:ByteArray, nickName:String):void{
+			_model.postAvatar(imgData,nickName);
+		}
 		
 		/**
 		 *	handlers for file upload ( complete set );	
@@ -78,14 +85,12 @@ package com.pintu.controller{
 			m_upload.load();
 			
 			m_fileName = m_upload.name;
-			trace( "selected image: "+m_fileName );						
 		}
 		//to show the selected pic in prev section...
 		private function imgLoadedHandler(evt:Event):void{
 			//保存获得的图片数据
 			availableImgData = m_upload.data;
 			dispatchEvent(new Event(IMG_INMEMLOAD));
-			trace( "upload image loaded in memory;");		
 		}
 		
 		private function uploadSuccesHandler(evt:Event):void{
@@ -103,7 +108,6 @@ package com.pintu.controller{
 		private function downloadCompleteHandler ( e : Event ) : void{
 			availableImgData = m_download.data;
 			dispatchEvent(new Event(IMG_DOWNLOAD));
-			trace( 'file download complete;' );
 		}
 		
 		
@@ -124,6 +128,7 @@ package com.pintu.controller{
 		
 		public function cleanUp():void{
 			PintuImpl(_model).removeEventListener(ApiMethods.UPLOAD,uploadSuccesHandler);
+			PintuImpl(_model).removeEventListener(ApiMethods.UPLDAVATAR,uploadSuccesHandler);
 		}
 		
 		

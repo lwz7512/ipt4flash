@@ -85,9 +85,10 @@ package com.pintu.api{
 		public function updateUser(userId:String):void{
 			client.userId = userId;
 			_currentUser = userId;
-		}
+		}		
 		
 		/**
+		 * 模型对client运行状态的监听
 		 * 添加新的服务事件
 		 */ 
 		protected function addClientListener(method:String):void{
@@ -113,6 +114,10 @@ package com.pintu.api{
 		 * 新建任务到队列中
 		 */ 
 		public function addHttpTask(nameValues:Array, methodName:String):void{
+			
+			//FIXME, TEMPORARILY STOP RUN TASK...
+//			return;
+			
 			var task:Object = {method:methodName, params:nameValues};
 			taskQueue.add(task);
 			Logger.debug("Add Task: "+methodName);

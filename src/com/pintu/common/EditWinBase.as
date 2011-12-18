@@ -5,6 +5,7 @@ package com.pintu.common{
 	import com.pintu.api.PintuImpl;
 	import com.pintu.config.*;
 	import com.pintu.controller.FileManager;
+	import com.pintu.utils.Logger;
 	import com.sibirjak.asdpc.button.Button;
 	import com.sibirjak.asdpc.button.ButtonEvent;
 	import com.sibirjak.asdpc.button.skins.ButtonSkin;
@@ -41,6 +42,7 @@ package com.pintu.common{
 		protected var _elementPadding:Number = 6;		
 		
 		private var _context:Stage;
+		private var _title:SimpleText;
 		private var _errorHint:SimpleText;
 		private var _sendBtn:Button;		
 		private var _loading:BusyIndicator;
@@ -56,7 +58,7 @@ package com.pintu.common{
 		private var _headerHeight:Number = 24;													
 				
 		
-		public function EditWinBase(ctxt:Stage, w:Number=320, h:Number=400){
+		public function EditWinBase(ctxt:Stage, w:Number=320, h:Number=400, title:String=""){
 			super();
 			//得到父容器，用来关闭自己
 			_context = ctxt;
@@ -68,7 +70,8 @@ package com.pintu.common{
 			
 			//大小固定了，子类就不用设置了
 			drawBackground();
-						
+			
+			createWinTitle(title);
 			createCloseBtn();		
 			createSubmitBtn();			
 			createErrorHint();
@@ -98,6 +101,13 @@ package com.pintu.common{
 			
 			this.filters = [new DropShadowFilter(4,45,0x666666,0.8)];
 		}
+		
+		private function createWinTitle(title:String):void{
+			_title = new SimpleText(title, 0xFFFFFF);
+			_title.x = 6;
+			_title.y = 4;
+			this.addChild(_title);
+		}	
 		
 		private function createCloseBtn():void{
 			var closeIconPath:String = "assets/closeme.png";
@@ -186,6 +196,18 @@ package com.pintu.common{
 		
 		protected function updateSuggest(hint:String):void{
 			_errorHint.text = hint;
+		}
+		
+		/**
+		 * 多个窗口可能会用FileManager，这里检查下
+		 * 只有活动窗口才执行事件
+		 */ 
+		protected function shouldDo():Boolean{
+			if(!_context.contains(this)){				
+				return false;
+			}else{
+				return true;
+			}
 		}
 		
 		public function set sourceModel(model:IPintu):void{

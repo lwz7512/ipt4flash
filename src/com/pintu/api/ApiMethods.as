@@ -24,6 +24,8 @@ package com.pintu.api
 		
 		//上传贴图
 		public static const UPLOAD:String = "upload";
+		//上传头像
+		public static const UPLDAVATAR:String = "uploadAvatar";
 		
 		public static const GETIMAGEFILE:String = "getImageFile";
 		public static const GETIMAGEBYPATH:String = "getImageByPath";

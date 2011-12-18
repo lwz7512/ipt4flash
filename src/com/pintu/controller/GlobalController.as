@@ -12,7 +12,7 @@ package com.pintu.controller{
 	public class GlobalController{
 		
 		//是否为调试模式
-		public static const isDebug:Boolean = true;	
+		public static const isDebug:Boolean = false;	
 		//默认收信人，客服
 		public static const KEFU_ID:String = "b8931b314c24dca4";
 		public static const KEFU_NAME:String = "客服小辣椒";
@@ -30,6 +30,9 @@ package com.pintu.controller{
 		
 		//将来做提示
 		private static var toastContainer:Sprite;
+		
+		//每次登陆后记下账号，用于修改昵称时调用
+		public static var account:String;
 		
 	
 		public static function initClientStorage(context:Sprite):void{
@@ -71,7 +74,6 @@ package com.pintu.controller{
 			if(result==SharedObjectFlushStatus.FLUSHED){
 				Logger.debug("User log info successfully saved to disk!");
 			}
-					
 			
 		}
 		

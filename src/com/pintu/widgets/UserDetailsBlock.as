@@ -4,6 +4,7 @@ package com.pintu.widgets{
 	import com.pintu.api.*;
 	import com.pintu.common.*;
 	import com.pintu.config.*;
+	import com.pintu.controller.GlobalController;
 	import com.pintu.events.*;
 	import com.pintu.utils.*;
 	
@@ -25,7 +26,7 @@ package com.pintu.widgets{
 		private var blockHeight:Number;
 		
 		private var userDetailFetched:Boolean;
-			
+		private var userInfoContainer:CasaSprite;
 		
 		private var titleBackgroudColor:uint = StyleParams.ICONMENU_MOUSEOVER_TOP;
 		private var titleBackgroudHeight:int = InitParams.ANDI_TITLE_HEIGHT;
@@ -39,7 +40,16 @@ package com.pintu.widgets{
 			
 			drawLoginBackGround();	
 			drawTitleBar();
-						
+			
+			userInfoContainer = new CasaSprite();
+			this.addChild(userInfoContainer);
+		}
+		
+		/**
+		 * 更新用户资料后刷新显示
+		 */ 
+		public function refreshUserEstate():void{
+			_clonedModel.getUserEstate(PintuImpl(_clonedModel).currentUser);
 		}
 		
 		override protected function initModelListener(evt:Event):void{			
@@ -98,7 +108,7 @@ package com.pintu.widgets{
 			updateUser.textOnRight = true;
 			updateUser.label = "修改资料";			
 			updateUser.setSkinStyle(null,overColors,downColors);			
-			this.addChild(updateUser);					
+			this.addChild(updateUser);
 			
 		}
 		
@@ -120,8 +130,7 @@ package com.pintu.widgets{
 			
 			if(evt is ResponseEvent){
 				var jsUser:String = ResponseEvent(evt).data;
-//				Logger.debug("user info: \n"+jsUser);
-				
+				Logger.debug("user info: \n"+jsUser);				
 				var objUser:Object = JSON.decode(jsUser);
 				buildUserDetails(objUser);				
 			}
@@ -142,7 +151,10 @@ package com.pintu.widgets{
 			var bigTXTSize:int = 16;
 			var avatarToTextGap:Number = 4;
 			var textHGap:Number = 10;			
-					
+			
+			//修改用户资料后重新绘制
+			if(userInfoContainer.numChildren)
+				userInfoContainer.removeChildren();
 			
 			//头像
 			var avatarUrl:String = _clonedModel.composeImgUrlByPath(userObj["avatar"]);
@@ -150,42 +162,48 @@ package com.pintu.widgets{
 			avatarImg.x = startX;
 			avatarImg.y = startY;	
 			avatarImg.maxSize = 64;
-			this.addChild(avatarImg);
+			userInfoContainer.addChild(avatarImg);
 			
 			//用户名
-			var userNameStr:String = PintuUtils.getShowUserName(userObj["account"]);
+			var accountStr:String = PintuUtils.getShowUserName(userObj["account"]);
+			var userNameStr:String = userObj["nickName"];
+			if(userNameStr==null || userNameStr=="")
+				userNameStr = accountStr;
 			var userNameTF:SimpleText = new SimpleText(userNameStr,dark,bigTXTSize,true);
 			userNameTF.x = startX+xOffset;
 			userNameTF.y = startY+yOffset+avatarImg.maxSize;
-			this.addChild(userNameTF);
+			userInfoContainer.addChild(userNameTF);
+			
+			//记下用户昵称，用于修改
+			GlobalController.account = userNameStr;
 			
 			//级别，与用户名左对齐，在用户名的下面
 			var levelStr:String = "级别 "+userObj["level"];
 			var levelTF:SimpleText = new SimpleText(levelStr, dark, normalTXTSize);
 			levelTF.x =startX+avatarImg.maxSize+avatarToTextGap;
 			levelTF.y = startY+yOffset;
-			this.addChild(levelTF);
+			userInfoContainer.addChild(levelTF);
 			
 			//积分，与用户名左对齐，在级别的后面
 			var scoreStr:String = "积分 "+userObj["score"];
 			var scoreTF:SimpleText = new SimpleText(scoreStr, dark, normalTXTSize);
 			scoreTF.x = levelTF.x+levelTF.textWidth+textHGap;
 			scoreTF.y = levelTF.y;
-			this.addChild(scoreTF);
+			userInfoContainer.addChild(scoreTF);
 			
 			//贴图数
 			var postNumStr:String = "贴图数 "+userObj["tpicNum"];
 			var postNumTF:SimpleText = new SimpleText(postNumStr, dark, normalTXTSize);
 			postNumTF.x = levelTF.x;
 			postNumTF.y = startY+40;
-			this.addChild(postNumTF);
+			userInfoContainer.addChild(postNumTF);
 			
 			//评论数
 			var cmntNumStr:String = "评论数 "+userObj["storyNum"];
 			var cmntNumTF:SimpleText = new SimpleText(cmntNumStr, dark, normalTXTSize);
 			cmntNumTF.x = postNumTF.x+postNumTF.textWidth+textHGap;
 			cmntNumTF.y = startY+40;
-			this.addChild(cmntNumTF);
+			userInfoContainer.addChild(cmntNumTF);
 			
 			
 			var shellsY:Number = startY+avatarImg.maxSize+userNameTF.textHeight+4*yOffset;
@@ -194,42 +212,42 @@ package com.pintu.widgets{
 			var seaShell:SimpleImage = new SimpleImage("assets/shell_sea_24.png");
 			seaShell.x = startX+xOffset;
 			seaShell.y = shellsY;
-			this.addChild(seaShell);
+			userInfoContainer.addChild(seaShell);
 			var seaShellNum:SimpleText = new SimpleText(userObj["seaShell"],dark,normalTXTSize);
 			seaShellNum.x = seaShell.x+24+xOffset;
 			seaShellNum.y = shellsY+yOffset;
-			this.addChild(seaShellNum);
+			userInfoContainer.addChild(seaShellNum);
 			
 			//铜贝数目			
 			var copperShell:SimpleImage = new SimpleImage("assets/shell_copper_24.png");
 			copperShell.x = seaShellNum.x+2*textHGap;
 			copperShell.y = shellsY;
-			this.addChild(copperShell);
+			userInfoContainer.addChild(copperShell);
 			var copperShellNum:SimpleText = new SimpleText(userObj["copperShell"],dark,normalTXTSize);
 			copperShellNum.x = copperShell.x+24+xOffset;
 			copperShellNum.y = shellsY+yOffset;
-			this.addChild(copperShellNum);
+			userInfoContainer.addChild(copperShellNum);
 			
 			
 			//银贝数目
 			var silverShell:SimpleImage = new SimpleImage("assets/shell_silver_24.png");
 			silverShell.x = copperShellNum.x+2*textHGap;
 			silverShell.y = shellsY;
-			this.addChild(silverShell);
+			userInfoContainer.addChild(silverShell);
 			var silverShellNum:SimpleText = new SimpleText(userObj["silverShell"],dark,normalTXTSize);
 			silverShellNum.x = silverShell.x+24+xOffset;
 			silverShellNum.y = shellsY+yOffset;
-			this.addChild(silverShellNum);			
+			userInfoContainer.addChild(silverShellNum);			
 			
 			//金贝数目
 			var goldShell:SimpleImage = new SimpleImage("assets/shell_gold_24.png");
 			goldShell.x = silverShellNum.x+2*textHGap;
 			goldShell.y = shellsY;
-			this.addChild(goldShell);
+			userInfoContainer.addChild(goldShell);
 			var goldShellNum:SimpleText = new SimpleText(userObj["goldShell"],dark,normalTXTSize);
 			goldShellNum.x = goldShell.x+24+xOffset;
 			goldShellNum.y = shellsY+yOffset;
-			this.addChild(goldShellNum);
+			userInfoContainer.addChild(goldShellNum);
 			
 		}
 		

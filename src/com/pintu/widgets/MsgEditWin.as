@@ -26,7 +26,8 @@ package com.pintu.widgets{
 		private var _receiverName:String = GlobalController.KEFU_NAME;
 		
 		public function MsgEditWin(ctxt:Stage, w:Number=320, h:Number=350){
-			super(ctxt, w, h);
+			super(ctxt, w, h, "编辑消息");
+			
 			
 			createFormElements();
 			
@@ -87,7 +88,9 @@ package com.pintu.widgets{
 			cloneModel.destory();			
 		}
 		
-		private function createFormElements():void{
+		
+		private function createFormElements():void{						
+			
 			var margingTop:Number = 4;
 			var textHGap:Number = 10;
 			var textVGap:Number = 10;

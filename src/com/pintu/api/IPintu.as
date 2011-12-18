@@ -1,6 +1,7 @@
 package com.pintu.api
 {
 	import flash.net.FileReference;
+	import flash.utils.ByteArray;
 	
 	import org.httpclient.HttpClient;
 	
@@ -21,6 +22,8 @@ package com.pintu.api
 		
 		//登录成功更新用户
 		function updateUser(userId:String):void;	
+		
+		
 		//服务地址
 		function getServiceUrl():String;
 		
@@ -31,7 +34,8 @@ package com.pintu.api
 		/**
 		 * 单独操作，不存在并发请求
 		 */ 
-		function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void;				
+		function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void;
+		function postAvatar(imgData:ByteArray, nickName:String):void;
 		
 		function getGalleryByTime(startTime:String, endTime:String):void;		
 		function getPicDetail(tpId:String):void;		

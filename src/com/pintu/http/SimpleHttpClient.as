@@ -2,6 +2,7 @@ package com.pintu.http
 {
 	import com.adobe.net.URI;
 	import com.adobe.utils.StringUtil;
+	import com.pintu.api.ApiMethods;
 	import com.pintu.events.PTErrorEvent;
 	import com.pintu.events.PTStatusEvent;
 	import com.pintu.events.ResponseEvent;
@@ -124,7 +125,7 @@ package com.pintu.http
 		 * params format:
 		 * [{name:"key1", value:"FirstName1"}, {name:"key2", value: "LastName1"}];
 		 */ 
-		public function uploadImage(file:FileReference, params:Array):void{						
+		public function uploadImage(file:FileReference, params:Array, methodName:String):void{						
 			if(!file.data){
 				Logger.error("NO FILE DATA, EXECUTE FileReference.load() first!");
 				return;
@@ -147,7 +148,7 @@ package com.pintu.http
 				parts.push(new Part(param.name, param.value, "text/plain; charset=UTF-8"));
 			}
 			//方法参数必须传，后台用来区分上传图片的操作类型
-			var method:Part = new Part("method", "upload");
+			var method:Part = new Part("method", methodName);
 			var user:Part = new Part("userId", _userId);
 			var source:Part = new Part("source", "desktop");			
 			var image:Part = new Part("file", sended, contentType, [{name:"filename", value:fileName}]);
@@ -163,7 +164,7 @@ package com.pintu.http
 				// Notified when complete (after status and data)
 				var response:String = event.response.message;
 //				Logger.debug("Method: upload , response: "+response);
-				var completeEvent:ResponseEvent = new ResponseEvent("upload",response);
+				var completeEvent:ResponseEvent = new ResponseEvent(methodName,response);
 				dispatchEvent(completeEvent);
 				//提交结束
 				_isRuning = false;
@@ -172,7 +173,7 @@ package com.pintu.http
 			_client.listener.onError = function(event:ErrorEvent):void {
 				var errorMessage:String = event.text;
 //				Logger.error("Method: upload, error: "+errorMessage);
-				var errorEvent:PTErrorEvent = new PTErrorEvent("upload",errorMessage);
+				var errorEvent:PTErrorEvent = new PTErrorEvent(methodName,errorMessage);
 				dispatchEvent(errorEvent);
 				//提交结束
 				_isRuning = false;
@@ -181,6 +182,54 @@ package com.pintu.http
 			_client.postMultipart(new URI(_serviceUrl), new Multipart(parts));
 			//正在运行
 			_isRuning = true;
+		}
+		
+		public function uploadAvatar(imgData:ByteArray, params:Array, methodName:String):void{
+			var fileName:String = "myAvatar.jpg";
+			var contentType:String = "image/jpeg";		
+			
+			var parts:Array = [];
+			//将参数解析封装
+			for each(var param:Object in params){
+				//字符集必须指定啊，否则中文是乱码
+				//2011/11/27
+				parts.push(new Part(param.name, param.value, "text/plain; charset=UTF-8"));
+			}
+			//方法参数必须传，后台用来区分上传图片的操作类型
+			var method:Part = new Part("method", methodName);
+			var user:Part = new Part("userId", _userId);
+			var source:Part = new Part("source", "desktop");			
+			var image:Part = new Part("file", imgData, contentType, [{name:"filename", value:fileName}]);
+			parts.push(method);
+			parts.push(user);
+			parts.push(source);
+			parts.push(image);
+			
+			//延迟生成客户端
+			if(!_client) this._client = new HttpClient();
+			
+			_client.listener.onComplete = function(event:HttpResponseEvent):void {
+				// Notified when complete (after status and data)
+				var response:String = event.response.message;
+				//Logger.debug("Method: upload , response: "+response);
+				var completeEvent:ResponseEvent = new ResponseEvent(methodName,response);
+				dispatchEvent(completeEvent);
+				//提交结束
+				_isRuning = false;
+			};
+			
+			_client.listener.onError = function(event:ErrorEvent):void {
+				var errorMessage:String = event.text;
+				//Logger.error("Method: upload, error: "+errorMessage);
+				var errorEvent:PTErrorEvent = new PTErrorEvent(methodName,errorMessage);
+				dispatchEvent(errorEvent);
+				//提交结束
+				_isRuning = false;
+			}; 
+			
+			_client.postMultipart(new URI(_serviceUrl), new Multipart(parts));
+			//正在运行
+			_isRuning = true;			
 		}
 		
 		

@@ -31,6 +31,9 @@ package com.pintu.events
 		//显示个人消息
 		public static const SHOW_MSGS:String = "showMsgs";
 		
+		//修改用户资料后刷新
+		public static const REFRESH_USER:String = "refreshUser";
+		
 		//通常带的参数
 		public var data:String;
 		//第二参数

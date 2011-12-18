@@ -22,7 +22,6 @@ package com.pintu.modules{
 		private var _model:IPintu;
 		private var _fileManager:FileManager;		
 		
-		private var categoryTree:CategoryTree;		
 		private var mainDisplayArea:MainDisplayArea;
 		private var slideToolBar:SlideToolBar;
 		
@@ -32,6 +31,7 @@ package com.pintu.modules{
 		
 		private var picEditWin:PicEditWin;
 		private var msgEditWin:MsgEditWin;
+		private var userEditWin:UserEditWin;
 		
 		public function HomePage(model:IPintu){
 			super();
@@ -84,8 +84,7 @@ package com.pintu.modules{
 		}
 		
 		
-		private function editPic(evt:PintuEvent):void{
-			
+		private function editPic(evt:PintuEvent):void{			
 			if(!picEditWin){
 				//只生成一次，必须添加在舞台上，这样才产生全局的Mask
 				picEditWin = new PicEditWin(this.stage, _fileManager);				
@@ -98,6 +97,7 @@ package com.pintu.modules{
 				msgEditWin = new MsgEditWin(this.stage);
 				msgEditWin.sourceModel = _model;
 			}
+			//回复消息需要这两个参数
 			var receiverId:String = evt.data;
 			var receiverName:String = evt.extra;
 			if(receiverId) msgEditWin.receiverId = receiverId;
@@ -107,7 +107,15 @@ package com.pintu.modules{
 		}
 		
 		private function editUserInfo(evt:PintuEvent):void{
-			//TODO, ....
+			if(!userEditWin){
+				userEditWin = new UserEditWin(this.stage, _fileManager);
+				userEditWin.addEventListener(PintuEvent.REFRESH_USER,refreshUserAvatar);
+			}
+			dropCenterWindow(userEditWin);
+		}
+		
+		private function refreshUserAvatar(evt:PintuEvent):void{
+			userDetails.refreshUserEstate();
 		}
 		
 		/**
@@ -190,6 +198,9 @@ package com.pintu.modules{
 			picEditWin = null;
 			if(msgEditWin) msgEditWin.destroy();
 			msgEditWin = null;
+			if(userEditWin) userEditWin.destroy();
+			userEditWin = null;
+			
 			
 			//清空引用
 			_model = null;

@@ -22,10 +22,7 @@ package com.pintu.widgets{
 	 */ 
 	public class PicEditWin extends EditWinBase{
 				
-		private var _manager:FileManager;				
-		
-		
-		private var _title:SimpleText;
+		private var _manager:FileManager;		
 		
 		private var _loader:Loader;
 		private var _selectLocalImage:IconButton;
@@ -36,27 +33,24 @@ package com.pintu.widgets{
 		
 		private var _maxLoadImgWidth:Number = 220;
 		private var _maxLoadImgHeight:Number = 160;
-		private var _loadImgX:Number = 94;
-		private var _loadImgY:Number = 30;
+		
+		
 		private var _loadFileBitmap:Bitmap;
 		
 		private var _localImagePath:String = "assets/folder32.png";
 		private var _cameraImagePath:String = "assets/webcamera32.png";
-		
-		private var delayToExecute:int;
+				
 		
 		public function PicEditWin(ctxt:Stage, manager:FileManager){
-			super(ctxt);
+			super(ctxt, 320, 400, "编辑图片");
 			
-			_manager = manager;
-			
-			//创建界面元素
-			createFormElements();
-			
+			_manager = manager;					
 			_manager.addEventListener(FileManager.IMG_INMEMLOAD, showUploadImg);
 			_manager.addEventListener(FileManager.IMG_UPLOAD_SUCCESS, uploadSuccess);
 			_manager.addEventListener(FileManager.IMG_UPLOAD_FAILURE, uploadError);			
 
+			//创建界面元素
+			createFormElements();
 		}
 		
 		override protected function drawBackground():void{
@@ -64,7 +58,7 @@ package com.pintu.widgets{
 			
 			//画个图片占位框
 			this.graphics.lineStyle(1, 0x666666, 1, true);
-			this.graphics.drawRect(_elementStartX, _loadImgY, _maxLoadImgWidth, _maxLoadImgHeight);
+			this.graphics.drawRect(_elementStartX, _elementStartY, _maxLoadImgWidth, _maxLoadImgHeight);
 			
 		}		
 		
@@ -101,22 +95,29 @@ package com.pintu.widgets{
 			_descInput.text = "";
 		}
 		
-		private function uploadSuccess(evt:Event):void{			
+		private function showUploadImg(evt:Event):void{
+			if(!shouldDo()) return;
+			
+			if(!_loader)
+				_loader=new Loader() ;
+			//载入文件对象的字节数据，牛啊
+			_loader.loadBytes(_manager.availableImgData);
+			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE,onLoadCompleteHandle);
+		}
+		
+		private function uploadSuccess(evt:Event):void{
+			if(!shouldDo()) return;
 			closeMe(null);			
 		}
 		
-		private function delayToLaunch():void{
-			clearInterval(delayToExecute);
-			dispatchEvent(new PintuEvent(PintuEvent.REFRESH_GALLERY,null));
-		}
 		
 		private function uploadError(evt:Event):void{
+			if(!shouldDo()) return;
 			updateSuggest("上传失败");
 		}
-			
+		
 
-		private function createFormElements():void{
-			createWinTitle();
+		private function createFormElements():void{			
 				
 			createLocalImageBtn();
 			createWebCameraBtn();
@@ -126,13 +127,7 @@ package com.pintu.widgets{
 			createDescriptionInput();
 			
 		}
-		
-		private function createWinTitle():void{
-			_title = new SimpleText("编辑贴图",0xFFFFFF);
-			_title.x = 6;
-			_title.y = 4;
-			this.addChild(_title);
-		}		
+			
 		
 		private function createLocalImageBtn():void{
 			//icon button colors
@@ -151,7 +146,7 @@ package com.pintu.widgets{
 				StyleParams.DEFAULT_TEXT_COLOR,
 				StyleParams.DEFAULT_TEXT_COLOR,
 				StyleParams.DEFAULT_TEXT_COLOR);
-			_selectLocalImage.label = "本地文件";
+			_selectLocalImage.label = "选择图片";
 			_selectLocalImage.x = _elementStartX+_maxLoadImgWidth+_elementPadding+10;
 			_selectLocalImage.y = _selectLocalImage.y+30;	
 			//图标路径
@@ -245,15 +240,7 @@ package com.pintu.widgets{
 			_descInput.y =_tagsInput.y+_elementPadding+30;
 			this.addChild(_descInput);
 		}
-		
-		
-		private function showUploadImg(evt:Event):void{
-			if(!_loader)
-				_loader=new Loader() ;
-			//载入文件对象的字节数据，牛啊
-			_loader.loadBytes(_manager.availableImgData);
-			_loader.contentLoaderInfo.addEventListener(Event.COMPLETE,onLoadCompleteHandle);
-		}
+			
 		
 		private function onLoadCompleteHandle(evt:Event):void {
 			//先移除上一个图片
@@ -263,7 +250,7 @@ package com.pintu.widgets{
 			_loadFileBitmap =evt.target.content as Bitmap;
 			//稍微做个偏移，好让底框露出来
 			_loadFileBitmap.x = _elementStartX+1;
-			_loadFileBitmap.y = _loadImgY+1;
+			_loadFileBitmap.y = _elementStartY+1;
 			var ratio:Number = _loadFileBitmap.width/_loadFileBitmap.height;
 			if(_loadFileBitmap.width>_maxLoadImgWidth || _loadFileBitmap.height>_maxLoadImgHeight ){
 				if(ratio>1){

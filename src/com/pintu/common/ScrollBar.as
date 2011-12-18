@@ -66,7 +66,8 @@ package com.pintu.common{
 			thumb.addEventListener(MouseEvent.MOUSE_OVER, onThumbOver);
 			thumb.addEventListener(MouseEvent.MOUSE_OUT, onThumbOut);
 			
-			//添加MouseEvent.MOUSE_MOVE事件
+			//鼠标按下时，为舞台添加MouseEvent.MOUSE_MOVE事件
+			//但是不对鼠标在thumb上抬起做监听，因为它不靠谱
 			thumb.addEventListener(MouseEvent.MOUSE_DOWN, onThumbDown);
 			
 			this.addChild(thumb);
@@ -74,8 +75,8 @@ package com.pintu.common{
 		}
 		
 		private function scrollBarAdded(evt:Event):void{
-			
-			//有可能鼠标在thumb外面释放
+			//不管在哪释放鼠标，都取消滚动
+			//有可能鼠标在thumb外面释放，所以不对thumb监听
 			this.stage.addEventListener(MouseEvent.MOUSE_UP, onThumbUp);
 			
 		}
@@ -97,7 +98,7 @@ package com.pintu.common{
 			}
 			
 			//准备显示
-			hided = false;
+			hided = false;						
 			
 			//实时改变thumb的大小
 			if(_oldTargetHeight!=_scrlTarget.height){				
@@ -165,19 +166,26 @@ package com.pintu.common{
 		 * 移除MouseEvent.MOUSE_MOVE事件
 		 * 必须是鼠标在thumb上按下后抬起，才触发
 		 */ 
-		private function onThumbUp(evt:MouseEvent):void{
-			//如果鼠标没有在thumb上按下，不处理
-			if(!mouseDownOnThumb) return;			
+		private function onThumbUp(evt:MouseEvent):void{			
 			
-			//开启监听
-			watchingTarget = true;
+			//一个动作周期结束
+			mouseDownOnThumb = false;
+			
+			if(!this.stage) return;
+			
+			//取消舞台监听
 			this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onThumbMove);
-			
-			thumb.graphics.clear();
-			thumb.graphics.lineStyle(1,trackColor);
-			thumb.graphics.beginFill(thumbUpColor);
-			thumb.graphics.drawRect(0,0,thumbWidth,_thumbHeight);
-			thumb.graphics.endFill();
+			//开启滚动监听
+			watchingTarget = true;
+					
+			//只有内容发生变化时才绘制
+			if(_oldTargetHeight!=_scrlTarget.height){
+				thumb.graphics.clear();
+				thumb.graphics.lineStyle(1,trackColor);
+				thumb.graphics.beginFill(thumbUpColor);
+				thumb.graphics.drawRect(0,0,thumbWidth,_thumbHeight);
+				thumb.graphics.endFill();				
+			}
 		}
 		
 		//拖动Thumb，改变_scrlTarget位置

@@ -10,6 +10,7 @@ package com.pintu.api
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
 	import flash.net.FileReference;
+	import flash.utils.ByteArray;
 	import flash.utils.Timer;
 	
 	import org.as3commons.collections.ArrayList;
@@ -59,6 +60,7 @@ package com.pintu.api
 			addClientListener(ApiMethods.CHANGEMSGSTATE);			
 			
 			
+			
 			//TODO, ADD OTHER LISTENER...
 			
 		}		
@@ -78,15 +80,29 @@ package com.pintu.api
 			var params:Array = [{name:"tags",value:tags},{name:"description",value:description},
 											{name:"isOriginal",value:isOriginal}];				
 			var myClient:SimpleHttpClient = new SimpleHttpClient(getServiceUrl(),this.currentUser);
-			myClient.addEventListener(ApiMethods.UPLOAD,function(evt:PintuEvent):void{
+			myClient.addEventListener(ApiMethods.UPLOAD,function(evt:Event):void{
 				//通知文件管理器
 				dispatchEvent(evt);	
 			});			
 			myClient.addEventListener(ApiMethods.UPLOAD,function():void{
 				myClient.disconnect();
 			});		
-			myClient.uploadImage(file,params);		
-		}		
+			myClient.uploadImage(file, params, ApiMethods.UPLOAD);		
+		}
+		
+		public function postAvatar(imgData:ByteArray, nickName:String):void{
+			var params:Array = [{name:"nickName",value:nickName}];				
+			var myClient:SimpleHttpClient = new SimpleHttpClient(getServiceUrl(),this.currentUser);
+			myClient.addEventListener(ApiMethods.UPLDAVATAR,function(evt:Event):void{
+				//通知文件管理器
+				dispatchEvent(evt);	
+			});			
+			myClient.addEventListener(ApiMethods.UPLDAVATAR,function():void{
+				myClient.disconnect();
+			});		
+			myClient.uploadAvatar(imgData, params, ApiMethods.UPLDAVATAR);
+			
+		}
 		
 		public function logon(account:String, password:String):void{
 			var params:Array = [{name:"account",value:account},{name:"password",value:password}];
