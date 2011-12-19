@@ -54,6 +54,7 @@ package com.pintu.modules{
 			this.addChild(mainDisplayArea);
 			
 			slideToolBar = new SlideToolBar();
+			slideToolBar.alpha = 0;
 			this.addChild(slideToolBar);
 			
 			userDetails = new UserDetailsBlock(_model);

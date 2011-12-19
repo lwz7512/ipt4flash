@@ -60,7 +60,7 @@ package com.pintu.widgets{
 		public function MainDisplayBase(){
 			super();
 			//先确定绘图起始位置
-			initDrawPoint();					
+			initDrawPoint();	
 			
 			//默认舞台背景色
 			drawMainDisplayBackground();

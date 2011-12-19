@@ -82,8 +82,11 @@ package com.pintu.widgets{
 			mobImage.addEventListener(PintuEvent.IMAGE_LOADED,imgLoaded);
 			this.addChild(mobImage);							
 			
-			this.addEventListener(MouseEvent.MOUSE_OVER, displayHidePart);
-			this.addEventListener(MouseEvent.MOUSE_OUT, hideToolAndDesc);
+			//FIXME, 这里用ROLL_OVER/ROLL_OUT事件比MOUSE_OVER/MOUSE_OUT好
+			//后者引起闪烁
+			//2011/12/19
+			this.addEventListener(MouseEvent.ROLL_OVER, displayHidePart);
+			this.addEventListener(MouseEvent.ROLL_OUT, hideToolAndDesc);
 			
 		}
 		
@@ -436,6 +439,10 @@ package com.pintu.widgets{
 		 * 评论、收藏、转发、保存、喜欢、举报
 		 */ 
 		private function buildPicOperaTools(imgWidth:Number):void{
+			
+			var overColors:Array = [StyleParams.HEADER_MENU_MOUSEOVER,StyleParams.HEADER_MENU_MOUSEOVER];
+			var downColors:Array = [StyleParams.DEFAULT_DARK_GREEN,StyleParams.DEFAULT_DARK_GREEN];
+			
 			//工具栏不能小于defaultImgWidth
 			if(imgWidth<defaultImgWidth){
 				imgWidth = defaultImgWidth;
@@ -456,13 +463,13 @@ package com.pintu.widgets{
 			
 			//DRAW BACKGROUND RECTANGLE
 			var toolbg:CasaShape = new CasaShape();
-			toolbg.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR);
+			toolbg.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR, 0.8);
 			//与图片左对齐
 			toolbg.graphics.drawRect(_xStartOffset, _yStartOffset,
 				_toolBGWidth, toolbarHeight);
 			toolbg.graphics.endFill();
-			toolHolder.addChild(toolbg);
-						
+			toolHolder.addChild(toolbg);		
+			
 			//提交评论成功后，在客户端评论列表顶部增加刚才发送的评论
 			//再次点击，恢复原状，图片复位，评论收起			
 			var comment:IconButton = new IconButton(toolbarHeight,toolbarHeight);
@@ -471,7 +478,8 @@ package com.pintu.widgets{
 			comment.x = drawStartX;
 			comment.y = iconYOffset;
 			comment.textOnRight = true;
-			comment.label = "评论";			
+			comment.label = "评论";		
+			comment.setSkinStyle(null,overColors,downColors);	
 			toolHolder.addChild(comment);
 			
 			//收藏按钮
@@ -481,7 +489,8 @@ package com.pintu.widgets{
 			favorite.x = comment.x +iconHGap;
 			favorite.y = iconYOffset;
 			favorite.textOnRight = true;
-			favorite.label = "收藏";			
+			favorite.label = "收藏";	
+			favorite.setSkinStyle(null,overColors,downColors);	
 			toolHolder.addChild(favorite);
 			
 			//喜欢投票
@@ -491,7 +500,8 @@ package com.pintu.widgets{
 			like.x = favorite.x +iconHGap;
 			like.y = iconYOffset;
 			like.textOnRight = true;
-			like.label = "喜欢";			
+			like.label = "喜欢";		
+			like.setSkinStyle(null,overColors,downColors);	
 			toolHolder.addChild(like);
 			
 			
@@ -502,7 +512,8 @@ package com.pintu.widgets{
 			save.x = like.x +iconHGap;
 			save.y = iconYOffset;
 			save.textOnRight = true;
-			save.label = "保存";			
+			save.label = "保存";		
+			save.setSkinStyle(null,overColors,downColors);	
 			toolHolder.addChild(save);
 			
 			//TODO, FORWAR TO WEIBO BUTTON
@@ -514,6 +525,7 @@ package com.pintu.widgets{
 			forward.textOnRight = true;
 			forward.label = "转发";
 			forward.enabled = false;
+			forward.setSkinStyle(null,overColors,downColors);	
 			toolHolder.addChild(forward);
 			
 			//TODO, REPORT TO ADMIN BUTTON
@@ -525,6 +537,7 @@ package com.pintu.widgets{
 			report.textOnRight = true;
 			report.label = "举报";
 			report.enabled = false;
+			report.setSkinStyle(null,overColors,downColors);	
 			toolHolder.addChild(report);
 						
 		}		

@@ -132,7 +132,7 @@ package{
 			//判断运行状态
 			var runningMode:Boolean = GlobalController.isDebug;
 			if(runningMode){
-				var hint:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "Warning, I'm running DEBUG mode!");
+				var hint:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "Warning, I'm in DEBUG mode!");
 				dispatchEvent(hint);
 			}
 			

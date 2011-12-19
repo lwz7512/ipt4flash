@@ -84,8 +84,7 @@ package com.pintu.widgets{
 			upload.x = drawStartX;
 			upload.y = drawStartY+iconYOffset;
 			upload.textOnRight = true;
-			upload.label = "贴图";
-			
+			upload.label = "贴图";			
 			upload.setSkinStyle(null,overColors,downColors);			
 			this.addChild(upload);
 			
