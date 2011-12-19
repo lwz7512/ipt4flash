@@ -19,7 +19,7 @@ package com.pintu.widgets{
 		private var blockWidth:Number;
 		private var blockHeight:Number;
 		
-		private var titleBackgroudColor:uint = StyleParams.ICONMENU_MOUSEOVER_TOP;
+		private var titleBackgroudColor:uint = StyleParams.COLUMN_TITLE_BACKGROUND;
 		private var titleBackgroudHeight:int = InitParams.ANDI_TITLE_HEIGHT;
 		
 		//菜单使用颜色
@@ -38,6 +38,7 @@ package com.pintu.widgets{
 		}
 		
 		private function drawTitleBar():void{
+			this.graphics.lineStyle(1, titleBackgroudColor);
 			this.graphics.beginFill(titleBackgroudColor, 1);
 			this.graphics.drawRect(drawStartX,drawStartY,InitParams.ANDI_ASSETS_WIDTH,titleBackgroudHeight);
 			this.graphics.endFill();

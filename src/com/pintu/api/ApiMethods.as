@@ -51,6 +51,11 @@ package com.pintu.api
 		//更新消息状态为已读
 		public static const CHANGEMSGSTATE:String = "changeMsgState";
 		
+		//获取自己的作品
+		public static const GETTPICSBYUSER:String = "getTpicsByUser";
+		//获取自己的收藏
+		public static const GETFAVORITEPICS:String = "getFavoriteTpics";
+		
 		
 		
 	}

@@ -23,6 +23,8 @@ package com.pintu.widgets
 		
 		private var headerHeight:Number = 24;
 		
+		private var titleBackgroudColor:uint = StyleParams.COLUMN_TITLE_BACKGROUND;
+		
 		public function ActiveUserBlock(model:IPintu){
 			super();
 			_model = model;
@@ -30,7 +32,7 @@ package com.pintu.widgets
 			drawActiveUserBackground();
 			
 			//标题
-			var title:SimpleText = new SimpleText("活跃用户排行榜",0x000000,12);
+			var title:SimpleText = new SimpleText("活跃用户排行榜",0xFFFFFF,12);
 			//居中
 			title.x = drawStartX+InitParams.LOGIN_FORM_WIDTH/2-title.textWidth/2;
 			title.y = drawStartY+2;
@@ -63,13 +65,13 @@ package com.pintu.widgets
 			}
 			this.graphics.clear();
 			this.graphics.lineStyle(1,StyleParams.DEFAULT_BORDER_COLOR);
-			//半透明效果似乎更好
-			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR, 0.6);
+			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR, 1);
 			this.graphics.drawRect(drawStartX,drawStartY,blockWidth,blockHeight);
 			this.graphics.endFill();
 			
 			//标题背景条
-			this.graphics.beginFill(StyleParams.MENUBAR_BOTTOM_ICE);
+			this.graphics.lineStyle(1, titleBackgroudColor);
+			this.graphics.beginFill(StyleParams.COLUMN_TITLE_BACKGROUND);
 			this.graphics.drawRect(drawStartX,drawStartY,blockWidth,headerHeight);
 			this.graphics.endFill();
 		}

@@ -82,6 +82,10 @@ package com.pintu.config
 		//月白：淡蓝色
 		public static const ICONMENU_MOUSEOVER_BOTTOM:uint = 0xD6ECF0;
 		
+		//黄栌：一种落叶灌木，花黄绿色,叶子秋天变成红色。木材黄色可做染料
+		//这个比较满意，我们就是这样植物的性格
+		//2011/12/19
+		public static const COLUMN_TITLE_BACKGROUND:uint = 0xE29C45;
 		
 		/**
 		 * FOOTER BAR SILVER style

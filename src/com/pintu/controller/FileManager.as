@@ -13,6 +13,9 @@ package com.pintu.controller{
 	[Event(name="imgDownload", type="flash.events.Event")]
 	[Event(name="imgUploadSucces", type="flash.events.Event")]
 	
+	/**
+	 * 文件上传下载，本地文件打开获取数据
+	 */ 
 	public class FileManager extends EventDispatcher{
 		//上传图片被选定后，载入内存后派发的事件
 		public static const IMG_INMEMLOAD:String = "imgInMemLoad";

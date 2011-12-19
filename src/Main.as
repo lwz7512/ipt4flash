@@ -105,19 +105,21 @@ package{
 			GlobalController.initClientStorage(this);
 			//这时该知道是否已经登录过了没
 			var isLogged:Boolean = GlobalController.isLogged;
-			
+			//得到缓存的用户
 			var currentUser:String = GlobalController.loggedUser;
+			
+			//初始化模型
 			model = new PintuImpl(currentUser);
 			//后台错误提示
-			PintuImpl(model).addEventListener(PintuEvent.HINT_USER, hintTextHandler);
-			
-			navigator = new GlobalNavigator(this,model);
+			PintuImpl(model).addEventListener(PintuEvent.HINT_USER, hintTextHandler);			
 			
 			//全局模块固定不变
 			buildHeaderMenu(isLogged);			
 			buildFooterContent();			
 
-			//display home page
+			//初始化导航器
+			navigator = new GlobalNavigator(this,model);
+			//展示首页
 			if(isLogged){
 				_currentModule = navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
@@ -133,6 +135,8 @@ package{
 				var hint:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "Warning, I'm running DEBUG mode!");
 				dispatchEvent(hint);
 			}
+			
+			//app construction completed...
 		}		
 		
 		//运行时切换模块状态，比如从未登录到登陆

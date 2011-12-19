@@ -7,7 +7,7 @@ package com.pintu.widgets{
 	import com.pintu.events.*;
 	import com.pintu.utils.*;
 	import com.pintu.vos.CmntData;
-	import com.pintu.vos.TPicData;
+	import com.pintu.vos.TPicDetails;
 	import com.sibirjak.asdpc.button.ButtonEvent;
 	
 	import flash.display.DisplayObject;
@@ -31,7 +31,7 @@ package com.pintu.widgets{
 		/*
 		 * construction function....
 		 */
-		public function PicDetailView(data:TPicData, model:IPintu){			
+		public function PicDetailView(data:TPicDetails, model:IPintu){			
 			super(data);
 			//每个视图中，都有各自不同的模型，这样就不会干扰了
 			_clonedModel = model.clone();						

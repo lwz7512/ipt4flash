@@ -6,7 +6,7 @@ package com.pintu.widgets{
 	import com.pintu.config.*;
 	import com.pintu.events.*;
 	import com.pintu.utils.*;
-	import com.pintu.vos.TPicData;
+	import com.pintu.vos.TPicDetails;
 	
 	import flash.display.JointStyle;
 	import flash.events.MouseEvent;
@@ -23,7 +23,7 @@ package com.pintu.widgets{
 	public class PicDetailBase extends CasaSprite{
 		
 		//当前图片详情对应数据
-		protected var _data:TPicData;
+		protected var _data:TPicDetails;
 		//图片未展示前出现
 		protected var mobImgPlaceHolder:CasaShape;
 		protected var imgLoading:CasaTextField;		
@@ -68,13 +68,12 @@ package com.pintu.widgets{
 		private var mouseOnToolZone:Boolean;
 
 		
-		public function PicDetailBase(data:TPicData){
+		public function PicDetailBase(data:TPicDetails){
 			_data = data;
 			if(!_data) return;
 						
 			//draw image place hoder
-			drawImgePlaceHolder();
-			
+			drawImgePlaceHolder();			
 			//loading image...
 			drawLoadingText();
 								
@@ -149,8 +148,7 @@ package com.pintu.widgets{
 			mobImgPlaceHolder.graphics.drawRect(_xStartOffset, _yStartOffset, _mobImgDefaultSize, _mobImgHeight);
 			mobImgPlaceHolder.graphics.endFill();
 			
-			this.addChild(mobImgPlaceHolder);
-			
+			this.addChild(mobImgPlaceHolder);			
 		}
 		
 		
@@ -300,7 +298,7 @@ package com.pintu.widgets{
 			var marging:Number = 44;
 			var startX:Number = _mobImgWidth+marging;			
 			var startY:Number = 4;	
-			var textItemVGap:Number = 24;
+			var textItemVGap:Number = 28;
 			var textItemHGap:Number = 20;
 			var avatarSize:Number = 64;
 			var avatarToTextGap:Number = 4;
@@ -333,6 +331,8 @@ package com.pintu.widgets{
 			scoreTF.x = userNameTF.x;
 			scoreTF.y = userNameTF.y+46;
 			imgInfoHolder.addChild(scoreTF);
+			
+			//------------ 原创另起一行 -----------------
 			
 			//是否原创
 			var isOriginalStr:String = _data.isOriginal=="0"?"非原创":"原创";
@@ -375,8 +375,9 @@ package com.pintu.widgets{
 			var pubTimeTF:SimpleText = new SimpleText(pubTimeStr,dark, normalTXTSize);
 			pubTimeTF.x = InitParams.GALLERY_WIDTH - pubTimeTF.textWidth-textItemHGap;
 			pubTimeTF.y = scoreTF.y+textItemVGap;
-			imgInfoHolder.addChild(pubTimeTF);
-						
+			imgInfoHolder.addChild(pubTimeTF);	
+			
+			//---------- 文字另起一行 -----------------
 			
 			//浏览次数
 			var browseCountStr:String = "浏览 "+_data.browseCount;
@@ -562,13 +563,16 @@ package com.pintu.widgets{
 		}
 		
 		/**
-		 * 6次改变详情视图高度的渲染事件：
-		 * 1. 图片加载完成通知渲染，imgLoaded触发
-		 * 2. 点击评论按钮增加输入框和按钮，addComment触发
-		 * 3. 再次点击评论按钮，收回评论内容，addComment触发
-		 * 4. 同时，获取评论列表结果，createCommentList个数大于0时触发
-		 * 5. 输入框高度发生变化，relayoutComments派发
-		 * 6. 提交评论成功后，新评论置顶，relayoutComments再次派发
+		 * 通知图片容器，重新排列图片位置<br/>
+		 * _picBuilder._context负责监听render事件，重新排列图片<br/>
+		 * 
+		 * 6次改变详情视图高度的渲染事件：<br/>
+		 * 1. 图片加载完成通知渲染，imgLoaded触发<br/>
+		 * 2. 点击评论按钮增加输入框和按钮，addComment触发<br/>
+		 * 3. 再次点击评论按钮，收回评论内容，addComment触发<br/>
+		 * 4. 同时，获取评论列表结果，createCommentList个数大于0时触发<br/>
+		 * 5. 输入框高度发生变化，relayoutComments派发<br/>
+		 * 6. 提交评论成功后，新评论置顶，relayoutComments再次派发<br/>
 		 *
 		 */ 
 		protected function rendered():void{

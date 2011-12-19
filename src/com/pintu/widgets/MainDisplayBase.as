@@ -28,12 +28,19 @@ package com.pintu.widgets{
 		protected var displayAreaWidth:Number;
 		protected var displayAreaHeight:Number;						
 		
-		// 使用增强的显示对象CasaSprite，以更好的管理子对象	
-		//画廊图片容器，也是被滚动对象
-		protected var _picsContainer:CasaSprite;					
-		//查询保护装置，2秒内不允许重复查询
+		/**
+		 * 使用增强的显示对象CasaSprite，以更好的管理子对象
+		 * 画廊图片容器，也是被滚动对象
+		 */ 
+		protected var _picsContainer:CasaSprite;	
+		
+		/**
+		 * 查询保护装置，2秒内不允许重复查询
+		 */ 
 		protected var queryAvailableTimer:Timer;
-		//查询状态开关
+		/**
+		 * 查询状态开关，定时器使用
+		 */ 
 		protected var isRunning:Boolean;
 		
 		//滚动条
@@ -92,7 +99,7 @@ package com.pintu.widgets{
 			loading.x = middleX-16;
 			loading.y = middleY-16;			
 			this.addChild(loading);
-			//打开查询开关，防止重复查询
+			//打开查询开关，防止短时间重复查询
 			isRunning = true;
 		}		
 		public function hideMiddleLoading():void{

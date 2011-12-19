@@ -28,7 +28,6 @@ package com.pintu.widgets{
 		
 		private var _model:IPintu;
 		private var _picBuilder:PicDOBuilder;
-		private var _toolBar:MainToolBar;					
 		
 		//浏览类型，是画廊、热图、经典、被收藏、系统分类
 		private var _browseType:String;				
@@ -37,10 +36,16 @@ package com.pintu.widgets{
 		//1. set browseType
 		//2. 画廊数据到达后，找出最晚记录的时间
 		private var _galleryLastRecordTime:Number;
+		
 		//画廊大图翻页页码
 		private var _galleryPageNum:int;
 		//按分类查询，翻页页码
-		private var _tagPageNum:int;				
+		private var _tagPageNum:int;		
+		//我在作品分页
+		private var _myPostsPageNum:int;
+		//我的收藏分页
+		private var _myFavoPageNum:int;
+		
 		
 		/**
 		 * 从非登陆状态切换到登陆状态时，很奇怪有两次事件响应
@@ -74,12 +79,6 @@ package com.pintu.widgets{
 			this.addEventListener(Event.REMOVED_FROM_STAGE, removeModelListener);											
 					
 		}
-		
-		public function createUserMsgs(msgs:Array):void{
-			//放心创建吧，外面校验过了
-			_picBuilder.createMsgList(msgs);
-		}
-		
 	
 		/**
 		 * 当HomePage初始化时，或者点击HeaderBar子菜单时调用
@@ -89,22 +88,20 @@ package com.pintu.widgets{
 		 * menuHandler()-->mainDisplayArea.browseType
 		 */ 
 		public function set browseType(type:String):void{
-			//FIXME, 先不拦截同类请求了，方便刷新按钮
-			//			if(type == _browseType) return;			
-			this._browseType = type;
-//			Logger.debug("browseType: "+_browseType);
-			
-			//每次切换标签选项，就重置分页起始数
-			_tagPageNum = 0;
+			//检查查看分类是否发生变化，如果变化就重置所有分页数
+			if(type!=_browseType){
+				_galleryPageNum = 0;
+				_tagPageNum = 0;
+				_myPostsPageNum = 0;
+				_myFavoPageNum = 0;
+			}
+			//保存当前查看类型
+			_browseType = type;									
 			
 			//每次进入画廊缩略图模式，就重置结束时间
 			if(_browseType== CategoryTree.CATEGORY_GALLERY_TBMODE){				
 				_galleryLastRecordTime = new Date().getTime();
-			}
-			//每次进入画廊大图模式，就重置分页起始数
-			if(_browseType== CategoryTree.CATEGORY_GALLERY_BPMODE){				
-				_galleryPageNum = 0;
-			}
+			}			
 			
 			//初始化没完成不查询
 			if(!_initialized) return;			
@@ -116,7 +113,7 @@ package com.pintu.widgets{
 		private function initModelListener(event:Event):void{
 			_initialized = true;
 			
-			//按照HomePage设置的模式进行查询			
+			//初始化时，按照HomePage设置的模式进行查询			
 			queryPicByType();					
 			
 			PintuImpl(_model).addEventListener(ApiMethods.GETGALLERYBYTIME,latestGalleryHandler);
@@ -126,6 +123,10 @@ package com.pintu.widgets{
 			PintuImpl(_model).addEventListener(ApiMethods.CLASSICALSTATISTICS,classicHandler);
 			PintuImpl(_model).addEventListener(ApiMethods.COLLECTSTATISTICS,favoredPicHandler);
 			PintuImpl(_model).addEventListener(ApiMethods.GETTHUMBNAILSBYTAG,tagPicHandler);
+			
+			PintuImpl(_model).addEventListener(ApiMethods.GETTPICSBYUSER,myPicHandler);
+			PintuImpl(_model).addEventListener(ApiMethods.GETFAVORITEPICS,myFavHandler);
+			
 		}
 		
 		private function removeModelListener(event:Event):void{			
@@ -136,6 +137,10 @@ package com.pintu.widgets{
 			PintuImpl(_model).removeEventListener(ApiMethods.CLASSICALSTATISTICS,classicHandler);
 			PintuImpl(_model).removeEventListener(ApiMethods.COLLECTSTATISTICS,favoredPicHandler);
 			PintuImpl(_model).removeEventListener(ApiMethods.GETTHUMBNAILSBYTAG,tagPicHandler);
+			
+			PintuImpl(_model).removeEventListener(ApiMethods.GETTPICSBYUSER,myPicHandler);
+			PintuImpl(_model).removeEventListener(ApiMethods.GETFAVORITEPICS,myFavHandler);
+			
 			queryAvailableTimer.stop();
 			queryAvailableTimer = null;
 		}
@@ -163,56 +168,58 @@ package com.pintu.widgets{
 			}else{
 				queryAvailableTimer.start();
 //				Logger.debug("Start to query for type:"+_browseType);				
-			}
-			//开启查询开关
-			galleryCreated = false;
-			
-			Logger.debug(">>>To query by type: "+_browseType+" ...");
-			//显示进度条
+			}						
+//			Logger.debug(">>>To query by type: "+_browseType+" ...");
+			//查询前显示进度条
 			showMiddleLoading();
 			
 			//按类型查询数据
 			switch(_browseType){
 				
-				case CategoryTree.CATEGORY_GALLERY_TBMODE:					
+				case BrowseMode.CATEGORY_GALLERY_TBMODE:
 					//缩略图模式					
 					var startTime:String = sixHourAgo(_galleryLastRecordTime);
 					var endTime:String = _galleryLastRecordTime.toString();
 					//查询画廊数据
-					_model.getGalleryByTime(startTime,endTime);
-					
+					_model.getGalleryByTime(startTime,endTime);					
 					break;
-				
-				case CategoryTree.CATEGORY_GALLERY_BPMODE:					
+								
+				case BrowseMode.CATEGORY_GALLERY_BPMODE:					
 					//大图模式
 					_galleryPageNum++;						
 					_model.getGalleryForWeb(_galleryPageNum.toString());				
 					break;
 				
-				case CategoryTree.CATEGORY_HOT:					
-					_model.getHotPicture();
-					
+				case BrowseMode.CATEGORY_HOT:					
+					_model.getHotPicture();					
 					break;
 				
-				case CategoryTree.CATEGORY_CLASSICAL:					
-					_model.getClassicalPics();
-					
+				case BrowseMode.CATEGORY_CLASSICAL:					
+					_model.getClassicalPics();					
 					break;
 				
-				case CategoryTree.CATEGORY_FAVORED:					
-					_model.getFavoredPics();
-					
+				case BrowseMode.CATEGORY_FAVORED:					
+					_model.getFavoredPics();					
 					break;
 				
-				case CategoryTree.CATEGORY_RANDOM_TBMODE:
-					_model.getRandomGallery();				
-					
+				case BrowseMode.CATEGORY_RANDOM_TBMODE:
+					_model.getRandomGallery();									
+					break;
+				
+				case AndiBlock.CATEGORY_GALLERY_MINE:
+					_myPostsPageNum ++;
+					_model.getMyPostPics(_myPostsPageNum.toString());
+					break;
+				
+				case AndiBlock.CATEGORY_GALLERY_MYFAV:
+					_myFavoPageNum ++;
+					_model.getMyFavorites(_myFavoPageNum.toString());
 					break;
 				
 				default:					
-					_tagPageNum++;
 					//TODO, GET THUMBNIALS BY TAG...
 //					_model.getThumbnailsByTag(_browseType,_tagPageNum.toString());
+//					_tagPageNum++;
 					
 					break;				
 			}					
@@ -228,17 +235,11 @@ package com.pintu.widgets{
 			
 			if(event is ResponseEvent){				
 				var galleryData:String = ResponseEvent(event).data;
-				var thumbnails:int;
-				Logger.debug("thumbnail data: \n"+galleryData);
 				
-				if(!galleryCreated){
-//					Logger.debug("to create mini gallery...");
-					
-					//创建画廊
-					thumbnails = _picBuilder.createScrollableMiniGallery(galleryData);
-					galleryCreated = true;
-										
-				}
+//				Logger.debug("thumbnail data: \n"+galleryData);
+				
+				//创建画廊
+				_picBuilder.createScrollableMiniGallery(galleryData);					
 				
 				//TODO, CHECK THE LAST GALLERY RECORD TIME...
 				//SO, GET THE NEWEST...
@@ -261,7 +262,11 @@ package com.pintu.widgets{
 				var galleryData:String = ResponseEvent(event).data;				
 //				Logger.debug("big gallery data: \n"+galleryData);
 				
-				_picBuilder.createScrollableBigGallery(galleryData);				
+				var picNum:int = _picBuilder.createScrollableBigGallery(galleryData);	
+				//如果没有图了，下次就展示第一页
+				if(picNum==0){
+					_galleryPageNum = 0;
+				}
 			}
 			if(event is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.GETGALLERYFORWEB);
@@ -303,6 +308,7 @@ package com.pintu.widgets{
 			}
 		}	
 		
+		//最近被收藏的图片
 		private function favoredPicHandler(event:Event):void{
 			//移除进度条
 			hideMiddleLoading();
@@ -318,6 +324,40 @@ package com.pintu.widgets{
 			if(event is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.COLLECTSTATISTICS);
 			}		
+		}
+		//我的贴图
+		private function myPicHandler(evt:Event):void{
+			//移除进度条
+			hideMiddleLoading();
+			
+			if(evt is ResponseEvent){
+				Logger.debug("to create my pic list...");
+				var galleryData:String = ResponseEvent(evt).data;				
+				Logger.debug("my pic data: \n"+galleryData);
+				
+				_picBuilder.createScrollableSimpleGallery(galleryData);
+			}
+			if(evt is PTErrorEvent){
+				Logger.error("Error in calling: "+ApiMethods.GETTPICSBYUSER);
+			}	
+			
+		}
+		//我的收藏
+		private function myFavHandler(evt:Event):void{
+			//移除进度条
+			hideMiddleLoading();
+			
+			if(evt is ResponseEvent){
+				Logger.debug("to create my favorites ...");
+				var galleryData:String = ResponseEvent(evt).data;				
+				Logger.debug("my favorites data: \n"+galleryData);
+				
+				_picBuilder.createScrollableSimpleGallery(galleryData);
+			}
+			if(evt is PTErrorEvent){
+				Logger.error("Error in calling: "+ApiMethods.GETFAVORITEPICS);
+			}
+			
 		}
 		
 		
@@ -353,6 +393,10 @@ package com.pintu.widgets{
 			}
 		}
 		
+		public function createUserMsgs(msgs:Array):void{
+			//放心创建吧，外面校验过了
+			_picBuilder.createMsgList(msgs);
+		}
 				
 		//重写销毁函数
 		//凡是在本类中，对_model加过事件监听的都要在这里置空

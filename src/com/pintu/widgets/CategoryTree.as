@@ -49,7 +49,7 @@ package com.pintu.widgets
 		 */ 
 		public static const CATEGORY_CLASSICAL:String = "classical";
 		/**
-		 * 最近的收藏模式
+		 * 最近的他人收藏模式
 		 */ 
 		public static const CATEGORY_FAVORED:String = "favored";
 		

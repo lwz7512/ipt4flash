@@ -35,12 +35,13 @@ package com.pintu.modules{
 		
 		public function HomePage(model:IPintu){
 			super();
-			this._model = model;	
-			this._fileManager = new FileManager(_model);
+			_model = model;	
+			_fileManager = new FileManager(_model);
 			
 			//PicDetailView派发的保存事件
-			this.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);				
-			//UserDetailsBlock派发的贴图事件，不带事件参数
+			this.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);
+			
+			//UserDetailsBlock派发的动作事件，不带事件参数
 			this.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);
 			this.addEventListener(PintuEvent.POST_MSG, editMsg);
 			this.addEventListener(PintuEvent.POST_USERINFO, editUserInfo);
@@ -60,6 +61,8 @@ package com.pintu.modules{
 			
 			andiAssets = new AndiBlock(_model);
 			andiAssets.addEventListener(PintuEvent.SHOW_MSGS, displayMsgList);
+			andiAssets.addEventListener(PintuEvent.GET_MYPICS, displayMyPics);
+			andiAssets.addEventListener(PintuEvent.GET_MYFAVS, displayMyFavs);
 			this.addChild(andiAssets);
 			
 			hotTags = new HotTags(_model);
@@ -72,10 +75,17 @@ package com.pintu.modules{
 			if(msgObjs==null) return;
 			if(msgObjs.length==0) return;
 			//创建消息列表
-			mainDisplayArea.createUserMsgs(msgObjs);
-			//标识为已读
-			andiAssets.msgReaded();
+			mainDisplayArea.createUserMsgs(msgObjs);			
 		}
+		
+		private function displayMyPics(evt:PintuEvent):void{
+			mainDisplayArea.browseType = AndiBlock.CATEGORY_GALLERY_MINE;
+		}
+		
+		private function displayMyFavs(evt:PintuEvent):void{
+			mainDisplayArea.browseType = AndiBlock.CATEGORY_GALLERY_MYFAV;
+		}
+		
 		
 		private function downLoadRawPic(evt:PintuEvent):void{
 			var picName:String = evt.extra;
@@ -200,8 +210,7 @@ package com.pintu.modules{
 			msgEditWin = null;
 			if(userEditWin) userEditWin.destroy();
 			userEditWin = null;
-			
-			
+						
 			//清空引用
 			_model = null;
 			removeChildren(true, true);		

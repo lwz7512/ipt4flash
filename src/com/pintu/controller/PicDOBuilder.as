@@ -10,11 +10,14 @@ package com.pintu.controller
 	import com.pintu.utils.Logger;
 	import com.pintu.utils.PintuUtils;
 	import com.pintu.vos.TPMessage;
-	import com.pintu.vos.TPicData;
 	import com.pintu.vos.TPicDesc;
+	import com.pintu.vos.TPicDetails;
+	import com.pintu.vos.TPicItem;
 	import com.pintu.widgets.MainDisplayArea;
+	import com.pintu.widgets.MainDisplayBase;
 	import com.pintu.widgets.MessageItem;
 	import com.pintu.widgets.PicDetailView;
+	import com.pintu.widgets.PicItemView;
 	import com.pintu.widgets.Thumbnail;
 	
 	import flash.display.DisplayObject;
@@ -33,6 +36,7 @@ package com.pintu.controller
 
 	/**
 	 * 用于主显示区域建立图片和画廊
+	 * 构造函数中添加的监听，必须在destroy方法中移除
 	 */ 
 	public class PicDOBuilder{
 		
@@ -44,7 +48,7 @@ package com.pintu.controller
 		/**
 		 * 拥有本实例的对象，用来调用显示进度条和提示方法
 		 */ 
-		private var _owner:MainDisplayArea;
+		private var _owner:MainDisplayBase;
 		
 		/**
 		 * 画廊起始位置，由主显示区指定，不能随意改变
@@ -71,16 +75,25 @@ package com.pintu.controller
 		
 		//大图模式下生成的列表对象，缓存下来用来重新排列位置
 		private var bigPicViews:Array;
-		
+				
+		//固定一个绘制路径的画布
 		private var pathShape:CasaShape;
+				
+		
+		//缩略图模式
+		private static const THUMBNAIL_MODE:String = "tbMode";		
+		//大图模式
+		private static const BIGPIC_MODE:String = "bpMode";
+		//当前模式
+		private static var currentMode:String;		
+		
 			
 		public function PicDOBuilder(container:CasaSprite, model:IPintu){
 			_model = model;
 			//图片容器在原点
 			_context = container;
 			//每次渲染事件都重新排列位置
-			_context.addEventListener(Event.RENDER, delayRelayoutBigPicList);
-			
+			_context.addEventListener(Event.RENDER, delayRelayoutBigPicList);			
 			//缩略图详情响应
 			PintuImpl(_model).addEventListener(ApiMethods.GETPICDETAIL,detailPicHandler);
 		}
@@ -91,7 +104,7 @@ package com.pintu.controller
 		public function set drawStartY(sy:Number):void{
 			_drawStartY = sy;
 		}
-		public function set owner(o:MainDisplayArea):void{
+		public function set owner(o:MainDisplayBase):void{
 			_owner = o;
 		}
 		
@@ -131,6 +144,9 @@ package com.pintu.controller
 			//布局缩略图
 			layoutThumbnails();
 			
+			//记下当前模式，好从详情返回
+			currentMode = THUMBNAIL_MODE;
+			
 			return thumnails.length;
 		}
 		
@@ -141,8 +157,13 @@ package com.pintu.controller
 		 * 造成转义字符解析异常，偶尔出现，现在还没找到明确原因
 		 * 后台已经去除了数据中的关于图片路径属性，但是该方法还是该捕捉这个异常
 		 * 2011/12/8
+		 * 严重怀疑是flashplayer版本问题，在小明的fp10上就没问题
+		 * 2011/12/14
+		 * 
+		 * @param json 生成画廊需要的数据
+		 * @return 生成的图片个数
 		 */ 
-		public function createScrollableBigGallery(json:String):void{			
+		public function createScrollableBigGallery(json:String):int{			
 			var detailObjs:Array;
 			var hintEvt:PintuEvent;
 			
@@ -154,14 +175,14 @@ package com.pintu.controller
 			}catch(e:JSONParseError){
 				hintEvt = new PintuEvent(PintuEvent.HINT_USER, ">>>data parse error!");
 				_owner.dispatchEvent(hintEvt);				
-				return;
+				return 0;
 			}
 			
 			//画廊没新图片
 			if(detailObjs.length==0){
 				hintEvt = new PintuEvent(PintuEvent.HINT_USER, "没有最新的图片，不然随便看看？");
 				_owner.dispatchEvent(hintEvt);				
-				return;
+				return 0;
 			}			
 			
 			//准备生成画廊
@@ -173,12 +194,13 @@ package com.pintu.controller
 			//大图数据列表
 			var tpicDatas:Array = [];
 			for(var i:int=0; i<detailObjs.length; i++){
-				var tpidData:TPicData = objToTPicData(detailObjs[i]);
+				var tpidData:TPicDetails = objToTPicData(detailObjs[i]);
 				tpicDatas.push(tpidData);
 			}
 			
-			//初始化视图容器
+			//初始化视图对象集，好重新排列时使用
 			bigPicViews = [];
+			
 			for(var j:int=0; j<tpicDatas.length; j++){				
 				var picDetails:PicDetailView = new PicDetailView(tpicDatas[j], _model);
 				picDetails.x = _drawStartX;
@@ -191,6 +213,75 @@ package com.pintu.controller
 				bigPicViews.push(picDetails);
 			}
 			
+			return detailObjs.length;
+			
+		}
+		
+		/**
+		 * 我的作品和我的收藏，都用它来生成
+		 * 作品简单列表
+		 * 2011/12/19
+		 * @param json 生成图片列表的数据
+		 * @return 列表长度
+		 */ 
+		public function createScrollableSimpleGallery(json:String):int{
+			var picObjs:Array;
+			var hintEvt:PintuEvent;			
+//			Logger.debug("my pics: \n"+json);			
+			//捕捉解析异常
+			try{
+				picObjs = JSON.decode(json);
+			}catch(e:JSONParseError){
+				hintEvt = new PintuEvent(PintuEvent.HINT_USER, ">>>data parse error!");
+				_owner.dispatchEvent(hintEvt);				
+				return 0;
+			}
+			
+			//画廊没新图片
+			if(picObjs.length==0){
+				hintEvt = new PintuEvent(PintuEvent.HINT_USER, "没有最新的图片，不然随便看看？");
+				_owner.dispatchEvent(hintEvt);				
+				return 0;
+			}			
+			
+			//准备生成画廊
+			cleanUp();
+			
+			//先把路径线放在底部，然后放图片			
+			drawPath(InitParams.DEFAULT_BIGPIC_WIDTH);
+			
+			//转换为对象
+			tpics = [];
+			for(var i:int=0; i<picObjs.length; i++){
+				var tpItem:TPicItem = objToTPicItem(picObjs[i]);
+				tpics.push(tpItem);
+			}
+			//将tpic转换为视图对象
+			layoutPicItems();
+			
+			//记下当前模式，好从详情返回
+			currentMode = BIGPIC_MODE;
+			
+			return picObjs.length;
+		}
+		
+		private function layoutPicItems():void{
+			//初始化视图对象集，好重新排列时使用
+			bigPicViews = [];
+			
+			//布局显示
+			for(var j:int=0; j<tpics.length; j++){				
+				var picView:PicItemView = new PicItemView(tpics[j]);
+				picView.addEventListener(PintuEvent.GETPICDETAILS,getDetails);
+				picView.x = _drawStartX;
+				//按照每个详情高度往下排，初始高度是一样的
+				picView.y = _drawStartY+picView.height*j+verticalGap;				
+				//显示空容器
+				_context.addChild(picView);	
+				
+				//存一份视图引用，重新计算位置时用到
+				bigPicViews.push(picView);
+			}			
 		}
 		
 		/**
@@ -267,13 +358,16 @@ package com.pintu.controller
 		}
 		
 
-		
+		//FIXME, 点击返回按钮，回到列表画廊
 		private function restoreGallery(evt:MouseEvent):void{
 			cleanUp();
-			layoutThumbnails();		
-		}
-
-		
+			
+			if(currentMode == BIGPIC_MODE){
+				layoutPicItems();
+			}else if(currentMode == THUMBNAIL_MODE){
+				layoutThumbnails();				
+			}
+		}		
 
 		
 		private function layoutThumbnails():void{
@@ -338,13 +432,18 @@ package com.pintu.controller
 			
 			if(!bigPicViews) return;
 			
+			var realPicsHeight:Number = 0;
+			for each(var pic:DisplayObject in bigPicViews){
+				realPicsHeight += pic.height;
+			}
+
 			//这时有高度了，重绘			
-			drawPath(_context.height);
+			drawPath(realPicsHeight);
 			
 			var localStartY:Number = _drawStartY;
 			//重新排列所有的图片
 			for(var i:int=0; i<bigPicViews.length; i++){
-				var bigPicView:PicDetailView = bigPicViews[i];				
+				var bigPicView:DisplayObject = bigPicViews[i];				
 				//按照每个详情高度往下排，初始高度是一样的
 				bigPicView.y = localStartY;
 				//记下下一个图的位置
@@ -355,10 +454,16 @@ package com.pintu.controller
 		/**
 		 * 图片背景上画根竖线，当做Path
 		 * 2011/12/09
-		 */ 
+		 */
+		//FIXME, 绘制path方法中的绘制对象不能做成局部变量
 		private function drawPath(picsHeight:Number):void{
 			if(!pathShape )pathShape = new CasaShape();			
-			if(!_context.contains(pathShape))_context.addChild(pathShape);
+			if(_context.contains(pathShape)){
+				//移除了重新绘制，这样高度才能准确
+				_context.removeChild(pathShape);
+			}
+			//添加在显示列表底部
+			_context.addChildAt(pathShape,0);
 			
 			var pathLineX:Number = _drawStartX+InitParams.DEFAULT_BIGPIC_WIDTH+20;
 			var pathStartY:Number = _drawStartY+4;
@@ -394,8 +499,20 @@ package com.pintu.controller
 		}
 		
 		
-		private function objToTPicData(details:Object):TPicData{
-			var pic:TPicData = new TPicData();
+		private function objToTPicItem(tpitem:Object):TPicItem{
+			var pic:TPicItem = new TPicItem();
+			pic.id = tpitem["id"];
+			pic.owner = tpitem["owner"];
+			pic.browseCount = tpitem["browseCount"];
+			pic.isOriginal = tpitem["isOriginal"];
+			pic.publishTime = tpitem["publishTime"];
+			pic.mobImgUrl =  _model.composeImgUrlById(tpitem["mobImgId"]);
+			
+			return pic;
+		}
+		
+		private function objToTPicData(details:Object):TPicDetails{
+			var pic:TPicDetails = new TPicDetails();
 			pic.id = details["id"];
 			pic.picName = details["name"];
 			pic.owner = details["owner"];

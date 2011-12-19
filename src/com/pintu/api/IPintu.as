@@ -61,7 +61,8 @@ package com.pintu.api
 		function getUserMsgs():void;
 		function markMsgReaded(msgIds:String):void;
 		
-		
+		function getMyPostPics(pageNum:String):void;
+		function getMyFavorites(pageNum:String):void;
 		
 		/**
 		 * 多个视图用到同样的模型，为了防止事件监听干扰，各自使用各自的模型 

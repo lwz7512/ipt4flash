@@ -28,7 +28,7 @@ package com.pintu.widgets{
 		private var userDetailFetched:Boolean;
 		private var userInfoContainer:CasaSprite;
 		
-		private var titleBackgroudColor:uint = StyleParams.ICONMENU_MOUSEOVER_TOP;
+		private var titleBackgroudColor:uint = StyleParams.COLUMN_TITLE_BACKGROUND;
 		private var titleBackgroudHeight:int = InitParams.ANDI_TITLE_HEIGHT;
 		private var iconYOffset:int = 0;
 		private var iconHGap:int = 58;
@@ -69,6 +69,7 @@ package com.pintu.widgets{
 		}
 		
 		private function drawTitleBar():void{
+			this.graphics.lineStyle(1, titleBackgroudColor);
 			this.graphics.beginFill(titleBackgroudColor, 1);
 			this.graphics.drawRect(drawStartX,drawStartY,InitParams.ANDI_ASSETS_WIDTH,titleBackgroudHeight);
 			this.graphics.endFill();
@@ -130,7 +131,7 @@ package com.pintu.widgets{
 			
 			if(evt is ResponseEvent){
 				var jsUser:String = ResponseEvent(evt).data;
-				Logger.debug("user info: \n"+jsUser);				
+//				Logger.debug("user info: \n"+jsUser);				
 				var objUser:Object = JSON.decode(jsUser);
 				buildUserDetails(objUser);				
 			}

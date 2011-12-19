@@ -59,6 +59,9 @@ package com.pintu.api
 			addClientListener(ApiMethods.GETUSERMSG);			
 			addClientListener(ApiMethods.CHANGEMSGSTATE);			
 			
+			addClientListener(ApiMethods.GETTPICSBYUSER);	
+			addClientListener(ApiMethods.GETFAVORITEPICS);	
+			
 			
 			
 			//TODO, ADD OTHER LISTENER...
@@ -191,9 +194,15 @@ package com.pintu.api
 			addHttpTask(params, ApiMethods.CHANGEMSGSTATE);
 		}
 		
+		public function getMyPostPics(pageNum:String):void{
+			var params:Array = [{name:"pageNum",value:pageNum}];
+			addHttpTask(params, ApiMethods.GETTPICSBYUSER);
+		}
 		
-		
-		
+		public function getMyFavorites(pageNum:String):void{
+			var params:Array = [{name:"pageNum",value:pageNum}];
+			addHttpTask(params, ApiMethods.GETFAVORITEPICS);
+		}
 		
 		
 		

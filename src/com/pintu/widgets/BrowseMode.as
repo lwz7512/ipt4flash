@@ -82,38 +82,43 @@ package com.pintu.widgets{
 			
 			var menuIndex:int = 0;
 			
-			
-			thumbnailMenu = new IconMenuItem("最新画廊");
+			var newGalleryPath:String = "assets/newgallery.png";
+			thumbnailMenu = new IconMenuItem("最新画廊", newGalleryPath);
 			thumbnailMenu.y = menuIndex*menuItemHeight;
 			thumbnailMenu.addEventListener(MouseEvent.CLICK, thumbnailClickHandler);
 			this.addChild(thumbnailMenu);
 			
 			menuIndex ++;
-			randomMenu = new IconMenuItem("随便看看");
+			var walkaroundPath:String = "assets/walkaround.png";
+			randomMenu = new IconMenuItem("随便看看", walkaroundPath);
 			randomMenu.y = menuIndex*menuItemHeight;
 			randomMenu.addEventListener(MouseEvent.CLICK, randomClickHandler);
 			this.addChild(randomMenu);						
 			
 			menuIndex ++;
-			bigPicListMenu = new IconMenuItem("大图列表");
+			var bigpicPath:String = "assets/biggallery.png";
+			bigPicListMenu = new IconMenuItem("大图列表", bigpicPath);
 			bigPicListMenu.y = menuIndex*menuItemHeight;
 			bigPicListMenu.addEventListener(MouseEvent.CLICK, bigPicListClickHandler);
 			this.addChild(bigPicListMenu);
 			
 			menuIndex ++;
-			hotPicsMenu = new IconMenuItem("热点图片");
+			var hotpicPath:String = "assets/hot.png";
+			hotPicsMenu = new IconMenuItem("热点图片", hotpicPath);
 			hotPicsMenu.y = menuIndex*menuItemHeight;
 			hotPicsMenu.addEventListener(MouseEvent.CLICK, hotPicsClickHandler);
 			this.addChild(hotPicsMenu);
 			
 			menuIndex ++;
-			classicalMenu = new IconMenuItem("经典图片");
+			var classicpicPath:String = "assets/classic.png";
+			classicalMenu = new IconMenuItem("经典图片", classicpicPath);
 			classicalMenu.y = menuIndex*menuItemHeight;
 			classicalMenu.addEventListener(MouseEvent.CLICK, classicalClickHandler);
 			this.addChild(classicalMenu);
 			
 			menuIndex ++;
-			favoredMenu = new IconMenuItem("最近收藏");
+			var recentFavPath:String = "assets/recentfavor.png";
+			favoredMenu = new IconMenuItem("最近收藏", recentFavPath);
 			favoredMenu.y = menuIndex*menuItemHeight;
 			favoredMenu.addEventListener(MouseEvent.CLICK, favoredClickHandler);
 			this.addChild(favoredMenu);

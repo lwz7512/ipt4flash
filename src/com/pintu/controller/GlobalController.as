@@ -12,7 +12,7 @@ package com.pintu.controller{
 	public class GlobalController{
 		
 		//是否为调试模式
-		public static const isDebug:Boolean = false;	
+		public static const isDebug:Boolean = true;	
 		//默认收信人，客服
 		public static const KEFU_ID:String = "b8931b314c24dca4";
 		public static const KEFU_NAME:String = "客服小辣椒";

@@ -16,13 +16,24 @@ package com.pintu.widgets{
 	/**
 	 * 类似于微博中的“我的首页”下面的内容
 	 * 就是把主工具栏中的“俺滴”菜单项拆到右边栏
+	 * 
+	 * 主要处理消息的获取，图片的显示和获取交由主显示区处理
 	 */ 
 	public class AndiBlock extends AbstractWidget{
+		
+		/**
+		 * 我的贴图
+		 */
+		public static const CATEGORY_GALLERY_MINE:String = "gallery_myworks";
+		/**
+		 * 我的收藏
+		 */
+		public static const CATEGORY_GALLERY_MYFAV:String = "gallery_myfavors";
 		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
 		
-		private var titleBackgroudColor:uint = StyleParams.ICONMENU_MOUSEOVER_TOP;
+		private var titleBackgroudColor:uint = StyleParams.COLUMN_TITLE_BACKGROUND;
 		private var titleBackgroudHeight:int = InitParams.ANDI_TITLE_HEIGHT;
 		
 		//菜单使用颜色
@@ -50,26 +61,23 @@ package com.pintu.widgets{
 			return msgList;
 		}
 		
-		/**
-		 * 调用消息已读api，成功后移除msgNum
-		 * 点击我的消息菜单后，HomePage返回来调用
-		 * 即，只要打开了消息，就认为是已读了，不再取了
-		 */ 
-		public function msgReaded():void{
-			var msgIds:String = "";
-			for each(var msg:Object in msgList){
-				msgIds += (msg.id+",");
-			}
-			_clonedModel.markMsgReaded(msgIds);
-		}
 		
 		override protected function initModelListener(evt:Event):void{
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETUSERMSG, userMsgFetched);
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.CHANGEMSGSTATE, userMsgReaded);
 						
-			//查询个人的消息
+			//查询个人的消息，这里是得到消息并显示消息数目
 			_clonedModel.getUserMsgs();
 			
+		}
+		
+		override protected function cleanUpModelListener(evt:Event):void{
+			msgList = null;
+			//先移除事件
+			PintuImpl(_clonedModel).removeEventListener(ApiMethods.GETUSERMSG, userMsgFetched);
+			PintuImpl(_clonedModel).removeEventListener(ApiMethods.CHANGEMSGSTATE, userMsgReaded);
+			//后清空模型
+			super.cleanUpModelListener(evt);
 		}
 		
 		private function userMsgReaded(evt:Event):void{
@@ -79,16 +87,7 @@ package com.pintu.widgets{
 			if(evt is PTErrorEvent){
 				Logger.error("update msgs readed error!!!");
 			}
-		}
-		
-		//HomePage里监听，要和主显示区交互，完成消息内容显示
-		private function showMsgList(evt:MouseEvent):void{
-			//没有消息不派发事件
-			if(msgList && msgList.length>0){
-				var showMsg:PintuEvent = new PintuEvent(PintuEvent.SHOW_MSGS,null);
-				this.dispatchEvent(showMsg);			
-			}
-		}
+		}		
 		
 		private function userMsgFetched(evt:Event):void{
 			if(evt is ResponseEvent){
@@ -111,18 +110,10 @@ package com.pintu.widgets{
 			if(evt is PTErrorEvent){
 				Logger.error("get user msgs error!!!");
 			}
-		}
-		
-		override protected function cleanUpModelListener(evt:Event):void{
-			msgList = null;
-			//先移除事件
-			PintuImpl(_clonedModel).removeEventListener(ApiMethods.GETUSERMSG, userMsgFetched);
-			PintuImpl(_clonedModel).removeEventListener(ApiMethods.CHANGEMSGSTATE, userMsgReaded);
-			//后清空模型
-			super.cleanUpModelListener(evt);
-		}
+		}		
 		
 		private function drawTitleBar():void{
+			this.graphics.lineStyle(1, titleBackgroudColor);
 			this.graphics.beginFill(titleBackgroudColor, 1);
 			this.graphics.drawRect(drawStartX,drawStartY,InitParams.ANDI_ASSETS_WIDTH,titleBackgroudHeight);
 			this.graphics.endFill();
@@ -132,8 +123,8 @@ package com.pintu.widgets{
 			title.y = drawStartY+4;
 			this.addChild(title);
 		}
-		private function drawMenus():void{
-			
+		
+		private function drawMenus():void{			
 			//主菜单颜色设置
 			upColors = [StyleParams.PICDETAIL_BACKGROUND_THIRD,
 				StyleParams.PICDETAIL_BACKGROUND_THIRD];
@@ -156,9 +147,10 @@ package com.pintu.widgets{
 				StyleParams.DEFAULT_TEXT_COLOR,
 				0xFFFFFF);
 			myPics.upAlpha = 1;
-			myPics.label = "贴图";
+			myPics.label = "已发作品";
 			myPics.x = menuStartX;
 			myPics.y = menuStartY;
+			myPics.addEventListener(MouseEvent.CLICK, getMyPics);
 			this.addChild(myPics);
 			
 			//我的收藏
@@ -170,9 +162,10 @@ package com.pintu.widgets{
 				StyleParams.DEFAULT_TEXT_COLOR,
 				0xFFFFFF);
 			myFavorites.upAlpha = 1;
-			myFavorites.label = "收藏";
+			myFavorites.label = "收藏集";
 			myFavorites.x = menuStartX;
 			myFavorites.y = menuStartY+titleBackgroudHeight+menuVGap;
+			myFavorites.addEventListener(MouseEvent.CLICK, getMyFavors);
 			this.addChild(myFavorites);
 			
 			//我的消息
@@ -184,15 +177,49 @@ package com.pintu.widgets{
 				StyleParams.DEFAULT_TEXT_COLOR,
 				0xFFFFFF);
 			myMsgs.upAlpha = 1;
-			myMsgs.label = "消息";
+			myMsgs.label = "最新消息";
 			myMsgs.x = menuStartX;
 			myMsgs.y = menuStartY+2*titleBackgroudHeight+2*menuVGap;
 			myMsgs.addEventListener(MouseEvent.CLICK, showMsgList);
 			this.addChild(myMsgs);
-			
-			
+						
 		}
 		
+		//HomePage里监听，要和主显示区交互，完成图片显示
+		//关于图片的显示和获取，交由主显示区处理
+		private function getMyPics(evt:MouseEvent):void{
+			this.dispatchEvent(new PintuEvent(PintuEvent.GET_MYPICS,null));
+		}
+		//HomePage里监听，要和主显示区交互，完成图片显示
+		//关于图片的显示和获取，交由主显示区处理
+		private function getMyFavors(evt:MouseEvent):void{
+			this.dispatchEvent(new PintuEvent(PintuEvent.GET_MYFAVS,null));
+		}
+		
+		//HomePage里监听，要和主显示区交互，完成消息内容显示
+		private function showMsgList(evt:MouseEvent):void{
+			//没有消息不派发事件
+			if(msgList && msgList.length>0){
+				//通知主显示区绘制消息列表
+				var showMsg:PintuEvent = new PintuEvent(PintuEvent.SHOW_MSGS,null);
+				this.dispatchEvent(showMsg);
+				
+				//通知后台，消息已读
+				msgReaded();
+			}
+		}
+		
+		/**
+		 * 只要打开了消息，就认为是已读了，不再取了
+		 */ 
+		private function msgReaded():void{
+			var msgIds:String = "";
+			for each(var msg:Object in msgList){
+				msgIds += (msg.id+",");
+			}
+			//通知后台，消息已读
+			_clonedModel.markMsgReaded(msgIds);
+		}
 		
 		private function drawLoginBackGround():void{
 			drawStartX = InitParams.startDrawingX()

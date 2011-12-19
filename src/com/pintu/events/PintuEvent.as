@@ -30,9 +30,15 @@ package com.pintu.events
 		
 		//显示个人消息
 		public static const SHOW_MSGS:String = "showMsgs";
+		//获取自己贴图
+		public static const GET_MYPICS:String = "getMyPics";
+		//获取自己收藏
+		public static const GET_MYFAVS:String = "getMyFavs";
 		
 		//修改用户资料后刷新
 		public static const REFRESH_USER:String = "refreshUser";
+		
+		
 		
 		//通常带的参数
 		public var data:String;

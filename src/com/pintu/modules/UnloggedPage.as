@@ -16,7 +16,6 @@ package com.pintu.modules
 	public class UnloggedPage extends CasaSprite implements IDestroyableModule, IMenuClickResponder{
 		
 		private var _model:IPintu;
-		private var mainToolBar:MainToolBar;
 		private var categoryTree:CategoryTree;
 		private var mainDisplayArea:MainDisplayArea;
 		private var slideToolBar:SlideToolBar;
