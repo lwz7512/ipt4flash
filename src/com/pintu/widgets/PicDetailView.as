@@ -31,8 +31,8 @@ package com.pintu.widgets{
 		/*
 		 * construction function....
 		 */
-		public function PicDetailView(data:TPicDetails, model:IPintu){			
-			super(data);
+		public function PicDetailView(data:TPicDetails, model:IPintu, logged:Boolean){			
+			super(data, logged);
 			//每个视图中，都有各自不同的模型，这样就不会干扰了
 			_clonedModel = model.clone();						
 						
@@ -262,10 +262,13 @@ package com.pintu.widgets{
 		}
 		
 		override protected function addToFavorite(evt:MouseEvent):void{			
-			_clonedModel.markThePic(null,_data.id);
+			_clonedModel.markThePic(_data.id);
 		}
 		
-		//保存原图到本地，在HomePage中处理该事件
+		/**
+		 * 保存原图到本地，只能在HomePage中处理该事件
+		 * 因为这个实例里没有文件管理器，没法进行下载操作
+		 */ 
 		override protected function saveToLocal(evt:MouseEvent):void{			
 			var globalEvt:PintuEvent = new PintuEvent(PintuEvent.DNLOAD_IMAGE, _data.rawImgUrl);
 			globalEvt.extra = _data.picName;

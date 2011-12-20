@@ -30,15 +30,13 @@ package com.pintu.modules
 			mainDisplayArea = new MainDisplayArea(_model);
 			//未登录，默认画廊
 			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;	
-			this.addChild(mainDisplayArea);
-			
-			slideToolBar = new SlideToolBar();
-			this.addChild(slideToolBar);
+			this.addChild(mainDisplayArea);			
 			
 			login = new LoginBlock(_model);
 			this.addChild(login);
 			
 			activeUser = new ActiveUserBlock(_model);
+			activeUser.addEventListener(PintuEvent.GETPICS_BYUSER, getPicsOfUser);
 			this.addChild(activeUser);
 			
 		}
@@ -56,7 +54,10 @@ package com.pintu.modules
 			mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;
 		}
 		
-		
+		private function getPicsOfUser(evt:PintuEvent):void{
+			mainDisplayArea.browseType = MainDisplayArea.GETPICS_BYUSER;
+			mainDisplayArea.user = evt.data;
+		}
 		
 		/**
 		 * 在Main中的browseTypeChanged监听器中调用该方法

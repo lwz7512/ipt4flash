@@ -138,8 +138,8 @@ package com.pintu.widgets
 			account.addEventListener(TextInputEvent.FOCUS_OUT, checkEmailFormat);
 			this.addChild(account);
 			//FIXME, 先写死省的老输入
-			account.text = "lwz7512@gmail.com";
-//			account.text = "guest@ipintu.com";
+//			account.text = "lwz7512@gmail.com";
+			account.text = "guest@ipintu.com";
 			
 			//密码名称
 			var pwdField:SimpleText = new SimpleText("密码：", 0, StyleParams.TEXTINPUT_FONTSIZE);
@@ -160,8 +160,8 @@ package com.pintu.widgets
 			pswd.addEventListener(TextInputEvent.CHANGED, clearInput);
 			this.addChild(pswd);
 			//FIXME, 先写死省的老输入
-			pswd.text = "123";
-//			pswd.text = "guest";
+//			pswd.text = "123";
+			pswd.text = "guest";
 			
 			//提交
 			submit = new Button();

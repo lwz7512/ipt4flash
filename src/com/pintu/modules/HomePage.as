@@ -36,28 +36,26 @@ package com.pintu.modules{
 		public function HomePage(model:IPintu){
 			super();
 			_model = model;	
-			_fileManager = new FileManager(_model);
-			
-			//PicDetailView派发的保存事件
-			this.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);
-			
-			//UserDetailsBlock派发的动作事件，不带事件参数
-			this.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);
-			this.addEventListener(PintuEvent.POST_MSG, editMsg);
-			this.addEventListener(PintuEvent.POST_USERINFO, editUserInfo);
+			_fileManager = new FileManager(_model);				
 			
 			//呈现图片的主要区域，大部分逻辑都在这里
 			mainDisplayArea = new MainDisplayArea(_model);
 			//设置即将执行的查询模式：缩略图模式画廊
 			//TODO, 后面如果保存了浏览模式，就要修改这里的值
-			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;				
+			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;
+			//PicDetailView派发的事件，内部无法处理下载动作
+			mainDisplayArea.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);		
 			this.addChild(mainDisplayArea);
 			
 			slideToolBar = new SlideToolBar();
 			slideToolBar.alpha = 0;
+			slideToolBar.addEventListener(PintuEvent.BROWSE_CHANGED, browseTypeChanged);
 			this.addChild(slideToolBar);
 			
 			userDetails = new UserDetailsBlock(_model);
+			userDetails.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);
+			userDetails.addEventListener(PintuEvent.POST_MSG, editMsg);
+			userDetails.addEventListener(PintuEvent.POST_USERINFO, editUserInfo);
 			this.addChild(userDetails);
 			
 			andiAssets = new AndiBlock(_model);
@@ -67,8 +65,18 @@ package com.pintu.modules{
 			this.addChild(andiAssets);
 			
 			hotTags = new HotTags(_model);
+			hotTags.addEventListener(PintuEvent.GETTB_BYTAG, displayThumbnailsOfTag);
 			this.addChild(hotTags);
 			
+		}
+		
+		private function displayThumbnailsOfTag(evt:PintuEvent):void{
+			mainDisplayArea.browseType = MainDisplayArea.THUMBNAIL_BYTAG;
+			mainDisplayArea.tag = evt.data;
+		}
+		
+		private function browseTypeChanged(evt:PintuEvent):void{
+			this.menuHandler(PintuEvent.BROWSE_CHANGED, evt.data);
 		}
 		
 		private function displayMsgList(evt:PintuEvent):void{

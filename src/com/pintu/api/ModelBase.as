@@ -66,6 +66,16 @@ package com.pintu.api{
 			return null;
 		}
 		
+		public function composeImgUrlById(imgId:String):String{
+			return getServiceUrl() + "?method=" + ApiMethods.GETIMAGEFILE 
+				+ "&tpId="+ imgId;
+		}
+		
+		public function composeImgUrlByPath(imgPath:String):String{
+			return getServiceUrl() + "?method=" + ApiMethods.GETIMAGEBYPATH
+				+ "&path="+ imgPath;
+		}
+		
 		public function get currentUser():String{
 			return _currentUser;
 		}
@@ -113,14 +123,10 @@ package com.pintu.api{
 		/**
 		 * 新建任务到队列中
 		 */ 
-		public function addHttpTask(nameValues:Array, methodName:String):void{
-			
-			//FIXME, TEMPORARILY STOP RUN TASK...
-//			return;
-			
+		protected function addHttpTask(nameValues:Array, methodName:String):void{
 			var task:Object = {method:methodName, params:nameValues};
 			taskQueue.add(task);
-			Logger.debug("Add Task: "+methodName);
+//			Logger.debug("Add Task: "+methodName);
 		}		
 		/**
 		 * 定时查看队列，并执行第一个任务
@@ -130,10 +136,9 @@ package com.pintu.api{
 		private function excuteTaskQueue(evt:TimerEvent):void{
 			if(taskQueue.size>0 && !client.isRunning()){
 				var params:Array = taskQueue.first.params;
-				var method:String = taskQueue.first.method;
-				
+				var method:String = taskQueue.first.method;				
 				client.post(params, method);
-				Logger.debug("Start Execute: "+method);
+//				Logger.debug("Start Execute: "+method);
 			}
 		}
 		/**
@@ -141,7 +146,7 @@ package com.pintu.api{
 		 */ 
 		private function clearHeaderTask(evt:Event):void{
 			var task:Object = taskQueue.removeFirst();
-			Logger.debug("Task removed: "+task.method);
+//			Logger.debug("Task removed: "+task.method);
 		}
 		
 	} //end of class

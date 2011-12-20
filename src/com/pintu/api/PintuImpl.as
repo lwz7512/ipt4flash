@@ -44,7 +44,8 @@ package com.pintu.api
 			addClientListener(ApiMethods.GETHOTPICTURE);			
 			addClientListener(ApiMethods.CLASSICALSTATISTICS);			
 			addClientListener(ApiMethods.COLLECTSTATISTICS);			
-			addClientListener(ApiMethods.GETTHUMBNAILSBYTAG);			
+			addClientListener(ApiMethods.GETTHUMBNAILSBYTAG);	
+			
 			addClientListener(ApiMethods.GETPICDETAIL);	
 			
 			addClientListener(ApiMethods.ADDSTORY);			
@@ -62,22 +63,14 @@ package com.pintu.api
 			addClientListener(ApiMethods.GETTPICSBYUSER);	
 			addClientListener(ApiMethods.GETFAVORITEPICS);	
 			
+			addClientListener(ApiMethods.GETHOTTAGS);					
+			addClientListener(ApiMethods.GETTHUMBNAILSBYTAG);					
+			addClientListener(ApiMethods.SEARCHBYTAG);	
 			
-			
-			//TODO, ADD OTHER LISTENER...
+			addClientListener(ApiMethods.ACTIVEUSERRANKING);					
 			
 		}		
-		
-		
-		public function composeImgUrlById(imgId:String):String{
-			return getServiceUrl() + "?method=" + ApiMethods.GETIMAGEFILE 
-				+ "&tpId="+ imgId;
-		}
-		
-		public function composeImgUrlByPath(imgPath:String):String{
-			return getServiceUrl() + "?method=" + ApiMethods.GETIMAGEBYPATH
-				+ "&path="+ imgPath;
-		}
+				
 		
 		public function postPicture(file:FileReference, tags:String, description:String, isOriginal:String):void{
 			var params:Array = [{name:"tags",value:tags},{name:"description",value:description},
@@ -136,12 +129,7 @@ package com.pintu.api
 		
 		public function getFavoredPics():void{
 			addHttpTask([],ApiMethods.COLLECTSTATISTICS);
-		}
-		
-		public function getThumbnailsByTag(tagId:String,pageNum:String):void{
-			var params:Array = [{name:"tagId",value:tagId},{name:"pageNum",value:pageNum}];
-			addHttpTask(params, ApiMethods.GETTHUMBNAILSBYTAG);
-		}
+		}		
 		
 		public function getPicDetail(tpId:String):void{
 			var params:Array = [{name:"tpId",value:tpId}];
@@ -158,7 +146,7 @@ package com.pintu.api
 			addHttpTask(params, ApiMethods.GETSTORIESOFPIC);
 		}
 		
-		public function markThePic(userId:String, picId:String):void{
+		public function markThePic(picId:String):void{
 			//其实在client中已经把userId传进去了
 			var params:Array = [{name:"picId",value:picId}];
 			addHttpTask(params, ApiMethods.MARKTHEPIC);
@@ -204,17 +192,35 @@ package com.pintu.api
 			addHttpTask(params, ApiMethods.GETFAVORITEPICS);
 		}
 		
+		public 	function getHotTags():void{
+			addHttpTask([], ApiMethods.GETHOTTAGS);
+		}
 		
+		public function getThumbnailsByTag(tagId:String,pageNum:String):void{
+			var params:Array = [{name:"tagId",value:tagId},{name:"pageNum",value:pageNum}];
+			addHttpTask(params, ApiMethods.GETTHUMBNAILSBYTAG);
+		}
 		
+		public function searchPicByTagsInput(tags:String):void{
+			var params:Array = [{name:"tags",value:tags}];
+			addHttpTask(params, ApiMethods.SEARCHBYTAG);
+		}
 		
+		public function getActiveUserRanking():void{
+			addHttpTask([], ApiMethods.ACTIVEUSERRANKING);
+		}		
 		
+		public function getPicsByUser(userId:String, pageNum:String):void{
+			var params:Array = [{name:"userId",value:userId}, {name:"pageNum",value:pageNum}];
+			addHttpTask(params, ApiMethods.GETTPICSBYUSER);
+		}
 		
 		
 		
 		
 		/**
 		 * 必须加个事件监听阻止方法，放置重复对模型添加事件监听
-		 * 所有的重复事件，可能就是没有这个处理引起的
+		 * 所有的重复事件，在这里就能发出警告
 		 */
 		override public function addEventListener(type:String, listener:Function, userCapture:Boolean=false,priority:int=0,useWeakReference:Boolean=false):void{
 			if(this.hasEventListener(type)){

@@ -17,6 +17,8 @@ package com.pintu.widgets{
 	import flash.events.MouseEvent;
 	import flash.utils.clearInterval;
 	
+	import org.casalib.display.CasaShape;
+	
 	/**
 	 * 窗口类，只初始化一个实例，并缓存
 	 */ 
@@ -36,6 +38,7 @@ package com.pintu.widgets{
 		
 		
 		private var _loadFileBitmap:Bitmap;
+		private var _bitmapMask:CasaShape;
 		
 		private var _localImagePath:String = "assets/folder32.png";
 		private var _cameraImagePath:String = "assets/webcamera32.png";
@@ -85,9 +88,11 @@ package com.pintu.widgets{
 		override protected function reset():void{
 			super.reset();
 			//清除预览图
-			if(_loadFileBitmap)
-				removeChild(_loadFileBitmap);
+			if(_loadFileBitmap) removeChild(_loadFileBitmap);
 			_loadFileBitmap = null;
+			//移除遮罩
+			if(_bitmapMask) removeChild(_bitmapMask);
+			_bitmapMask = null;
 			
 			//清除输入框文字
 			_isOriginalCheck.selected = false;
@@ -262,6 +267,19 @@ package com.pintu.widgets{
 				}
 			}
 			this.addChild(_loadFileBitmap);
+			
+			//添加动态遮罩
+			_bitmapMask = new CasaShape();
+			_bitmapMask.x = _elementStartX+1;
+			_bitmapMask.y = _elementStartY+1;
+			_bitmapMask.graphics.clear();
+			_bitmapMask.graphics.beginFill(0x000000);
+			_bitmapMask.graphics.drawRect(0,0,_maxLoadImgWidth,_maxLoadImgHeight);
+			_bitmapMask.graphics.endFill();
+			this.addChild(_bitmapMask);
+			//把图片盖住
+			_loadFileBitmap.mask = _bitmapMask;
+			
 			//清除错误提示
 			updateSuggest("");
 		}

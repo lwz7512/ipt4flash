@@ -10,25 +10,23 @@ package com.pintu.api
 	 */ 
 	public interface IPintu{	
 		
+		//-------------- 6个方法基本在ModelBase中实现 -----------------------
 		/**
-		 * 这4个方法在ModelBase中实现
-		 */ 
-		//client是否空闲
+		 * client是否空闲
+		 */
 		function get isIdle():Boolean;
 		/**
 		 * 停止队列和计时器，这个很重要，必须在视图移除时调用
 		 */
-		function destory():void;
-		
+		function destory():void;		
 		//登录成功更新用户
-		function updateUser(userId:String):void;	
-		
-		
+		function updateUser(userId:String):void;					
 		//服务地址
-		function getServiceUrl():String;
-		
+		function getServiceUrl():String;				
 		function composeImgUrlById(imgId:String):String;
-		function composeImgUrlByPath(imgPath:String):String;			
+		function composeImgUrlByPath(imgPath:String):String;	
+		
+		//-------------- 业务逻辑方法 -------------------------------------------
 		
 		function logon(account:String, password:String):void;	
 		/**
@@ -43,15 +41,12 @@ package com.pintu.api
 		function getRandomGallery():void;
 		function getHotPicture():void;
 		function getClassicalPics():void;
-		function getFavoredPics():void;
-		function getThumbnailsByTag(tagId:String,pageNum:String):void;
+		function getFavoredPics():void;		
 		
 		function postComment(follow:String, content:String):void;
 		function getComments(tpId:String):void;
-		/**
-		 * 这里可以不用传userId值，client已经有该参数值了
-		 */ 
-		function markThePic(userId:String, picId:String):void;
+		
+		function markThePic(picId:String):void;
 		function postVote(receiver:String, follow:String, type:String, amount:String):void;
 		
 		function getUserDetail(userId:String):void;
@@ -63,6 +58,13 @@ package com.pintu.api
 		
 		function getMyPostPics(pageNum:String):void;
 		function getMyFavorites(pageNum:String):void;
+		
+		function getHotTags():void;
+		function getThumbnailsByTag(tagId:String, pageNum:String):void;
+		function searchPicByTagsInput(tags:String):void;
+		
+		function getActiveUserRanking():void;
+		function getPicsByUser(userId:String, pageNum:String):void;
 		
 		/**
 		 * 多个视图用到同样的模型，为了防止事件监听干扰，各自使用各自的模型 

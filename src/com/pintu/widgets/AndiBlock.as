@@ -91,7 +91,7 @@ package com.pintu.widgets{
 		
 		private function userMsgFetched(evt:Event):void{
 			if(evt is ResponseEvent){
-				var msgs:String = ResponseEvent(evt).data;				
+				var msgs:String = ResponseEvent(evt).data;
 				if(!msgs) return;
 				
 				//先存起来，点击链接才展示

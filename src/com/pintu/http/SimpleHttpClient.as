@@ -59,8 +59,16 @@ package com.pintu.http
 			if(!_client) this._client = new HttpClient();
 			if(!params) params = [];
 			
+			var hasUserId:Boolean = checkUserInclude(params);
+			
 			params = params.concat([ {name:"method", value: method}]);
-			params = params.concat([ {name:"userId", value: _userId}]);
+			
+			//如果已经指定了用户，就不再添加该属性了
+			//这一定是查看新用户的资料
+			if(!hasUserId){
+				params = params.concat([ {name:"userId", value: _userId}]);			
+			}
+			
 			params = params.concat([ {name:"owner", value: _userId}]);
 			params = params.concat([ {name:"source", value: "desktop"}]);
 			
@@ -78,7 +86,7 @@ package com.pintu.http
 				result = StringUtil.trim(result);
 				var dataEvent:ResponseEvent = new ResponseEvent(method,result);
 				dispatchEvent(dataEvent);
-//				Logger.debug("Method: "+method+"\n"+"result: "+result);	
+//				Logger.debug("Method: "+method+" executed!");	
 			};
 			
 			_client.listener.onComplete = function(event:HttpResponseEvent):void {
@@ -119,6 +127,17 @@ package com.pintu.http
 			_client.postFormData(uri, params);	
 			//正在运行
 			_isRuning = true;
+		}
+		
+		private function checkUserInclude(params:Array):Boolean{
+			var includeUser:Boolean = false;
+			for each(var obj:Object in params){
+				if(obj["name"]=="userId"){
+					includeUser = true;
+					break;
+				}
+			}
+			return includeUser;
 		}
 		
 		/**		 

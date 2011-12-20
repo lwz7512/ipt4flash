@@ -142,6 +142,14 @@ package com.pintu.widgets{
 				PintuEvent.BROWSE_CHANGED, CATEGORY_GALLERY_TBMODE);			
 			this.dispatchEvent(typeChangeEvent);
 		}
+		private function randomClickHandler(evt:MouseEvent):void{
+			//通知菜单收回
+			forceCloseFlag = true;
+			
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, CATEGORY_RANDOM_TBMODE);			
+			this.dispatchEvent(typeChangeEvent);
+		}
 		private function bigPicListClickHandler(evt:MouseEvent):void{
 			//通知菜单收回
 			forceCloseFlag = true;
@@ -174,14 +182,7 @@ package com.pintu.widgets{
 				PintuEvent.BROWSE_CHANGED, CATEGORY_FAVORED);			
 			this.dispatchEvent(typeChangeEvent);
 		}
-		private function randomClickHandler(evt:MouseEvent):void{
-			//通知菜单收回
-			forceCloseFlag = true;
-			
-			var typeChangeEvent:PintuEvent = new PintuEvent(
-				PintuEvent.BROWSE_CHANGED, CATEGORY_RANDOM_TBMODE);			
-			this.dispatchEvent(typeChangeEvent);
-		}
+
 		
 		/**
 		 * HeaderBar 点击或者滑过主菜单文字时，调用该方法展开子菜单

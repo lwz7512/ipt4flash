@@ -5,8 +5,8 @@ package com.pintu.controller
 	import com.pintu.api.*;
 	import com.pintu.common.IconButton;
 	import com.pintu.config.*;
-	import com.pintu.events.PintuEvent;
-	import com.pintu.events.ResponseEvent;
+	import com.pintu.controller.GlobalController;
+	import com.pintu.events.*;
 	import com.pintu.utils.Logger;
 	import com.pintu.utils.PintuUtils;
 	import com.pintu.vos.TPMessage;
@@ -76,7 +76,8 @@ package com.pintu.controller
 		//大图模式下生成的列表对象，缓存下来用来重新排列位置
 		private var bigPicViews:Array;
 				
-		//固定一个绘制路径的画布
+		//固定一个绘制路径的画布，必须是全局变量
+		//这样才能在render事件中重新调整位置
 		private var pathShape:CasaShape;
 				
 		
@@ -201,8 +202,9 @@ package com.pintu.controller
 			//初始化视图对象集，好重新排列时使用
 			bigPicViews = [];
 			
-			for(var j:int=0; j<tpicDatas.length; j++){				
-				var picDetails:PicDetailView = new PicDetailView(tpicDatas[j], _model);
+			for(var j:int=0; j<tpicDatas.length; j++){	
+				var logged:Boolean = GlobalController.isLogged;
+				var picDetails:PicDetailView = new PicDetailView(tpicDatas[j], _model, logged);
 				picDetails.x = _drawStartX;
 				//按照每个详情高度往下排，初始高度是一样的
 				picDetails.y = _drawStartY+picDetails.height*j+verticalGap;				
@@ -321,15 +323,21 @@ package com.pintu.controller
 		}
 		
 		private function detailPicHandler(event:Event):void{	
-			//只处理结果事件，不处理状态事件
-			if(!(event is ResponseEvent)) return;
+			
+			//很怪异有时出不来图，先隐藏掉进度条吧	
+			//2011/12/20
+			_owner.hideMiddleLoading();
 						
-			//展示详情前，先清理
-			cleanUp();					
-//			Logger.debug("pic details: \n"+ResponseEvent(event).data);
+			//只处理结果事件，不处理状态事件
+			if((event is PTStatusEvent)) return;						
+			
+			//数据到了准备显示
+			cleanUp();	
+			
 			//CREATE PIC DETAILS...
 			var details:Object =  JSON.decode(ResponseEvent(event).data) as Object;
-			var picDetails:PicDetailView = new PicDetailView(objToTPicData(details), _model);
+			var logged:Boolean = GlobalController.isLogged;
+			var picDetails:PicDetailView = new PicDetailView(objToTPicData(details), _model, logged);
 			picDetails.x = _drawStartX;
 			picDetails.y = _drawStartY;
 			//工具栏左侧给返回按钮让位
@@ -350,15 +358,12 @@ package com.pintu.controller
 				StyleParams.HEADERBAR_TOP_LIGHTGREEN, 
 				StyleParams.HEADERBAR_TOP_LIGHTGREEN);
 			
-			_context.addChild(back);
-			
-			//移除进度条
-			_owner.hideMiddleLoading();
+			_context.addChild(back);			
 			
 		}
 		
 
-		//FIXME, 点击返回按钮，回到列表画廊
+		//点击返回按钮，回到列表画廊
 		private function restoreGallery(evt:MouseEvent):void{
 			cleanUp();
 			
@@ -454,8 +459,10 @@ package com.pintu.controller
 		/**
 		 * 图片背景上画根竖线，当做Path
 		 * 2011/12/09
-		 */
-		//FIXME, 绘制path方法中的绘制对象不能做成局部变量
+		 * 绘制path方法中的绘制对象不能做成局部变量
+		 * 否则重绘时高度不准确
+		 * 2011/12/20
+		 */		
 		private function drawPath(picsHeight:Number):void{
 			if(!pathShape )pathShape = new CasaShape();			
 			if(_context.contains(pathShape)){

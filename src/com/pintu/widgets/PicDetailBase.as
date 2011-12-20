@@ -67,9 +67,11 @@ package com.pintu.widgets{
 		//鼠标如果在工具栏区域，显示工具栏
 		private var mouseOnToolZone:Boolean;
 
+		private var _isLoggedIn:Boolean = false;
 		
-		public function PicDetailBase(data:TPicDetails){
+		public function PicDetailBase(data:TPicDetails, logged:Boolean){
 			_data = data;
+			_isLoggedIn = logged;
 			if(!_data) return;
 						
 			//draw image place hoder
@@ -132,7 +134,7 @@ package com.pintu.widgets{
 			
 			//-------------- toolHolder -----------------------------
 			//最后创建图片工具栏，使其浮在顶部
-			buildPicOperaTools(_mobImgWidth);		
+			if(_isLoggedIn) buildPicOperaTools(_mobImgWidth);		
 			
 			imgLoadedFlag = true;
 			
@@ -397,7 +399,9 @@ package com.pintu.widgets{
 			var commentsTF:SimpleLinkTxt = new SimpleLinkTxt(commentsStr,commentColor, normalTXTSize);
 			commentsTF.x = browseCountTF.x+browseCountTF.textWidth+textItemHGap;
 			commentsTF.y = isOriginalTF.y+textItemVGap;
-			commentsTF.addEventListener(MouseEvent.CLICK, addComment);
+			if(_isLoggedIn){
+				commentsTF.addEventListener(MouseEvent.CLICK, addComment);				
+			}
 			imgInfoHolder.addChild(commentsTF);
 			
 			//喜欢人数

@@ -1,17 +1,22 @@
 package com.pintu.widgets{
 	
+	import com.adobe.serialization.json.JSON;
 	import com.pintu.api.*;
 	import com.pintu.common.*;
 	import com.pintu.config.*;
+	import com.pintu.events.*;
 	import com.pintu.utils.Logger;
 	
 	import flash.display.Sprite;
+	import flash.events.Event;
+	import flash.events.MouseEvent;
 	
+	import org.casalib.display.CasaShape;
 	import org.casalib.display.CasaSprite;
 	
-	public class HotTags extends CasaSprite{
-		
-		private var _model:IPintu;
+	
+	public class HotTags extends AbstractWidget{
+				
 		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
@@ -27,14 +32,74 @@ package com.pintu.widgets{
 		private var overColors:Array;
 		private var downColors:Array;		
 		
+		private var tagObjs:Array;
+		private var tagsContainer:CasaSprite;
+		
 		public function HotTags(model:IPintu){			
-			super();
-			_model = model;
+			super(model);			
 			
 			drawLoginBackGround();
 			
 			drawTitleBar();
 			
+			tagsContainer = new CasaSprite();
+			tagsContainer.x = drawStartX;
+			tagsContainer.y = drawStartY+titleBackgroudHeight;
+			this.addChild(tagsContainer);
+		}
+		
+		override protected function initModelListener(evt:Event):void{
+			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETHOTTAGS, hotTagsHandler);
+			_clonedModel.getHotTags();
+		}
+		
+		override protected function cleanUpModelListener(evt:Event):void{
+			//先移除事件
+			PintuImpl(_clonedModel).removeEventListener(ApiMethods.GETHOTTAGS, hotTagsHandler);
+			//后清空模型
+			super.cleanUpModelListener(evt);
+		}
+		
+		private function hotTagsHandler(evt:Event):void{
+			if(evt is ResponseEvent){
+				var tags:String = ResponseEvent(evt).data;
+				if(!tags) return;
+								
+				tagObjs = JSON.decode(tags);
+				if(tagObjs.length==0) return;
+				
+				buildTagsLink();
+								
+			}
+			if(evt is PTErrorEvent){
+				Logger.error("get hot tags error!!!");
+			}
+		}
+		
+		private function buildTagsLink():void{
+			var tagStartX:Number = 4;
+			var tagStartY:Number = 4;
+			var tagVGap:Number = 26;
+			
+			tagsContainer.removeChildren();
+			//只放10个
+			for(var i:int=0; i<10; i++){
+				var tagObj:Object = tagObjs[i];
+				var tagStr:String = tagObj["name"]+" ("+tagObj["browseCount"]+")";
+				var tagId:String = tagObj["id"];
+				var tagView:LinkRow = new LinkRow(tagStr, tagId);
+				tagView.x = 1;
+				tagView.y = i*tagVGap+tagStartY;
+				tagView.width = blockWidth-1;
+				tagView.height = tagVGap;
+				//偶数行放背景
+				if(i%2==0){
+					tagView.backgroundColor = StyleParams.PICDETAIL_BACKGROUND_THIRD;							
+				}
+				//指定派发： 查询缩略图事件
+				tagView.eventType = PintuEvent.GETTB_BYTAG;				
+				tagsContainer.addChild(tagView);
+			}
 		}
 		
 		private function drawTitleBar():void{

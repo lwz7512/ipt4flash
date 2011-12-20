@@ -88,16 +88,26 @@ package com.pintu.widgets
 			
 			showLogo();		
 			
-//			showVersion();						
-
+//			showVersion();
 		}
 		
+		/**
+		 * 主应用导航时调用
+		 */ 
 		public function showExit():void{
 			exitMenu.visible = true;
+			searchInput.visible = true;
+			searchIcon.visible = true;
+			feedbackMenu.visible = true;
 		}
-		
+		/**
+		 * 主应用导航时调用
+		 */ 
 		public function hideExit():void{
 			exitMenu.visible = false;
+			searchInput.visible = false;
+			searchIcon.visible = false;
+			feedbackMenu.visible = false;
 		}
 		
 		private function showLogo():void{
@@ -106,6 +116,24 @@ package com.pintu.widgets
 			logoLoader.addEventListener(LoadEvent.COMPLETE,onLoaded);
 			logoLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
 			logoLoader.start();			
+		}
+		
+		private function onLoaded(e:LoadEvent):void {
+			logoBitmap = this.logoLoader.contentAsBitmap;
+			mainMenuContainer.addChild(logoBitmap);
+			logoBitmap.x = elementStartX-100;
+			logoBitmap.y = 2;			
+			
+			//主菜单，都在主容器中
+			createMainMenus();				
+			createSearchInput();				
+			createFeedbackMenu();
+			createExitMenu();	
+			
+			//子菜单都画在子容器中
+			//放在HeaderBar后面隐藏，鼠标点击菜单滑出
+			createSubMenus();
+			
 		}
 		
 		private function showVersion():void{
@@ -242,8 +270,11 @@ package com.pintu.widgets
 			feedbackMenu.label = "反馈";
 			feedbackMenu.x = searchInput.x+searchInput.width+InitParams.HEADERMENU_BG_WIDTH+menuGap;
 			feedbackMenu.y = 0;
-//			feedbackMenu.enabled = false;
 			mainMenuContainer.addChild(feedbackMenu);
+			
+			if(!_isLogged){
+				feedbackMenu.visible = false;
+			}
 		}		
 		
 		private function createSearchInput():void{
@@ -277,6 +308,10 @@ package com.pintu.widgets
 			});
 			mainMenuContainer.addChild(searchIcon);						
 			
+			if(!_isLogged) {
+				searchInput.visible = false;
+				searchIcon.visible = false;
+			}
 		}
 		
 		
@@ -305,23 +340,6 @@ package com.pintu.widgets
 			dispatchEvent(new PintuEvent(PintuEvent.NAVIGATE, GlobalNavigator.UNLOGGED));
 		}
 		
-		private function onLoaded(e:LoadEvent):void {
-			logoBitmap = this.logoLoader.contentAsBitmap;
-			mainMenuContainer.addChild(logoBitmap);
-			logoBitmap.x = elementStartX-100;
-			logoBitmap.y = 2;			
-			
-			//主菜单，都在主容器中
-			createMainMenus();					
-			createSearchInput();	
-			createFeedbackMenu();
-			createExitMenu();	
-			
-			//子菜单都画在子容器中
-			//放在HeaderBar后面隐藏，鼠标点击菜单滑出
-			createSubMenus();
-			
-		}
 		
 		private function onError(event:IOErrorEvent):void{
 			Logger.error("load logo error: "+logoPath);

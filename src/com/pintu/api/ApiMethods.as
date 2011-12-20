@@ -13,9 +13,7 @@ package com.pintu.api
 		//经典
 		public static const CLASSICALSTATISTICS:String = "classicalStatistics";
 		//最近被收藏
-		public static const COLLECTSTATISTICS:String = "collectStatistics";
-		//按标签查询
-		public static const GETTHUMBNAILSBYTAG:String = "getThumbnailsByTag";
+		public static const COLLECTSTATISTICS:String = "collectStatistics";		
 		
 		//查询图片详情
 		public static const GETPICDETAIL:String = "getPicDetail";		
@@ -56,7 +54,15 @@ package com.pintu.api
 		//获取自己的收藏
 		public static const GETFAVORITEPICS:String = "getFavoriteTpics";
 		
+		//获取热门标签
+		public static const GETHOTTAGS:String = "getHotTags";
+		//获取某标签的图片
+		public static const GETTHUMBNAILSBYTAG:String = "getThumbnailsByTag";
+		//按标签输入搜索
+		public static const SEARCHBYTAG:String="searchByTag";		
 		
+		//获取活跃用户排行榜
+		public static const ACTIVEUSERRANKING:String = "getActiveUserRanking";
 		
 	}
 }

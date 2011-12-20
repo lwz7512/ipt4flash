@@ -60,24 +60,20 @@ package com.pintu.common{
 			_oldTargetY = _scrlTarget.y;
 						
 			this.addEventListener(Event.ENTER_FRAME, detectTargetPropChanged);
-			this.addEventListener(Event.ADDED_TO_STAGE, scrollBarAdded);
 			
 			thumb = new CasaSprite();
-			thumb.addEventListener(MouseEvent.MOUSE_OVER, onThumbOver);
-			thumb.addEventListener(MouseEvent.MOUSE_OUT, onThumbOut);
-			
 			//鼠标按下时，为舞台添加MouseEvent.MOUSE_MOVE事件
 			//但是不对鼠标在thumb上抬起做监听，因为它不靠谱
 			thumb.addEventListener(MouseEvent.MOUSE_DOWN, onThumbDown);
+			thumb.addEventListener(MouseEvent.MOUSE_OVER, onThumbOver);
+			thumb.addEventListener(MouseEvent.MOUSE_OUT, onThumbOut);
+			
 			
 			this.addChild(thumb);
 			
 		}
 		
-		private function scrollBarAdded(evt:Event):void{
-			//不管在哪释放鼠标，都取消滚动
-			//有可能鼠标在thumb外面释放，所以不对thumb监听
-			this.stage.addEventListener(MouseEvent.MOUSE_UP, onThumbUp);
+		private function scrollBarAdded(evt:Event):void{			
 			
 		}
 		
@@ -154,7 +150,11 @@ package com.pintu.common{
 			watchingTarget = false;
 			
 			_globalStartMouseY = evt.stageY;
+			//改变滚动对象位置
 			this.stage.addEventListener(MouseEvent.MOUSE_MOVE, onThumbMove);
+			//不管在哪释放鼠标，都取消滚动
+			//有可能鼠标在thumb外面释放，所以不对thumb监听
+			this.stage.addEventListener(MouseEvent.MOUSE_UP, onThumbUp);
 			
 			thumb.graphics.clear();
 			thumb.graphics.lineStyle(1,trackColor);
@@ -175,6 +175,8 @@ package com.pintu.common{
 			
 			//取消舞台监听
 			this.stage.removeEventListener(MouseEvent.MOUSE_MOVE, onThumbMove);
+			this.stage.removeEventListener(MouseEvent.MOUSE_UP, onThumbUp);
+			
 			//开启滚动监听
 			watchingTarget = true;
 					

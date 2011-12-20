@@ -1,10 +1,11 @@
 package com.pintu.widgets{
 	
 	import com.greensock.TweenLite;
-	
 	import com.pintu.common.IconButton;
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
+	import com.pintu.events.PintuEvent;
+	import com.pintu.widgets.BrowseMode;
 	
 	import flash.display.GradientType;
 	import flash.display.Sprite;
@@ -15,6 +16,9 @@ package com.pintu.widgets{
 	
 	import org.casalib.display.CasaSprite;
 	
+	/**
+	 * 图片浏览工具栏，事件自身监听，在HomePage中处理
+	 */ 
 	public class SlideToolBar extends CasaSprite{
 		
 		private var drawStartX:Number;
@@ -96,70 +100,100 @@ package com.pintu.widgets{
 			
 			var newGallery:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			newGallery.iconPath = "assets/newgallery.png";
-			newGallery.addEventListener(MouseEvent.CLICK, todo);
 			newGallery.x = toolStartX;
 			newGallery.y = drawStartY;
 			newGallery.textOnRight = true;
 			newGallery.label = "最新画廊";
 			newGallery.setSkinStyle(null,overColors,downColors);	
+			newGallery.addEventListener(MouseEvent.CLICK, getLatestGallery);
 			this.addChild(newGallery);
 			
 			var randomGallery:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			randomGallery.iconPath = "assets/walkaround.png";
-			randomGallery.addEventListener(MouseEvent.CLICK, todo);
 			randomGallery.x = toolStartX-toolsHGap;
 			randomGallery.y = drawStartY;
 			randomGallery.textOnRight = true;
 			randomGallery.label = "随便看看";	
 			randomGallery.setSkinStyle(null,overColors,downColors);	
+			randomGallery.addEventListener(MouseEvent.CLICK, getRandomGallery);
 			this.addChild(randomGallery);
 			
 			var bigpicGallery:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			bigpicGallery.iconPath = "assets/biggallery.png";
-			bigpicGallery.addEventListener(MouseEvent.CLICK, todo);
 			bigpicGallery.x = toolStartX-2*toolsHGap;
 			bigpicGallery.y = drawStartY;
 			bigpicGallery.textOnRight = true;
 			bigpicGallery.label = "大图列表";	
 			bigpicGallery.setSkinStyle(null,overColors,downColors);	
+			bigpicGallery.addEventListener(MouseEvent.CLICK, getBigPicGallery);
 			this.addChild(bigpicGallery);
 			
 			var hotpicGallery:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			hotpicGallery.iconPath = "assets/hot.png";
-			hotpicGallery.addEventListener(MouseEvent.CLICK, todo);
 			hotpicGallery.x = toolStartX-3*toolsHGap;
 			hotpicGallery.y = drawStartY;
 			hotpicGallery.textOnRight = true;
 			hotpicGallery.label = "热点图片";
 			hotpicGallery.setSkinStyle(null,overColors,downColors);	
+			hotpicGallery.addEventListener(MouseEvent.CLICK, getHotGallery);
 			this.addChild(hotpicGallery);
 			
 			var classicGallery:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			classicGallery.iconPath = "assets/classic.png";
-			classicGallery.addEventListener(MouseEvent.CLICK, todo);
 			classicGallery.x = toolStartX-4*toolsHGap;
 			classicGallery.y = drawStartY;
 			classicGallery.textOnRight = true;
 			classicGallery.label = "经典图片";	
 			classicGallery.setSkinStyle(null,overColors,downColors);	
+			classicGallery.addEventListener(MouseEvent.CLICK, getClassicGallery);
 			this.addChild(classicGallery);
 			
 			var favoredGallery:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			favoredGallery.iconPath = "assets/recentfavor.png";
-			favoredGallery.addEventListener(MouseEvent.CLICK, todo);
 			favoredGallery.x = toolStartX-5*toolsHGap;
 			favoredGallery.y = drawStartY;
 			favoredGallery.textOnRight = true;
 			favoredGallery.label = "最近收藏";		
 			favoredGallery.setSkinStyle(null,overColors,downColors);	
+			favoredGallery.addEventListener(MouseEvent.CLICK, getRecentFavored);
 			this.addChild(favoredGallery);
 		}
 		
-		private function todo(evt:MouseEvent):void{
-			
+		private function getLatestGallery(evt:MouseEvent):void{
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, BrowseMode.CATEGORY_GALLERY_TBMODE);			
+			this.dispatchEvent(typeChangeEvent);
 		}
 		
+		private function getRandomGallery(evt:MouseEvent):void{
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, BrowseMode.CATEGORY_RANDOM_TBMODE);			
+			this.dispatchEvent(typeChangeEvent);
+		}
 		
+		private function getBigPicGallery(evt:MouseEvent):void{
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, BrowseMode.CATEGORY_GALLERY_BPMODE);			
+			this.dispatchEvent(typeChangeEvent);
+		}
+		
+		private function getHotGallery(evt:MouseEvent):void{
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, BrowseMode.CATEGORY_HOT);			
+			this.dispatchEvent(typeChangeEvent);
+		}
+		
+		private function getClassicGallery(evt:MouseEvent):void{
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, BrowseMode.CATEGORY_CLASSICAL);			
+			this.dispatchEvent(typeChangeEvent);
+		}
+		
+		private function getRecentFavored(evt:MouseEvent):void{
+			var typeChangeEvent:PintuEvent = new PintuEvent(
+				PintuEvent.BROWSE_CHANGED, BrowseMode.CATEGORY_FAVORED);			
+			this.dispatchEvent(typeChangeEvent);
+		}
 		
 		
 	}

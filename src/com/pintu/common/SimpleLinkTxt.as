@@ -9,7 +9,7 @@ package com.pintu.common{
 		
 		protected var _mouseOverFormat:TextFormat;
 		
-		public function SimpleLinkTxt(text:String, color:uint=0, fontSize:int=12, bold:Boolean=false, wrap:Boolean=true, overColor:uint=0x177cb0)
+		public function SimpleLinkTxt(text:String, color:uint=0, fontSize:int=12, bold:Boolean=false, wrap:Boolean=false, overColor:uint=0x177cb0)
 		{
 			super(text, color, fontSize, bold, wrap);
 							

@@ -1,30 +1,23 @@
 package com.pintu.widgets{
 
-	import com.adobe.utils.StringUtil;
 	import com.pintu.api.ApiMethods;
 	import com.pintu.api.IPintu;
 	import com.pintu.api.PintuImpl;
-	import com.pintu.common.BusyIndicator;
-	import com.pintu.config.InitParams;
-	import com.pintu.config.StyleParams;
 	import com.pintu.controller.PicDOBuilder;
 	import com.pintu.events.*;
 	import com.pintu.utils.Logger;
 	
-	import flash.display.Shape;
-	import flash.display.Sprite;
 	import flash.events.Event;
-	import flash.events.MouseEvent;
-	import flash.utils.Timer;
-	
-	import org.casalib.display.CasaSprite;
 
 	/**
 	 * 主工作类，用来生成和展示图片及相关信息
 	 * 主要是跟数据交互有关的操作类
 	 */ 
 	public class MainDisplayArea extends MainDisplayBase{
-							
+		
+		public static const THUMBNAIL_BYTAG:String = "thumbnailOfTag";
+		public static const SEARCHRESULT_BYTAG:String = "searchResultOfTag";
+		public static const GETPICS_BYUSER:String = "getPicsOfUser";
 		
 		private var _model:IPintu;
 		private var _picBuilder:PicDOBuilder;
@@ -45,7 +38,14 @@ package com.pintu.widgets{
 		private var _myPostsPageNum:int;
 		//我的收藏分页
 		private var _myFavoPageNum:int;
+		//查询分页数
+		private var _seachResultPageNum:int;
 		
+		//按标签查询参数
+		private var _tagKey:String;
+		
+		//按用户查询图片
+		private var _selectedUser:String;
 		
 		/**
 		 * 从非登陆状态切换到登陆状态时，很奇怪有两次事件响应
@@ -61,17 +61,15 @@ package com.pintu.widgets{
 		public function MainDisplayArea(model:IPintu){							
 			//父类MainDisplayBase用来创建显示内容
 			super();		
-			
-			Logger.debug("Create MainDisplayArea once...");
-			
-			this._model = model;
+						
+			_model = model;
 			//画廊内容生成工具
-			this._picBuilder = new PicDOBuilder(_picsContainer,_model);
+			_picBuilder = new PicDOBuilder(_picsContainer,_model);
 			//图片工厂要知道放置起始位置
-			this._picBuilder.drawStartX = drawStartX;
-			this._picBuilder.drawStartY = drawStartY;
+			_picBuilder.drawStartX = drawStartX;
+			_picBuilder.drawStartY = drawStartY;
 			//为了让他可以调用以展示进度条和提示
-			this._picBuilder.owner = this;
+			_picBuilder.owner = this;
 			
 			//初始化添加模型监听
 			this.addEventListener(Event.ADDED_TO_STAGE, initModelListener);
@@ -81,8 +79,8 @@ package com.pintu.widgets{
 		}
 	
 		/**
-		 * 当HomePage初始化时，或者点击HeaderBar子菜单时调用
-		 * 在menuHandler方法中调用该方法，从菜单到触发查询的整个流程为：
+		 * 当HomePage初始化时，或者点击HeaderBar子菜单时调用 <br/>
+		 * 在menuHandler方法中调用该方法，从菜单到触发查询的整个流程为：<br/>
 		 * 
 		 * BrowseMode-->HeaderBar-->Main-->_currentModule-->
 		 * menuHandler()-->mainDisplayArea.browseType
@@ -93,13 +91,13 @@ package com.pintu.widgets{
 				_galleryPageNum = 0;
 				_tagPageNum = 0;
 				_myPostsPageNum = 0;
-				_myFavoPageNum = 0;
+				_myFavoPageNum = 0;				
 			}
 			//保存当前查看类型
 			_browseType = type;									
 			
 			//每次进入画廊缩略图模式，就重置结束时间
-			if(_browseType== CategoryTree.CATEGORY_GALLERY_TBMODE){				
+			if(_browseType== BrowseMode.CATEGORY_GALLERY_TBMODE){				
 				_galleryLastRecordTime = new Date().getTime();
 			}			
 			
@@ -108,7 +106,24 @@ package com.pintu.widgets{
 			
 			//delay query..
 			invalidate();
-		}							
+		}
+		
+		/**
+		 * 按标签查询，或者搜索：
+		 * 如果是按标签查询，传入的是id
+		 * 如果是按标签搜索，传入的是标签关键字
+		 */ 
+		public function set tag(key:String):void{
+			_tagKey = key;
+		}
+		
+		/**
+		 * 点击活跃用户，或者点击作者头像都需要指定用户ID
+		 * 同时指明浏览类型为GETPICS_BYUSER
+		 */
+		public function set user(userId:String):void{
+			_selectedUser = userId;
+		}
 		
 		private function initModelListener(event:Event):void{
 			_initialized = true;
@@ -127,6 +142,7 @@ package com.pintu.widgets{
 			PintuImpl(_model).addEventListener(ApiMethods.GETTPICSBYUSER,myPicHandler);
 			PintuImpl(_model).addEventListener(ApiMethods.GETFAVORITEPICS,myFavHandler);
 			
+			PintuImpl(_model).addEventListener(ApiMethods.SEARCHBYTAG,searchResultHandler);
 		}
 		
 		private function removeModelListener(event:Event):void{			
@@ -140,6 +156,8 @@ package com.pintu.widgets{
 			
 			PintuImpl(_model).removeEventListener(ApiMethods.GETTPICSBYUSER,myPicHandler);
 			PintuImpl(_model).removeEventListener(ApiMethods.GETFAVORITEPICS,myFavHandler);
+			
+			PintuImpl(_model).removeEventListener(ApiMethods.SEARCHBYTAG,searchResultHandler);
 			
 			queryAvailableTimer.stop();
 			queryAvailableTimer = null;
@@ -162,14 +180,14 @@ package com.pintu.widgets{
 			//定时器运行期间或者正在查询期间，不能重新查询
 			if(queryAvailableTimer.running || isRunning){
 				//定时器已启动，查询正在进行，不能再次查询				
-				//在主显示区弹出提示
+				//在主显示区弹出提示，这是唯一一个需要派发提示的地方
+				//其余的数据提示都在_picBuilder中派发
 				this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "不能在2秒内持续查询..."));
 				return;
 			}else{
 				queryAvailableTimer.start();
-//				Logger.debug("Start to query for type:"+_browseType);				
-			}						
-//			Logger.debug(">>>To query by type: "+_browseType+" ...");
+			}	
+			
 			//查询前显示进度条
 			showMiddleLoading();
 			
@@ -216,12 +234,24 @@ package com.pintu.widgets{
 					_model.getMyFavorites(_myFavoPageNum.toString());
 					break;
 				
-				default:					
-					//TODO, GET THUMBNIALS BY TAG...
-//					_model.getThumbnailsByTag(_browseType,_tagPageNum.toString());
-//					_tagPageNum++;
-					
-					break;				
+				case THUMBNAIL_BYTAG:										
+					_tagPageNum++;					
+					_model.getThumbnailsByTag(_tagKey,_tagPageNum.toString());
+					break;
+				
+				case SEARCHRESULT_BYTAG:
+					//查询不分页，一把返回
+					_model.searchPicByTagsInput(_tagKey);
+					break;
+				
+				case GETPICS_BYUSER:
+					//查询某人贴图，与查询自己贴图可以共用翻页数
+					//因为查询类型变化后，页面都置为零了
+					//二者使用的事件都相同，所以数据处理逻辑一致
+					_myPostsPageNum ++;
+					_model.getPicsByUser(_selectedUser, _myPostsPageNum.toString());
+					break;
+				
 			}					
 			
 		}		
@@ -234,16 +264,10 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){				
-				var galleryData:String = ResponseEvent(event).data;
-				
-//				Logger.debug("thumbnail data: \n"+galleryData);
-				
+				var galleryData:String = ResponseEvent(event).data;				
+//				Logger.debug("thumbnail data: \n"+galleryData);				
 				//创建画廊
-				_picBuilder.createScrollableMiniGallery(galleryData);					
-				
-				//TODO, CHECK THE LAST GALLERY RECORD TIME...
-				//SO, GET THE NEWEST...
-				
+				_picBuilder.createScrollableMiniGallery(galleryData);				
 			}
 			if(event is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.GETGALLERYBYTIME);
@@ -257,11 +281,9 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-//				Logger.debug("to create big gallery...");		
-				
+//				Logger.debug("to create big gallery...");						
 				var galleryData:String = ResponseEvent(event).data;				
-//				Logger.debug("big gallery data: \n"+galleryData);
-				
+//				Logger.debug("big gallery data: \n"+galleryData);				
 				var picNum:int = _picBuilder.createScrollableBigGallery(galleryData);	
 				//如果没有图了，下次就展示第一页
 				if(picNum==0){
@@ -278,11 +300,9 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-//				Logger.debug("to create hotPic gallery...");		
-				
+//				Logger.debug("to create hotPic gallery...");						
 				var galleryData:String = ResponseEvent(event).data;				
-//				Logger.debug("hotPic data: \n"+galleryData);
-				
+//				Logger.debug("hotPic data: \n"+galleryData);				
 				_picBuilder.createScrollableBigGallery(galleryData);
 			}
 			if(event is PTErrorEvent){
@@ -295,11 +315,9 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-				Logger.debug("to create classic gallery...");		
-				
+//				Logger.debug("to create classic gallery...");						
 				var galleryData:String = ResponseEvent(event).data;				
-//				Logger.debug("classic data: \n"+galleryData);
-				
+//				Logger.debug("classic data: \n"+galleryData);				
 				//渲染事件在PicDetailView中派发
 				_picBuilder.createScrollableBigGallery(galleryData);
 			}
@@ -314,12 +332,10 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-				Logger.debug("to create favored gallery...");		
-				
+//				Logger.debug("to create favored gallery...");						
 				var galleryData:String = ResponseEvent(event).data;				
-//				Logger.debug("favored data: \n"+galleryData);
-				
-				_picBuilder.createScrollableBigGallery(galleryData);
+//				Logger.debug("favored data: \n"+galleryData);				
+				_picBuilder.createScrollableBigGallery(galleryData);				
 			}
 			if(event is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.COLLECTSTATISTICS);
@@ -331,11 +347,13 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(evt is ResponseEvent){
-				Logger.debug("to create my pic list...");
+//				Logger.debug("to create my pic list...");
 				var galleryData:String = ResponseEvent(evt).data;				
-				Logger.debug("my pic data: \n"+galleryData);
-				
-				_picBuilder.createScrollableSimpleGallery(galleryData);
+//				Logger.debug("my pic data: \n"+galleryData);				
+				var resultNum:int = _picBuilder.createScrollableSimpleGallery(galleryData);
+				if(resultNum==0){
+					_myPostsPageNum = 0;
+				}
 			}
 			if(evt is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.GETTPICSBYUSER);
@@ -348,11 +366,13 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(evt is ResponseEvent){
-				Logger.debug("to create my favorites ...");
+//				Logger.debug("to create my favorites ...");
 				var galleryData:String = ResponseEvent(evt).data;				
-				Logger.debug("my favorites data: \n"+galleryData);
-				
-				_picBuilder.createScrollableSimpleGallery(galleryData);
+//				Logger.debug("my favorites data: \n"+galleryData);				
+				var resultNum:int = _picBuilder.createScrollableSimpleGallery(galleryData);
+				if(resultNum==0){
+					_myFavoPageNum = 0;
+				}
 			}
 			if(evt is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.GETFAVORITEPICS);
@@ -362,20 +382,39 @@ package com.pintu.widgets{
 		
 		
 		/**
-		 * 这个数据结构？
+		 * 缩略图
 		 */ 
-		private function tagPicHandler(event:Event):void{
+		private function tagPicHandler(evt:Event):void{
 			//移除进度条
 			hideMiddleLoading();
 			
-			if(event is ResponseEvent){
-				
-				
+			if(evt is ResponseEvent){				
+				var galleryData:String = ResponseEvent(evt).data;				
+//				Logger.debug("thumbnail data: \n"+galleryData);				
+				//创建画廊
+				var result:int = _picBuilder.createScrollableMiniGallery(galleryData);								
+				if(result==0){
+					_tagPageNum = 0;
+				}
 			}
-			if(event is PTErrorEvent){
-				
+			if(evt is PTErrorEvent){
+				Logger.error("Error in calling: "+ApiMethods.GETTHUMBNAILSBYTAG);
 			}			
 		}	
+		
+		private function searchResultHandler(evt:Event):void{
+			//移除进度条
+			hideMiddleLoading();
+			
+			if(evt is ResponseEvent){	
+				
+			}
+			
+			if(evt is PTErrorEvent){
+				
+			}
+			
+		}
 		
 
 		//6小时以前

@@ -21,7 +21,9 @@ package com.pintu.events
 		//修改用户资料
 		public static const POST_USERINFO:String = "modifyUserInfo";
 		
-		//弹出提示事件
+		/**
+		 * 弹出提示事件，这是系统事件只有Main来监听并处理
+		 */ 
 		public static const HINT_USER:String = "hintToUser";
 		//进度条事件
 		public static const PROGRESS:String = "progress";
@@ -37,6 +39,13 @@ package com.pintu.events
 		
 		//修改用户资料后刷新
 		public static const REFRESH_USER:String = "refreshUser";
+		
+		//查看点击标签的图片缩略图
+		public static const GETTB_BYTAG:String = "getThumbnailsBytag";
+		
+		//点击活跃用户查看他的贴图
+		public static const GETPICS_BYUSER:String = "getPicsByUser";
+		
 		
 		
 		

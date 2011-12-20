@@ -9,6 +9,9 @@ package com.pintu.controller{
 	import flash.net.SharedObject;
 	import flash.net.SharedObjectFlushStatus;
 	
+	/**
+	 * 用于登陆用户状态缓存
+	 */ 
 	public class GlobalController{
 		
 		//是否为调试模式
@@ -50,11 +53,14 @@ package com.pintu.controller{
 				return;
 			}
 			
+			//如果缓存过用户，那么肯定是登陆过了
+			if(cs.data["userId"] && cs.data["roleName"]){
+				_isLogged = true;
+			}
+			
 			//如果用户登录过了，则从缓存中初始化用户信息
-			if(cs.data["userId"])
-				userId = cs.data["userId"];
-			if(cs.data["roleName"])
-				roleName = cs.data["roleName"];
+			if(cs.data["userId"]) userId = cs.data["userId"];
+			if(cs.data["roleName"]) roleName = cs.data["roleName"];
 			
 		}
 		
@@ -63,7 +69,7 @@ package com.pintu.controller{
 			//当前应用要保存下来
 			userId = user;
 			roleName = role;
-			
+			_isLogged = true;
 			//同时保存到sharedobject文件
 			cs = SharedObject.getLocal("ipintu");			
 			cs.data["userId"] = user;
@@ -72,7 +78,7 @@ package com.pintu.controller{
 			var result:String = cs.flush(500);
 			//判断是否保存成功
 			if(result==SharedObjectFlushStatus.FLUSHED){
-				Logger.debug("User log info successfully saved to disk!");
+				Logger.debug("User login succeed!");
 			}
 			
 		}
@@ -80,8 +86,10 @@ package com.pintu.controller{
 		public static function clearUser():void{
 			//清空缓存
 			cs.clear();
+			_isLogged = false;
 			//用户ID置为guest
 			userId = GUEST_USER_ACCOUNT;
+			Logger.debug("User log out!");
 		}
 		
 		public static function get loggedUser():String{						
@@ -90,10 +98,7 @@ package com.pintu.controller{
 		
 		public static function get isLogged():Boolean{
 			//如果是guest用户，则没有登录
-			if(userId==GUEST_USER_ACCOUNT){
-				return false;
-			}
-			return true;
+			return _isLogged;
 		}
 		
 		public static function get usePaperTile():Boolean{
