@@ -45,12 +45,18 @@ package com.pintu.api{
 			_currentUser = userId;
 			
 			client = new SimpleHttpClient(getServiceUrl(),userId);
-			//执行一个，清除一个
+			//执行一个，清除一个			
 			client.addEventListener("complete",clearHeaderTask);
+			//FIXME, 这有一个没执行完，其余的都挂了！！！
+			//2011/12/21
+			client.addEventListener("error",clearHeaderTask);
 			
 			taskQueue = new ArrayList();
 			
-			//慎用啊，销毁时一定要停掉			
+			//慎用啊，销毁时一定要停掉
+			//丫在不停的跑，真慎得慌
+			//没关系，destory收拾你
+			//2011/12/21
 			taskTimer = new Timer(100);
 			taskTimer.addEventListener(TimerEvent.TIMER, excuteTaskQueue);
 			taskTimer.start();			
@@ -88,6 +94,11 @@ package com.pintu.api{
 			taskTimer = null;
 		}
 		
+		/**
+		 * 这个方法目前没用到啊，似乎没必要对外暴露啊
+		 * 有了队列没必要整这个了
+		 * 2011/12/21
+		 */ 
 		public function get isIdle():Boolean{
 			return client.isRunning();
 		}
@@ -121,7 +132,10 @@ package com.pintu.api{
 		
 		
 		/**
-		 * 新建任务到队列中
+		 * 新建任务到队列中<br/>
+		 * 只管往进放，只是在模型调用层做查询拦截，例如：<br/>
+		 * MainDisplayArea.queryPicByType用开关值和定时器拦截频繁调用<br/>
+		 * 2011/12/21
 		 */ 
 		protected function addHttpTask(nameValues:Array, methodName:String):void{
 			var task:Object = {method:methodName, params:nameValues};

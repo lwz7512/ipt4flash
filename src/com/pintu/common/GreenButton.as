@@ -9,9 +9,9 @@ package com.pintu.common{
 	
 	public class GreenButton extends Button{
 		
-		public function GreenButton()
-		{
+		public function GreenButton(){
 			super();
+			
 			this.setStyle(ButtonSkin.style_backgroundColors, 
 				[StyleParams.HEADERBAR_NEARBOTTOM_LIGHTGREEN, StyleParams.HEADERBAR_BOTTOM_LIGHTGREEN]);
 			this.setStyle(ButtonSkin.style_overBackgroundColors, 
@@ -33,6 +33,8 @@ package com.pintu.common{
 				Label.style.size, 12,
 				Label.style.verticalAlign, Position.MIDDLE
 			]);
+			
+			
 		}
 		
 	} //end of class

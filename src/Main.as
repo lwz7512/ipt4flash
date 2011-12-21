@@ -5,15 +5,22 @@
  */ 
 package{
 	
+	import com.greensock.TweenLite;
+	
 	import com.pintu.api.*;
 	import com.pintu.common.Toast;
 	import com.pintu.config.InitParams;
+	import com.pintu.config.PopWinNames;
 	import com.pintu.controller.*;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.modules.IMenuClickResponder;
 	import com.pintu.utils.Logger;
 	import com.pintu.widgets.FooterBar;
 	import com.pintu.widgets.HeaderBar;
+	import com.pintu.window.AboutWin;
+	import com.pintu.window.EditWinBase;
+	import com.pintu.window.FeedbackWin;
+	import com.pintu.window.SettingWin;
 	
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -27,8 +34,7 @@ package{
 	import org.libspark.ui.SWFWheel;
 		
 	public class Main extends Sprite{
-		
-				
+						
 		/**
 		 * 整个应用只有一个模型，即服务实现的一个实例
 		 * 各个widget都是用的这同一个实例
@@ -37,6 +43,11 @@ package{
 		 * 在视图Event.REMOVED_FROM_STAGE进行移除
 		 */ 
 		private var model:IPintu;
+		/**
+		 * 当前模块，比如HomePage
+		 * 都要实现这个接口，以对菜单动作进行响应
+		 */ 
+		private var _currentModule:IMenuClickResponder;
 				
 		private var navigator:GlobalNavigator;
 		
@@ -44,13 +55,11 @@ package{
 		private var footer:FooterBar;
 		private var currentModule:Sprite;
 		
-		private var tileImagePath:String = "assets/paper103.png";
+		private var tileImagePath:String = "assets/paper103.png";		
 		
-		/**
-		 * 当前模块，比如HomePage
-		 * 都要实现这个接口，以对菜单动作进行响应
-		 */ 
-		private var _currentModule:IMenuClickResponder;
+		private var settingWin:SettingWin;
+		private var aboutWin:AboutWin;
+		private var feedbackWin:FeedbackWin;
 		
 		
 		
@@ -158,23 +167,6 @@ package{
 			moveHeaderBarTop();
 		}		
 		
-		
-		private function buildHeaderMenu(isLogged:Boolean):void{
-			header = new HeaderBar(isLogged);
-			header.addEventListener(PintuEvent.BROWSE_CHANGED, browseTypeChanged);
-			this.addChild(header);			
-		}
-		
-		private function browseTypeChanged(evt:PintuEvent):void{
-			_currentModule.menuHandler(PintuEvent.BROWSE_CHANGED, evt.data);
-		}
-		
-		
-		private function buildFooterContent():void{
-			footer = new FooterBar();
-			this.addChild(footer);
-		}
-		
 		/**
 		 * 主菜单置顶，好让它盖住下面的子菜单，这样子菜单可以在画廊上面显示
 		 */ 
@@ -213,9 +205,73 @@ package{
 			Toast.getInstance(this).show(hint,middleX,middleY);
 		}
 			
+		private function buildHeaderMenu(isLogged:Boolean):void{
+			header = new HeaderBar(isLogged);
+			header.addEventListener(PintuEvent.BROWSE_CHANGED, browseTypeChanged);
+			header.addEventListener(PintuEvent.SEARCH_BYTAGS, searchHandler);
+			header.addEventListener(PintuEvent.OPEN_WIN, popUpWinHandler);
+			
+			this.addChild(header);			
+		}
 		
+		private function browseTypeChanged(evt:PintuEvent):void{
+			_currentModule.menuHandler(PintuEvent.BROWSE_CHANGED, evt.data);
+		}
+		private function searchHandler(evt:PintuEvent):void{
+			var keyWord:String = evt.data;
+			_currentModule.searchable(keyWord);
+		}		
+		private function popUpWinHandler(evt:PintuEvent):void{
+			var winName:String = evt.data;
+			
+			var currentWin:EditWinBase;
+			
+			switch(winName){
+				case PopWinNames.SETTING_WIN:
+					if(!settingWin) settingWin = new SettingWin(this.stage);
+					currentWin = settingWin;
+					break;
+				
+				case PopWinNames.ABOUT_WIN:
+					if(!aboutWin) aboutWin = new AboutWin(this.stage);
+					currentWin = aboutWin;
+					break;
+				
+				case PopWinNames.FEEDBACK_WIN:
+					if(!feedbackWin) feedbackWin = new FeedbackWin(this.stage);
+					currentWin = feedbackWin;
+					break;				
+			}
+			//打开窗口
+			dropCenterWindow(currentWin);
+			
+		}
 		
+		/**
+		 * 向下滑出窗口
+		 */ 
+		private function dropCenterWindow(win:EditWinBase):void{
+			win.x = (InitParams.appWidth-win.width)/2;
+			//屏幕上方
+			win.y = -win.height;
+			
+			//FIXME, 注意：必须添加在顶级
+			this.stage.addChild(win);
+			
+			var endY:Number;
+			if(InitParams.isStretchHeight()){
+				endY = (InitParams.appHeight-win.height)/2;
+			}else{
+				endY = (InitParams.MINAPP_HEIGHT-win.height)/2;
+			}
+			//动画切入
+			TweenLite.to(win, 0.6, {y:endY});
+		}
 		
+		private function buildFooterContent():void{
+			footer = new FooterBar();
+			this.addChild(footer);
+		}
 		
 		
 	} //end of class

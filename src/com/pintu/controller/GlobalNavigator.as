@@ -10,7 +10,10 @@ package com.pintu.controller{
 	
 	import org.casalib.display.CasaSprite;
 	
-	
+	/**
+	 * 主要用于模块之间的切换，例如登录和退出状态的切换
+	 * 2011/12/21
+	 */ 
 	public class GlobalNavigator{		
 		
 		//module names...

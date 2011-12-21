@@ -2,6 +2,7 @@ package com.pintu.modules
 {
 	import com.pintu.api.IPintu;
 	import com.pintu.config.*;
+	import com.pintu.controller.GlobalController;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
 	import com.pintu.widgets.*;
@@ -28,8 +29,15 @@ package com.pintu.modules
 			this._model = model;
 			
 			mainDisplayArea = new MainDisplayArea(_model);
-			//未登录，默认画廊
-			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;	
+			
+			//设置即将执行的查询模式：缩略图模式画廊
+			var savedBrowseType:String = GlobalController.browseType;
+			if(savedBrowseType){
+				mainDisplayArea.browseType = savedBrowseType;
+			}else{
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;				
+			}
+			
 			this.addChild(mainDisplayArea);			
 			
 			login = new LoginBlock(_model);
@@ -103,6 +111,10 @@ package com.pintu.modules
 				//告诉显示区，按照随机模式查询
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_FAVORED;
 			}
+		}
+		
+		public function searchable(key:String):void{
+			trace(".... to search by: "+key);
 		}
 		
 		//重写销毁函数

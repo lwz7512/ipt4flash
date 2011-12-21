@@ -46,8 +46,8 @@ package com.pintu.events
 		//点击活跃用户查看他的贴图
 		public static const GETPICS_BYUSER:String = "getPicsByUser";
 		
-		
-		
+		//HeaderBar派发事件，通知HomePage打开窗口
+		public static const OPEN_WIN:String = "openWin";
 		
 		//通常带的参数
 		public var data:String;

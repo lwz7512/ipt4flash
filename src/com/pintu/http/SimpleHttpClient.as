@@ -39,6 +39,8 @@ package com.pintu.http
 		
 		/**
 		 * 判断当前提交是否完成
+		 * 模型会依据此判断查询状态，以决定是否执行下一个任务
+		 * 2011/12/21
 		 */ 
 		public function isRunning():Boolean{
 			return _isRuning;
@@ -51,6 +53,9 @@ package com.pintu.http
 		/**
 		 * params format:
 		 * [{name:"key1", value:"FirstName1"}, {name:"key2", value: "LastName1"}];
+		 * 
+		 * HTTP任务队列使用的方法
+		 * 2011/12/21
 		 */ 
 		public function post(params:Array, method:String):void{
 			//服务
@@ -112,15 +117,27 @@ package com.pintu.http
 			
 			_client.addEventListener(HttpErrorEvent.ERROR,function(evt:HttpErrorEvent):void{
 				Logger.error("Method:"+method+" , error: "+evt.text);
+				dispatchEvent(new Event("error"));
+				//提交结束
+				_isRuning = false;
 			});
 			_client.addEventListener(HttpErrorEvent.TIMEOUT_ERROR,function(evt:HttpErrorEvent):void{
 				Logger.error("Method:"+method+" , error: "+evt.text);
+				dispatchEvent(new Event("error"));
+				//提交结束
+				_isRuning = false;
 			});
 			_client.addEventListener(IOErrorEvent.IO_ERROR,function(evt:IOErrorEvent):void{
 				Logger.error("Method:"+method+" , error: "+evt.text);
+				dispatchEvent(new Event("error"));
+				//提交结束
+				_isRuning = false;
 			});
 			_client.addEventListener(SecurityErrorEvent.SECURITY_ERROR,function(evt:SecurityErrorEvent):void{
 				Logger.error("Method:"+method+" , error: "+evt.text);
+				dispatchEvent(new Event("error"));
+				//提交结束
+				_isRuning = false;
 			});
 			
 			//提交
@@ -140,9 +157,13 @@ package com.pintu.http
 			return includeUser;
 		}
 		
-		/**		 
+		
+		/**
 		 * params format:
 		 * [{name:"key1", value:"FirstName1"}, {name:"key2", value: "LastName1"}];
+		 * 
+		 * 不走队列的方法
+		 * 2011/12/21
 		 */ 
 		public function uploadImage(file:FileReference, params:Array, methodName:String):void{						
 			if(!file.data){
@@ -203,6 +224,10 @@ package com.pintu.http
 			_isRuning = true;
 		}
 		
+		/**
+		 * 不走队列的方法
+		 * 2011/12/21
+		 */ 
 		public function uploadAvatar(imgData:ByteArray, params:Array, methodName:String):void{
 			var fileName:String = "myAvatar.jpg";
 			var contentType:String = "image/jpeg";		

@@ -2,6 +2,7 @@ package com.pintu.controller{
 	
 	import com.pintu.common.Toast;
 	import com.pintu.config.InitParams;
+	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
 	
 	import flash.display.Sprite;
@@ -11,8 +12,17 @@ package com.pintu.controller{
 	
 	/**
 	 * 用于登陆用户状态缓存
+	 * 以及用户设置保存
+	 * 2011/12/21
 	 */ 
 	public class GlobalController{
+		
+		/**
+		 * 每次登陆后记下账号，用于修改昵称时调用
+		 * UserDetailsBlock在获取用户数据后记下
+		 * UserEditWin在打开窗口时，要显示修改
+		 */ 
+		public static var account:String;
 		
 		//是否为调试模式
 		public static const isDebug:Boolean = true;	
@@ -31,25 +41,22 @@ package com.pintu.controller{
 		//默认是来宾角色
 		private static var roleName:String = "guest";
 		
-		//将来做提示
-		private static var toastContainer:Sprite;
+		//派发提示事件
+		private static var _context:Sprite;
 		
-		//每次登陆后记下账号，用于修改昵称时调用
-		public static var account:String;
+		private static var _browseType:String;
 		
 	
 		public static function initClientStorage(context:Sprite):void{
-			//弹出异常提示的容器
-			toastContainer = context;
+			_context = context;
 			
 			try{
 				cs = SharedObject.getLocal("ipintu");				
 			}catch(e:Error){
 				Logger.error("Can not create client data storage!");
-				Toast.getInstance(toastContainer).show(
-					"Can not create client data storage!",
-					InitParams.appWidth/2,
-					InitParams.appHeight/2);
+				
+				hintToUser("Can not create client data storage!");
+								
 				return;
 			}
 			
@@ -62,6 +69,9 @@ package com.pintu.controller{
 			if(cs.data["userId"]) userId = cs.data["userId"];
 			if(cs.data["roleName"]) roleName = cs.data["roleName"];
 			
+			//初始化保存过的浏览方式
+			if(cs.data["browseType"]) _browseType = cs.data["browseType"];
+			
 		}
 		
 		
@@ -70,6 +80,7 @@ package com.pintu.controller{
 			userId = user;
 			roleName = role;
 			_isLogged = true;
+			
 			//同时保存到sharedobject文件
 			cs = SharedObject.getLocal("ipintu");			
 			cs.data["userId"] = user;
@@ -81,6 +92,30 @@ package com.pintu.controller{
 				Logger.debug("User login succeed!");
 			}
 			
+		}
+		
+		public static function rememberBrowseType(browseType:String):void{
+			
+			_browseType = browseType;
+			
+			cs = SharedObject.getLocal("ipintu");			
+			cs.data["browseType"] = browseType;
+			var result:String = cs.flush(500);
+			//判断是否保存成功
+			if(result==SharedObjectFlushStatus.FLUSHED){
+				Logger.debug("save browse type succeed!");
+				
+				hintToUser("设置保存成功，下次访问生效！");
+			}
+		}
+		
+		public static function get browseType():String{
+			return _browseType;
+		}
+		
+		private static function hintToUser(info:String):void{
+			var hint:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, info);
+			_context.dispatchEvent(hint);
 		}
 		
 		public static function clearUser():void{

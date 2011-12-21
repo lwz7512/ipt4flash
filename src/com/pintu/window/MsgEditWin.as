@@ -1,8 +1,7 @@
-package com.pintu.widgets{
+package com.pintu.window{
 	
 	import com.pintu.api.*;
 	import com.pintu.common.DisableTxtInput;
-	import com.pintu.common.EditWinBase;
 	import com.pintu.common.SimpleText;
 	import com.pintu.common.TextArea;
 	import com.pintu.config.StyleParams;

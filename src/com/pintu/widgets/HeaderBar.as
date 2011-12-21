@@ -63,7 +63,7 @@ package com.pintu.widgets
 		private var subMenuContainer:CasaSprite;
 		//首页子菜单
 		private var browseMode:BrowseMode;
-		//TODO, 其他子菜单
+		
 		
 		
 		
@@ -86,7 +86,7 @@ package com.pintu.widgets
 //			var shadow:DropShadowFilter = new DropShadowFilter(4,45,0x666666,0.8);
 //			mainMenuContainer.filters = [shadow];			
 			
-			showLogo();		
+			showLogo();
 			
 //			showVersion();
 		}
@@ -133,6 +133,17 @@ package com.pintu.widgets
 			//子菜单都画在子容器中
 			//放在HeaderBar后面隐藏，鼠标点击菜单滑出
 			createSubMenus();
+			
+		}
+		
+		private function createSubMenus():void{
+			//首页子菜单
+			browseMode = new BrowseMode();
+			browseMode.x = homeMenu.x;
+			browseMode.y = -browseMode.height;
+			subMenuContainer.addChild(browseMode);
+			
+			//TODO, 其他子菜单
 			
 		}
 		
@@ -200,7 +211,7 @@ package com.pintu.widgets
 			homeMenu.addEventListener(MouseEvent.CLICK, onHomeMenuClick);
 			mainMenuContainer.addChild(homeMenu);
 			
-			//TODO, 社区菜单，对应社区模块
+			//社区菜单，对应社区模块
 			communityMenu = new TextMenu(InitParams.HEADERMENU_BG_WIDTH,InitParams.HEADER_HEIGHT);
 			communityMenu.setSkinStyle(upColors,overColors,downColors);
 			communityMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
@@ -213,7 +224,8 @@ package com.pintu.widgets
 			communityMenu.y = 0;
 			communityMenu.enabled = false;
 			mainMenuContainer.addChild(communityMenu);
-			//TODO, 夜市模块，对应市场模块
+			
+			//夜市模块，对应市场模块
 			marketMenu = new TextMenu(InitParams.HEADERMENU_BG_WIDTH,InitParams.HEADER_HEIGHT);
 			marketMenu.setSkinStyle(upColors,overColors,downColors);
 			marketMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
@@ -227,7 +239,7 @@ package com.pintu.widgets
 			marketMenu.enabled = false;
 			mainMenuContainer.addChild(marketMenu);
 			
-			//	TODO, 设置菜单，点击打开窗口
+			//	设置菜单，点击打开窗口
 			settingMenu = new TextMenu(InitParams.HEADERMENU_BG_WIDTH,InitParams.HEADER_HEIGHT);
 			settingMenu.setSkinStyle(upColors,overColors,downColors);
 			settingMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
@@ -238,10 +250,10 @@ package com.pintu.widgets
 			settingMenu.label = "设置";
 			settingMenu.x = marketMenu.x+InitParams.HEADERMENU_BG_WIDTH+menuGap;
 			settingMenu.y = 0;
-//			settingMenu.enabled = false;
+			settingMenu.addEventListener(MouseEvent.CLICK, openSettingWin);
 			mainMenuContainer.addChild(settingMenu);
 			
-			//TODO, 关于菜单， 点击打开窗口
+			//关于菜单， 点击打开窗口
 			aboutMenu = new TextMenu(InitParams.HEADERMENU_BG_WIDTH,InitParams.HEADER_HEIGHT);
 			aboutMenu.setSkinStyle(upColors,overColors,downColors);
 			aboutMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
@@ -252,14 +264,14 @@ package com.pintu.widgets
 			aboutMenu.label = "关于";
 			aboutMenu.x = settingMenu.x+InitParams.HEADERMENU_BG_WIDTH+menuGap;
 			aboutMenu.y = 0;
-//			aboutMenu.enabled = false;
+			aboutMenu.addEventListener(MouseEvent.CLICK, openAboutWin);
 			mainMenuContainer.addChild(aboutMenu);
 
 		}
+
 		
 		private function createFeedbackMenu():void{
-			//TODO, 反馈菜单（类型包括：建议，BUG），点击打开窗口
-			//放在退出的左侧，搜索的右侧
+			
 			feedbackMenu = new TextMenu(InitParams.HEADERMENU_BG_WIDTH,InitParams.HEADER_HEIGHT);
 			feedbackMenu.setSkinStyle(upColors,overColors,downColors);
 			feedbackMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
@@ -270,12 +282,13 @@ package com.pintu.widgets
 			feedbackMenu.label = "反馈";
 			feedbackMenu.x = searchInput.x+searchInput.width+InitParams.HEADERMENU_BG_WIDTH+menuGap;
 			feedbackMenu.y = 0;
+			feedbackMenu.addEventListener(MouseEvent.CLICK, openFeedbackWin);
 			mainMenuContainer.addChild(feedbackMenu);
 			
 			if(!_isLogged){
 				feedbackMenu.visible = false;
 			}
-		}		
+		}
 		
 		private function createSearchInput():void{
 			//搜索输入框
@@ -371,16 +384,29 @@ package com.pintu.widgets
 			
 		}
 		
-		private function createSubMenus():void{
-			//首页子菜单
-			browseMode = new BrowseMode();
-			browseMode.x = homeMenu.x;
-			browseMode.y = -browseMode.height;
-			subMenuContainer.addChild(browseMode);
-			
-			//TODO, 其他子菜单
-			
+		/**
+		 * 派发打开窗口事件，在主应用中处理
+		 */ 
+		private function openSettingWin(evt:MouseEvent):void{
+			var openEvt:PintuEvent = new PintuEvent(PintuEvent.OPEN_WIN, PopWinNames.SETTING_WIN);
+			this.dispatchEvent(openEvt);
 		}
+		/**
+		 * 派发打开窗口事件，在主应用中处理
+		 */
+		private function openAboutWin(evt:MouseEvent):void{
+			var openEvt:PintuEvent = new PintuEvent(PintuEvent.OPEN_WIN, PopWinNames.ABOUT_WIN);
+			this.dispatchEvent(openEvt);
+		}		
+		/**
+		 * 派发打开窗口事件，在主应用中处理
+		 */
+		private function openFeedbackWin(evt:MouseEvent):void{
+			var openEvt:PintuEvent = new PintuEvent(PintuEvent.OPEN_WIN, PopWinNames.FEEDBACK_WIN);
+			this.dispatchEvent(openEvt);
+		}
+		
+
 		
 		
 	} //end of class

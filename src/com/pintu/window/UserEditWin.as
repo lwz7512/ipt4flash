@@ -1,4 +1,4 @@
-package com.pintu.widgets{
+package com.pintu.window{
 	
 	import com.adobe.images.JPGEncoder;
 	import com.pintu.api.*;

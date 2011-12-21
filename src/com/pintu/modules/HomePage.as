@@ -2,12 +2,14 @@ package com.pintu.modules{
 
 	import com.greensock.TweenLite;
 	import com.pintu.api.*;
-	import com.pintu.common.EditWinBase;
 	import com.pintu.config.InitParams;
 	import com.pintu.controller.FileManager;
+	import com.pintu.controller.GlobalController;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
 	import com.pintu.widgets.*;
+	import com.pintu.window.*;
+	import com.pintu.window.EditWinBase;
 	
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
@@ -40,9 +42,15 @@ package com.pintu.modules{
 			
 			//呈现图片的主要区域，大部分逻辑都在这里
 			mainDisplayArea = new MainDisplayArea(_model);
+			
 			//设置即将执行的查询模式：缩略图模式画廊
-			//TODO, 后面如果保存了浏览模式，就要修改这里的值
-			mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;
+			var savedBrowseType:String = GlobalController.browseType;
+			if(savedBrowseType){
+				mainDisplayArea.browseType = savedBrowseType;
+			}else{
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;				
+			}
+			
 			//PicDetailView派发的事件，内部无法处理下载动作
 			mainDisplayArea.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);		
 			this.addChild(mainDisplayArea);
@@ -205,6 +213,10 @@ package com.pintu.modules{
 			
 		}
 		
+		public function searchable(key:String):void{			
+			mainDisplayArea.browseType = MainDisplayArea.SEARCHRESULT_BYTAG;
+			mainDisplayArea.tag = key;
+		}
 		
 		public  function killMe():void{
 			super.destroy();

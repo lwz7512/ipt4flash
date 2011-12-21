@@ -252,7 +252,7 @@ package com.pintu.widgets{
 					_model.getPicsByUser(_selectedUser, _myPostsPageNum.toString());
 					break;
 				
-			}					
+			}
 			
 		}		
 		
@@ -265,7 +265,6 @@ package com.pintu.widgets{
 			
 			if(event is ResponseEvent){				
 				var galleryData:String = ResponseEvent(event).data;				
-//				Logger.debug("thumbnail data: \n"+galleryData);				
 				//创建画廊
 				_picBuilder.createScrollableMiniGallery(galleryData);				
 			}
@@ -281,9 +280,7 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-//				Logger.debug("to create big gallery...");						
 				var galleryData:String = ResponseEvent(event).data;				
-//				Logger.debug("big gallery data: \n"+galleryData);				
 				var picNum:int = _picBuilder.createScrollableBigGallery(galleryData);	
 				//如果没有图了，下次就展示第一页
 				if(picNum==0){
@@ -300,9 +297,7 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-//				Logger.debug("to create hotPic gallery...");						
 				var galleryData:String = ResponseEvent(event).data;				
-//				Logger.debug("hotPic data: \n"+galleryData);				
 				_picBuilder.createScrollableBigGallery(galleryData);
 			}
 			if(event is PTErrorEvent){
@@ -315,9 +310,7 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-//				Logger.debug("to create classic gallery...");						
 				var galleryData:String = ResponseEvent(event).data;				
-//				Logger.debug("classic data: \n"+galleryData);				
 				//渲染事件在PicDetailView中派发
 				_picBuilder.createScrollableBigGallery(galleryData);
 			}
@@ -332,9 +325,7 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(event is ResponseEvent){
-//				Logger.debug("to create favored gallery...");						
 				var galleryData:String = ResponseEvent(event).data;				
-//				Logger.debug("favored data: \n"+galleryData);				
 				_picBuilder.createScrollableBigGallery(galleryData);				
 			}
 			if(event is PTErrorEvent){
@@ -347,9 +338,7 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(evt is ResponseEvent){
-//				Logger.debug("to create my pic list...");
 				var galleryData:String = ResponseEvent(evt).data;				
-//				Logger.debug("my pic data: \n"+galleryData);				
 				var resultNum:int = _picBuilder.createScrollableSimpleGallery(galleryData);
 				if(resultNum==0){
 					_myPostsPageNum = 0;
@@ -366,9 +355,7 @@ package com.pintu.widgets{
 			hideMiddleLoading();
 			
 			if(evt is ResponseEvent){
-//				Logger.debug("to create my favorites ...");
 				var galleryData:String = ResponseEvent(evt).data;				
-//				Logger.debug("my favorites data: \n"+galleryData);				
 				var resultNum:int = _picBuilder.createScrollableSimpleGallery(galleryData);
 				if(resultNum==0){
 					_myFavoPageNum = 0;
@@ -378,8 +365,7 @@ package com.pintu.widgets{
 				Logger.error("Error in calling: "+ApiMethods.GETFAVORITEPICS);
 			}
 			
-		}
-		
+		}		
 		
 		/**
 		 * 缩略图
@@ -390,7 +376,6 @@ package com.pintu.widgets{
 			
 			if(evt is ResponseEvent){				
 				var galleryData:String = ResponseEvent(evt).data;				
-//				Logger.debug("thumbnail data: \n"+galleryData);				
 				//创建画廊
 				var result:int = _picBuilder.createScrollableMiniGallery(galleryData);								
 				if(result==0){
@@ -406,12 +391,12 @@ package com.pintu.widgets{
 			//移除进度条
 			hideMiddleLoading();
 			
-			if(evt is ResponseEvent){	
-				
+			if(evt is ResponseEvent){
+				var galleryData:String = ResponseEvent(evt).data;				
+				_picBuilder.createScrollableBigGallery(galleryData);					
 			}
-			
 			if(evt is PTErrorEvent){
-				
+				Logger.error("Error in calling: "+ApiMethods.SEARCHBYTAG);
 			}
 			
 		}
@@ -426,12 +411,14 @@ package com.pintu.widgets{
 			//派发尺寸改变事件	
 			if(this.stage) {
 				this.stage.invalidate();	
-//				Logger.debug("pic detail view rendered...");
 			}else{
 				Logger.warn("stage in pic Main Display Area lost!");
 			}
 		}
 		
+		/**
+		 * HomePage内调用
+		 */ 
 		public function createUserMsgs(msgs:Array):void{
 			//放心创建吧，外面校验过了
 			_picBuilder.createMsgList(msgs);

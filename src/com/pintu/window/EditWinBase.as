@@ -1,8 +1,12 @@
-package com.pintu.common{
+package com.pintu.window{
 	
 	import com.greensock.TweenLite;
 	import com.pintu.api.IPintu;
 	import com.pintu.api.PintuImpl;
+	import com.pintu.common.BusyIndicator;
+	import com.pintu.common.GreenButton;
+	import com.pintu.common.SimpleImage;
+	import com.pintu.common.SimpleText;
 	import com.pintu.config.*;
 	import com.pintu.controller.FileManager;
 	import com.pintu.utils.Logger;
@@ -36,6 +40,12 @@ package com.pintu.common{
 		 * 在窗体销毁时，务必在子类的destroy方法中销毁这个实例
 		 */ 
 		private var _clonedModel:PintuImpl;
+		/**
+		 * 默认都是提交动作，所以这个都是true <br/>
+		 * 如果只是普通的确定关闭，这个为false
+		 */ 
+		private var _showProgressbar:Boolean = true;
+		
 		
 		protected var _elementStartX:Number = 6;
 		protected var _elementStartY:Number = 30;
@@ -55,8 +65,9 @@ package com.pintu.common{
 		private var _width:Number = 320;
 		private var _height:Number = 400;				
 		
-		private var _headerHeight:Number = 24;													
-				
+		private var _headerHeight:Number = 24;
+		
+
 		
 		public function EditWinBase(ctxt:Stage, w:Number=320, h:Number=400, title:String=""){
 			super();
@@ -128,7 +139,7 @@ package com.pintu.common{
 				this.removeChild(_loading);
 			//滑出舞台
 			var initY:Number = -_height;
-			TweenLite.to(this, 0.6, {y:initY, onComplete:reset});
+			TweenLite.to(this, 0.4, {y:initY, onComplete:reset});
 		}
 		
 		/**
@@ -153,7 +164,7 @@ package com.pintu.common{
 		
 		private function createSubmitBtn():void{
 			_sendBtn = new GreenButton();
-			_sendBtn.label = "发送";
+			_sendBtn.label = submitLabel;
 			//这个尺寸跟登陆按钮大小一致
 			_sendBtn.setSize(60, 28);
 			
@@ -164,11 +175,24 @@ package com.pintu.common{
 			this.addChild(_sendBtn);
 		}
 		
+		protected function get submitLabel():String{
+			return "发送";
+		}
+		
 		/**
 		 * 清除进度条和错误提示，禁用提交按钮
 		 * 子类需要重载这个方法来提交内容
+		 * 
+		 * 如果是普通的窗口，则不显示进度条
+		 * 2011/12/21
 		 */ 
 		protected function submit(evt:ButtonEvent):void{
+			
+			if(!_showProgressbar){
+				closeMe(null);
+				return;
+			}
+			
 			if(!_loading) _loading = new BusyIndicator(24);
 			_loading.x = _loadingX;
 			_loading.y = _loadingY;
@@ -215,6 +239,10 @@ package com.pintu.common{
 		}
 		public function get cloneModel():PintuImpl{
 			return _clonedModel;
+		}
+		
+		public function set showProgressbar(s:Boolean):void{
+			_showProgressbar = s;
 		}
 		
 		public override function set width(w:Number):void{

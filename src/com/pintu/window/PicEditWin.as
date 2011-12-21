@@ -1,4 +1,4 @@
-package com.pintu.widgets{
+package com.pintu.window{
 	
 	import com.pintu.common.*;
 	import com.pintu.config.InitParams;
