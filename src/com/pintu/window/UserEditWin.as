@@ -298,13 +298,7 @@ package com.pintu.window{
 		override public function destroy():void{
 			super.destroy();
 			
-			_manager = null;
-			
-			//如果没用到模型，就此打住
-			if(!cloneModel) return;
-			
-			//REMOVE MODEL EVENT LISTENER...						
-			cloneModel.destory();		
+			_manager = null;					
 		}
 		
 		override protected function drawBackground():void{

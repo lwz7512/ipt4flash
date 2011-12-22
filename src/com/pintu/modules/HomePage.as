@@ -114,7 +114,8 @@ package com.pintu.modules{
 		private function editPic(evt:PintuEvent):void{			
 			if(!picEditWin){
 				//只生成一次，必须添加在舞台上，这样才产生全局的Mask
-				picEditWin = new PicEditWin(this.stage, _fileManager);				
+				picEditWin = new PicEditWin(this.stage, _fileManager);	
+				picEditWin.addEventListener(PintuEvent.HINT_USER,sendSuccessHandler);
 			}			
 			dropCenterWindow(picEditWin);
 		}
@@ -123,6 +124,7 @@ package com.pintu.modules{
 			if(!msgEditWin){
 				msgEditWin = new MsgEditWin(this.stage);
 				msgEditWin.sourceModel = _model;
+				msgEditWin.addEventListener(PintuEvent.HINT_USER,sendSuccessHandler);
 			}
 			//回复消息需要这两个参数
 			var receiverId:String = evt.data;
@@ -164,6 +166,11 @@ package com.pintu.modules{
 			}
 			//动画切入
 			TweenLite.to(win, 0.6, {y:endY});
+		}
+		
+		//Main来监听此事件，弹出提示
+		private function sendSuccessHandler(evt:PintuEvent):void{			
+			this.dispatchEvent(evt);
 		}
 		
 		/**
@@ -227,8 +234,10 @@ package com.pintu.modules{
 			//清理窗口实例
 			if(picEditWin) picEditWin.destroy();
 			picEditWin = null;
+			
 			if(msgEditWin) msgEditWin.destroy();
 			msgEditWin = null;
+			
 			if(userEditWin) userEditWin.destroy();
 			userEditWin = null;
 						

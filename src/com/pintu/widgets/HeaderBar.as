@@ -47,7 +47,7 @@ package com.pintu.widgets
 		private var logoLoader:ImageLoad;
 		private var logoBitmap:Bitmap;
 		private var version:TextField;
-		private var logoPath:String = "assets/logo.png";
+		private var logoPath:String = "assets/banner.png";
 		private var versionText:String = "爱品图 v1.0";		
 		private var logoVersionGap:Number = 36;
 		private var versionHomeGap:Number = 100;

@@ -13,7 +13,12 @@ package com.pintu.window{
 	
 	import flash.display.Stage;
 	
+	import org.casalib.display.CasaShape;
 	
+	/**
+	 * 应用的全局窗口，不需要实现销毁方法
+	 * 2011/12/22
+	 */ 
 	public class SettingWin extends EditWinBase{
 		
 		private var tbBtn:RadioButton;
@@ -24,19 +29,32 @@ package com.pintu.window{
 		
 		private var radioGroup : RadioGroup;
 		
-		public function SettingWin(ctxt:Stage, w:Number=320, h:Number=350){
+		public function SettingWin(ctxt:Stage, w:Number=300, h:Number=350){
 			super(ctxt, w, h, "浏览模式设置");
 			
 			//不是提交数据窗口
 			this.showProgressbar = false;
 			
-			_elementStartX += 10;
-			_elementStartY += 10;
+			createFrame();					
 			
 			buildBrowseTypeSetting();
 		}
 		
+		private function createFrame():void{
+			var marging:Number = 4;
+			var frame:CasaShape = new CasaShape();		
+			frame.x = marging;
+			frame.y = _elementStartY;
+			frame.graphics.lineStyle(1, StyleParams.DARKER_BORDER_COLOR);
+			frame.graphics.drawRect(marging,marging,width-16,height-80);
+			this.addChild(frame);
+		}
+		
 		private function buildBrowseTypeSetting():void{
+			
+			_elementStartX += 10;
+			_elementStartY += 10;
+			
 			tbBtn = new RadioButton();
 			tbBtn.label = "最新画廊";
 			tbBtn.value = "gallery_tb";

@@ -10,11 +10,11 @@ package com.pintu.common{
 		protected var _normalFormat:TextFormat;
 		protected var _txt:String;
 		
-		public function SimpleText(text:String, color:uint=0, fontSize:int=12, bold:Boolean=false, wrap:Boolean=true){
+		public function SimpleText(text:String, color:uint=0, fontSize:int=12, bold:Boolean=false, wrap:Boolean=true, selectable:Boolean=false){
 			this.autoSize = "left";
 			this.wordWrap = wrap;
 			this.multiline = true;			
-			this.selectable = false;
+			this.selectable = selectable;
 			
 			_txt = text;
 			

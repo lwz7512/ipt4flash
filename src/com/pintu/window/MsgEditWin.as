@@ -48,7 +48,7 @@ package com.pintu.window{
 		override public function set sourceModel(_model:IPintu):void{
 			super.sourceModel = _model;
 			
-			this.cloneModel.addEventListener(ApiMethods.SENDMSG, closeMe);			
+			this.cloneModel.addEventListener(ApiMethods.SENDMSG, sendMsgHandler);			
 		}
 		
 		//点击提交触发
@@ -82,11 +82,16 @@ package com.pintu.window{
 			if(!cloneModel) return;
 			
 			//REMOVE MODEL EVENT LISTENER...
-			this.cloneModel.removeEventListener(ApiMethods.SENDMSG, closeMe);
+			this.cloneModel.removeEventListener(ApiMethods.SENDMSG, sendMsgHandler);
 			
 			cloneModel.destory();			
 		}
 		
+		private function sendMsgHandler(evt:Event):void{
+			closeMe(null);
+			
+			this.hintToUser("消息发送成功！");
+		}
 		
 		private function createFormElements():void{						
 			

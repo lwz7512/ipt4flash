@@ -6,7 +6,6 @@
 package{
 	
 	import com.greensock.TweenLite;
-	
 	import com.pintu.api.*;
 	import com.pintu.common.Toast;
 	import com.pintu.config.InitParams;
@@ -141,12 +140,16 @@ package{
 			//判断运行状态
 			var runningMode:Boolean = GlobalController.isDebug;
 			if(runningMode){
-				var hint:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "Warning, I'm in DEBUG mode!");
-				dispatchEvent(hint);
+				hintToUser("Warning, I'm in DEBUG mode!");
 			}
 			
 			//app construction completed...
-		}		
+		}
+		
+		private function hintToUser(info:String):void{
+			var hint:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, info);
+			this.dispatchEvent(hint);
+		}
 		
 		//运行时切换模块状态，比如从未登录到登陆
 		private function navigateTo(event:PintuEvent):void{
@@ -238,7 +241,11 @@ package{
 					break;
 				
 				case PopWinNames.FEEDBACK_WIN:
-					if(!feedbackWin) feedbackWin = new FeedbackWin(this.stage);
+					if(!feedbackWin) {
+						feedbackWin = new FeedbackWin(this.stage);
+						feedbackWin.sourceModel = model;
+						feedbackWin.addEventListener(PintuEvent.HINT_USER, hintTextHandler);
+					}
 					currentWin = feedbackWin;
 					break;				
 			}
@@ -246,6 +253,8 @@ package{
 			dropCenterWindow(currentWin);
 			
 		}
+		
+
 		
 		/**
 		 * 向下滑出窗口

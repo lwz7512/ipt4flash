@@ -9,6 +9,7 @@ package com.pintu.window{
 	import com.pintu.common.SimpleText;
 	import com.pintu.config.*;
 	import com.pintu.controller.FileManager;
+	import com.pintu.events.PintuEvent;
 	import com.pintu.utils.Logger;
 	import com.sibirjak.asdpc.button.Button;
 	import com.sibirjak.asdpc.button.ButtonEvent;
@@ -168,7 +169,7 @@ package com.pintu.window{
 			//这个尺寸跟登陆按钮大小一致
 			_sendBtn.setSize(60, 28);
 			
-			_sendBtn.x = _elementStartX+_width-80;
+			_sendBtn.x = _elementStartX+_width-76;
 			_sendBtn.y = _elementStartX+_height-50+_elementPadding;
 			_sendBtn.addEventListener(ButtonEvent.CLICK, submit);
 			
@@ -220,6 +221,11 @@ package com.pintu.window{
 		
 		protected function updateSuggest(hint:String):void{
 			_errorHint.text = hint;
+		}
+		
+		protected function hintToUser(info:String):void{
+			var hint:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, info);
+			this.dispatchEvent(hint);
 		}
 		
 		/**

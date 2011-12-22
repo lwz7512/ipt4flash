@@ -100,6 +100,16 @@ package com.pintu.window{
 			_descInput.text = "";
 		}
 		
+		/**
+		 * 只销毁引用就行了
+		 * 2011/12/22
+		 */ 
+		override public function destroy():void{
+			super.destroy();
+		
+			_manager = null;
+		}	
+		
 		private function showUploadImg(evt:Event):void{
 			if(!shouldDo()) return;
 			
@@ -112,7 +122,8 @@ package com.pintu.window{
 		
 		private function uploadSuccess(evt:Event):void{
 			if(!shouldDo()) return;
-			closeMe(null);			
+			closeMe(null);	
+			this.hintToUser("图片发送成功！");
 		}
 		
 		

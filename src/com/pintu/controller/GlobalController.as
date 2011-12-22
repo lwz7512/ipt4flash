@@ -25,10 +25,15 @@ package com.pintu.controller{
 		public static var account:String;
 		
 		//是否为调试模式
-		public static const isDebug:Boolean = true;	
+		public static const isDebug:Boolean = true;
+		
 		//默认收信人，客服
 		public static const KEFU_ID:String = "b8931b314c24dca4";
 		public static const KEFU_NAME:String = "客服小辣椒";
+		
+		//用户反馈收信人
+		public static const PRODUCT_MANAGER_ID:String = "b053beae20125b5b";
+		public static const PRODUCT_MANAGER_NAME:String = "产品经理";
 		
 		//默认来宾账号
 		private static const GUEST_USER_ACCOUNT:String = "a6c7897a988870d8";		
@@ -37,13 +42,13 @@ package com.pintu.controller{
 		//运行时判断，主应用负责初始化
 		private static var _isLogged:Boolean = false;							
 		//默认是guest账号，登录后更新此记录，并更新缓存
-		private static var userId:String = "a6c7897a988870d8";
+		private static var userId:String = GUEST_USER_ACCOUNT;
 		//默认是来宾角色
 		private static var roleName:String = "guest";
 		
 		//派发提示事件
 		private static var _context:Sprite;
-		
+		//设置的浏览模式
 		private static var _browseType:String;
 		
 	
