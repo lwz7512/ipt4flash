@@ -25,7 +25,7 @@ package com.pintu.controller{
 		public static var account:String;
 		
 		//是否为调试模式
-		public static const isDebug:Boolean = true;
+		public static const isDebug:Boolean = false;
 		
 		//默认收信人，客服
 		public static const KEFU_ID:String = "b8931b314c24dca4";

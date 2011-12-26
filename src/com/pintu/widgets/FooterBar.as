@@ -54,7 +54,7 @@ package com.pintu.widgets
 			var rightSide:Number = InitParams.startDrawingX()+InitParams.MINAPP_WIDTH;
 			
 			//联系我们
-			var contactUs:SimpleText = new SimpleText("联系我们："+PublishParams.SERVICE_MAIL,
+			var contactUs:SimpleText = new SimpleText("联系我们："+PublishParams.CONTACT_MAIL,
 				StyleParams.HEADERBAR_BOTTOM_LIGHTGREEN,12,false,false,true);
 			contactUs.width = 150;
 			contactUs.x = rightSide-250;
