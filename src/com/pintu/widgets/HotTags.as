@@ -64,9 +64,17 @@ package com.pintu.widgets{
 			if(evt is ResponseEvent){
 				var tags:String = ResponseEvent(evt).data;
 				if(!tags) return;
-								
+				Logger.debug("tags: \n"+tags);
+				
 				tagObjs = JSON.decode(tags);
-				if(tagObjs.length==0) return;
+				if(!tagObjs) {
+					Logger.error("tagObjs is null !");
+					return;
+				}
+				if(tagObjs.length==0) {
+					Logger.error("tagObjs length is 0 !");
+					return;
+				}
 				
 				buildTagsLink();
 								
@@ -79,12 +87,19 @@ package com.pintu.widgets{
 		private function buildTagsLink():void{
 			var tagStartX:Number = 4;
 			var tagStartY:Number = 4;
-			var tagVGap:Number = 26;
+			var tagVGap:Number = 26;					
 			
 			tagsContainer.removeChildren();
+			
+			var tagLength:int = tagObjs.length;
+			//最多放10个
+			if(tagLength>10) tagLength = 10;
+			
 			//只放10个
-			for(var i:int=0; i<10; i++){
+			for(var i:int=0; i<tagLength; i++){
 				var tagObj:Object = tagObjs[i];
+				if(tagObj==null) continue;
+				
 				var tagStr:String = tagObj["name"]+" ("+tagObj["browseCount"]+")";
 				var tagId:String = tagObj["id"];
 				var tagView:LinkRow = new LinkRow(tagStr, tagId);

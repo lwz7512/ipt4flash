@@ -86,6 +86,8 @@ package com.pintu.widgets{
 			
 			for(var i:int=0; i<userObjs.length; i++){
 				var user:Object = userObjs[i];
+				if(user==null) continue;
+				
 				var nickName:String = user["nickName"];
 				if(nickName==""){
 					nickName = PintuUtils.getShowUserName(user["account"]);
