@@ -300,7 +300,7 @@ package com.pintu.widgets{
 		 * 是否原创、标签、评论数目、描述摘要6个字
 		 */ 
 		private function buildPicRelateInfo():void{
-			var marging:Number = 44;
+			var marging:Number = 34;
 			var startX:Number = _mobImgWidth+marging;			
 			var startY:Number = 4;	
 			var textItemVGap:Number = 28;
@@ -419,21 +419,22 @@ package com.pintu.widgets{
 			imgInfoHolder.addChild(sourceTF);
 			
 			//标签
-			var tagsStr:String = "标签 "+_data.tags;
+			var tagsStr:String = "标签: "+_data.tags;
 			var tagsTF:SimpleText = new SimpleText(tagsStr,dark, normalTXTSize);
 			tagsTF.x = startX;
 			tagsTF.y = browseCountTF.y+textItemVGap;
+			tagsTF.width = 200;
 			imgInfoHolder.addChild(tagsTF);
 			
 			//描述摘要
 			var origDescContent:String = _data.description;	
-			origDescContent = "描述 "+origDescContent;
+			origDescContent = "描述: "+origDescContent;
 			//描述是多行文本，全部显示
-			var descTF:SimpleText = new SimpleText(origDescContent,dark, normalTXTSize);
+			var descTF:SimpleText = new SimpleText(origDescContent,dark, normalTXTSize, false, true, true);
 			descTF.x = startX;
 			descTF.y = tagsTF.y+textItemVGap;
-			descTF.width = InitParams.GALLERY_WIDTH - startX-marging;
-			descTF.height = _mobImgHeight-descTF.y-marging;
+			descTF.width = InitParams.GALLERY_WIDTH - startX-10;
+			descTF.height = _mobImgHeight-descTF.y-15;
 			imgInfoHolder.addChild(descTF);			
 			
 		}

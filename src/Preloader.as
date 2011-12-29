@@ -36,12 +36,19 @@ package
 		
 		private function progress(e:ProgressEvent):void 
 		{
-			// TODO update loader
+			// update loader
 			//在浏览器顶部header的位置绘制矩形长条，长条充满浏览器宽度即加载完成
 			//高度2个像素够了，使用lineto绘制
 			//屏幕中央放置loading...
 			var percent:Number = e.bytesLoaded/e.bytesTotal;
-			var showProgress:int = int(percent*100);
+			
+			if(this.stage){
+				var pbWidh:Number = this.stage.stageWidth;
+				this.graphics.clear();
+				this.graphics.beginFill(0x00BC12);
+				this.graphics.drawRect(0,0,pbWidh*percent,18);
+				this.graphics.endFill();
+			}
 			
 		}
 		
@@ -60,7 +67,8 @@ package
 			loaderInfo.removeEventListener(ProgressEvent.PROGRESS, progress);
 			loaderInfo.removeEventListener(IOErrorEvent.IO_ERROR, ioError);
 			
-			// TODO hide loader
+			// hide loader
+			this.graphics.clear();
 			
 			startup();
 		}

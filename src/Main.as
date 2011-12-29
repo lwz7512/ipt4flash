@@ -62,7 +62,7 @@ package{
 		
 		
 		
-//		[Frame(factoryClass="Preloader")]
+		[Frame(factoryClass="Preloader")]
 		public function Main(){
 			super();
 			//不允许图形缩放
@@ -96,6 +96,7 @@ package{
 			//2012/12/15
 			if(ExternalInterface.available && !GlobalController.isDebug){
 				ExternalInterface.call("removeLogo");
+				Logger.debug("logo div removed!");
 			}			
 			
 			//主应用只监听来自headerbar退出和loginBlock的登录引起的导航事件
