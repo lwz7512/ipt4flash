@@ -36,12 +36,13 @@ package com.pintu.widgets{
 		
 		private var defaultThumbnailPath:String = "assets/defaultImage100.png";
 		//如果丢失了图片，不能进行点击
-		private var isLost:Boolean;
+		private var isLost:Boolean = true;
 		
 		private var timeBarHeight:int = 24;
 		
 		public function Thumbnail(data:TPicDesc){
 			_data = data;
+//			Logger.debug("thumbnail url: "+data.url);
 			//LOAD PIC BY URL...
 			_imgLoader = new ImageLoad(data.url);			
 			this._imgLoader.addEventListener(LoadEvent.COMPLETE, _onComplete);
@@ -93,6 +94,7 @@ package com.pintu.widgets{
 		}
 		
 		private function _onComplete(e:LoadEvent):void {
+			isLost = false;
 			//第一次载人的图片
 			var bitmap:Bitmap = _imgLoader.contentAsBitmap;				
 			var imgContainer:CasaSprite = this;
@@ -129,6 +131,11 @@ package com.pintu.widgets{
 		
 		private function _onError(event:IOErrorEvent):void{
 			Logger.error("Load thumbnail error: "+_data.thumbnailId);
+			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.WHITE_TEXT_COLOR);
+			tf.text = "I'm lost!";
+			this.graphics.beginFill(0x000000);
+			this.graphics.drawRect(0,0,100,100);
+			this.graphics.endFill();
 		}
 		
 		private function drawBackground(cavas:CasaShape):void{

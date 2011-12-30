@@ -3,12 +3,15 @@ package com.pintu.api{
 	import com.pintu.controller.GlobalController;
 	import com.pintu.events.PTErrorEvent;
 	import com.pintu.events.PintuEvent;
+	import com.pintu.events.ResponseEvent;
+	import com.pintu.http.LiteHttpClient;
 	import com.pintu.http.SimpleHttpClient;
 	import com.pintu.utils.Logger;
 	
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
 	import flash.events.TimerEvent;
+	import flash.net.URLVariables;
 	import flash.utils.Timer;
 	
 	import org.as3commons.collections.ArrayList;
@@ -26,7 +29,9 @@ package com.pintu.api{
 	 */ 
 	public class ModelBase extends EventDispatcher{
 		
-		protected var client:SimpleHttpClient;		
+		private var client:SimpleHttpClient;	
+		
+		private var lite:LiteHttpClient;
 		
 		private  var _currentUser:String;	
 		/**
@@ -43,6 +48,10 @@ package com.pintu.api{
 		
 		public function ModelBase(userId:String){
 			_currentUser = userId;
+			
+			lite = new LiteHttpClient(getServiceUrl());
+			lite.addEventListener("complete",clearHeaderTask);
+			lite.addEventListener("error",clearHeaderTask);
 			
 			client = new SimpleHttpClient(getServiceUrl(),userId);
 			//执行一个，清除一个			
@@ -113,13 +122,18 @@ package com.pintu.api{
 		 * 添加新的服务事件
 		 */ 
 		protected function addClientListener(method:String):void{
-			client.addEventListener(method,responseHander);
+			if(useLiteClient(method)){
+				lite.addEventListener(method, responseHander);			
+			}else{
+				client.addEventListener(method,responseHander);			
+			}
 		}
 		
 		//这里指定泛型事件，因为可能是ResponseEvent，也可能是PTErrorEvent
 		//也有可能是状态事件PTStatusEvent，用于提交动作的响应
 		//2011/11/29
-		private function responseHander(event:Event):void{
+		private function responseHander(event:Event):void{			
+			
 			//通知使用模型的模块
 			dispatchEvent(event);	
 			
@@ -140,7 +154,7 @@ package com.pintu.api{
 		protected function addHttpTask(nameValues:Array, methodName:String):void{
 			var task:Object = {method:methodName, params:nameValues};
 			taskQueue.add(task);
-//			Logger.debug("Add Task: "+methodName);
+			Logger.debug("Add Task: "+methodName);
 		}		
 		/**
 		 * 定时查看队列，并执行第一个任务
@@ -148,11 +162,18 @@ package com.pintu.api{
 		 * 这样保证只有一个客户端只有一个HTTP链接
 		 */ 
 		private function excuteTaskQueue(evt:TimerEvent):void{
-			if(taskQueue.size>0 && !client.isRunning()){
+			if(taskQueue.size>0 && !client.isRunning() && !lite.isRunning()){
 				var params:Array = taskQueue.first.params;
-				var method:String = taskQueue.first.method;				
-				client.post(params, method);
-//				Logger.debug("Start Execute: "+method);
+				var method:String = taskQueue.first.method;	
+				
+				if(useLiteClient(method)){
+					var vs:URLVariables = arrayToURLVariables(params);
+					vs["method"] = method;
+					lite.send(vs);
+				}else{
+					client.post(params, method);					
+				}
+				Logger.debug("Start Execute: "+method);
 			}
 		}
 		/**
@@ -160,7 +181,34 @@ package com.pintu.api{
 		 */ 
 		private function clearHeaderTask(evt:Event):void{
 			var task:Object = taskQueue.removeFirst();
-//			Logger.debug("Task removed: "+task.method);
+			Logger.debug("Task removed: "+task.method);
+		}
+		
+		private function arrayToURLVariables(params:Array):URLVariables{
+			var values:URLVariables = new URLVariables();
+			//默认的用户参数是指向自己，如果params中有该参数，则覆盖它
+			values["userId"] = _currentUser;
+			for each(var param:Object in params){
+				values[param.name] = param.value;
+			}
+			return values;
+		}
+		
+		private function useLiteClient(method:String):Boolean{
+			var result:Boolean = false;
+			if(method==ApiMethods.GETGALLERYFORWEB ||
+				ApiMethods.GETGALLERYBYTIME ||
+				ApiMethods.GETGALLERYRANDOM ||
+				ApiMethods.GETHOTPICTURE ||
+				ApiMethods.CLASSICALSTATISTICS ||
+				ApiMethods.COLLECTSTATISTICS ||
+				ApiMethods.GETTHUMBNAILSBYTAG ||
+				ApiMethods.GETTPICSBYUSER ||
+				ApiMethods.GETFAVORITEPICS ||
+				ApiMethods.SEARCHBYTAG){
+				result = true;
+			}
+			return result;
 		}
 		
 	} //end of class

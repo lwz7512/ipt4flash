@@ -118,10 +118,17 @@ package com.pintu.controller
 			var thumnails:Array;
 			//捕捉解析异常
 			try{
+				
+//				Logger.debug("mini gallery: \n"+json);
+				
 				thumnails = JSON.decode(json) as Array;
 			}catch(e:JSONParseError){
+				
 				hintEvt = new PintuEvent(PintuEvent.HINT_USER, ">>>data parse error!");
-				_owner.dispatchEvent(hintEvt);				
+				_owner.dispatchEvent(hintEvt);	
+				
+				Logger.error(e.getStackTrace());
+				
 				return 0;
 			}					
 			
@@ -175,7 +182,9 @@ package com.pintu.controller
 				detailObjs = JSON.decode(json);
 			}catch(e:JSONParseError){
 				hintEvt = new PintuEvent(PintuEvent.HINT_USER, ">>>data parse error!");
-				_owner.dispatchEvent(hintEvt);				
+				_owner.dispatchEvent(hintEvt);	
+				
+				Logger.error(e.getStackTrace());
 				return 0;
 			}
 			

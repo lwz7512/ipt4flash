@@ -72,7 +72,7 @@ package com.pintu.widgets{
 			//因为有舞台的invalidate方法，这时舞台可能丢失，所以要处理
 			if(!stageAvailable()) return;
 			
-			if(evt is PTStatusEvent){
+			if(evt is ResponseEvent){
 //				Logger.debug("comment post once...");
 				//新的评论，先不添加进去
 				var cmntObj:CmntData = new CmntData();
@@ -117,7 +117,7 @@ package com.pintu.widgets{
 		}
 		
 		private function markPicHandler(evt:Event):void{
-			if(evt is PTStatusEvent){
+			if(evt is ResponseEvent){
 				//在主显示区弹出提示
 				this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "图片收藏成功"));
 			}
@@ -127,7 +127,7 @@ package com.pintu.widgets{
 		}
 		
 		private function votePicHandler(evt:Event):void{
-			if(evt is PTStatusEvent){
+			if(evt is ResponseEvent){
 				//在主显示区弹出提示
 				this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "图片投票成功"));
 			}

@@ -13,7 +13,9 @@ package com.pintu.http
 	import flash.utils.ByteArray;
 	
 	import org.httpclient.HttpClient;
+	import org.httpclient.HttpRequest;
 	import org.httpclient.events.*;
+	import org.httpclient.http.Post;
 	import org.httpclient.http.multipart.*;
 	
 	
@@ -60,6 +62,7 @@ package com.pintu.http
 		public function post(params:Array, method:String):void{
 			//服务
 			var uri:URI = new URI(_serviceUrl);
+			
 			//延迟生成客户端
 			if(!_client) this._client = new HttpClient();
 			if(!params) params = [];
@@ -76,6 +79,7 @@ package com.pintu.http
 			
 			params = params.concat([ {name:"owner", value: _userId}]);
 			params = params.concat([ {name:"source", value: "desktop"}]);
+						
 			
 			_client.listener.onStatus = function(event:HttpStatusEvent):void {
 				// Notified of response (with headers but not content)
@@ -89,6 +93,7 @@ package com.pintu.http
 				// For string data
 				var result:String = event.readUTFBytes();
 				result = StringUtil.trim(result);
+				
 				var dataEvent:ResponseEvent = new ResponseEvent(method,result);
 				dispatchEvent(dataEvent);
 //				Logger.debug("Method: "+method+" executed!");	
@@ -142,6 +147,7 @@ package com.pintu.http
 			
 			//提交
 			_client.postFormData(uri, params);	
+			
 			//正在运行
 			_isRuning = true;
 		}

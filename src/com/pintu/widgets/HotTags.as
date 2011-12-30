@@ -64,7 +64,7 @@ package com.pintu.widgets{
 			if(evt is ResponseEvent){
 				var tags:String = ResponseEvent(evt).data;
 				if(!tags) return;
-				Logger.debug("tags: \n"+tags);
+//				Logger.debug("tags: \n"+tags);
 				
 				tagObjs = JSON.decode(tags);
 				if(!tagObjs) {
