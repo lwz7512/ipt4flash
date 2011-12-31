@@ -12,6 +12,7 @@ package com.pintu.config{
 		public static const RELEASE_TIME:String = "2011/12/30";
 		
 		public static const WEIBO_URL:String = "http://weibo.com/ipintu";
+		public static const HOME_URL:String = "http://ipintu.com";
 		
 		//客服联系，也接受用户反馈
 		public static const SERVICE_MAIL:String = "service@ipintu.com";

@@ -16,9 +16,12 @@ package com.pintu.widgets
 	import flash.events.MouseEvent;
 	import flash.filters.DropShadowFilter;
 	import flash.geom.Matrix;
+	import flash.net.URLRequest;
+	import flash.net.navigateToURL;
 	import flash.text.TextField;
 	import flash.text.TextFormat;
 	
+	import org.casalib.display.CasaShape;
 	import org.casalib.display.CasaSprite;
 	import org.casalib.events.LoadEvent;
 	import org.casalib.load.ImageLoad;
@@ -120,9 +123,21 @@ package com.pintu.widgets
 		
 		private function onLoaded(e:LoadEvent):void {
 			logoBitmap = this.logoLoader.contentAsBitmap;
-			mainMenuContainer.addChild(logoBitmap);
 			logoBitmap.x = elementStartX-100;
-			logoBitmap.y = 2;			
+			logoBitmap.y = 2;		
+			mainMenuContainer.addChild(logoBitmap);
+			
+			//add a link layer for logo
+			var maskLogo:Sprite = new Sprite();
+			maskLogo.graphics.beginFill(0xFFFFFF,0.01);
+			maskLogo.graphics.drawRect(0,0,logoBitmap.width,logoBitmap.height);
+			maskLogo.graphics.endFill();
+			maskLogo.x = logoBitmap.x;
+			maskLogo.y = logoBitmap.y;
+			maskLogo.useHandCursor = true;
+			maskLogo.buttonMode = true;
+			mainMenuContainer.addChild(maskLogo);
+			maskLogo.addEventListener(MouseEvent.CLICK,goBacktoHomePage);
 			
 			//主菜单，都在主容器中
 			createMainMenus();				
@@ -134,6 +149,11 @@ package com.pintu.widgets
 			//放在HeaderBar后面隐藏，鼠标点击菜单滑出
 			createSubMenus();
 			
+		}
+		
+		private function goBacktoHomePage(evt:MouseEvent):void{
+			var address:URLRequest = new URLRequest(PublishParams.HOME_URL);
+			navigateToURL(address, "_blank");
 		}
 		
 		private function createSubMenus():void{
