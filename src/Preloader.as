@@ -1,5 +1,7 @@
-package 
-{
+package {
+	
+	import com.pintu.utils.Logger;
+	
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.display.StageAlign;
@@ -59,6 +61,7 @@ package
 				stop();
 				loadingFinished();
 			}
+			
 		}
 		
 		private function loadingFinished():void 

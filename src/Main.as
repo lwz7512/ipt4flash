@@ -31,7 +31,11 @@ package{
 	import org.casalib.events.LoadEvent;
 	import org.casalib.load.ImageLoad;
 	import org.libspark.ui.SWFWheel;
-		
+	
+	//FIXME, 进度条应该加在这里
+	//2011/12/31
+	//lwz7512
+	[Frame(factoryClass="Preloader")]
 	public class Main extends Sprite{
 						
 		/**
@@ -60,11 +64,15 @@ package{
 		private var aboutWin:AboutWin;
 		private var feedbackWin:FeedbackWin;
 		
-		
-		
-		[Frame(factoryClass="Preloader")]
+					
 		public function Main(){
-			super();
+			super();			
+			
+			//舞台准备好后创建应用
+			this.addEventListener(Event.ADDED_TO_STAGE, buildApp);						
+		}
+		
+		private function setupStage():void{
 			//不允许图形缩放
 			this.stage.scaleMode =StageScaleMode.NO_SCALE;
 			//从左上角开始绘制
@@ -73,10 +81,7 @@ package{
 			this.stage.showDefaultContextMenu = false;
 			//阻止浏览器滚动条
 			SWFWheel.initialize(stage);
-			SWFWheel.browserScroll = false;			
-			
-			//舞台准备好后创建应用
-			this.addEventListener(Event.ADDED_TO_STAGE, buildApp);						
+			SWFWheel.browserScroll = false;		
 		}
 		
 		/**
@@ -84,6 +89,9 @@ package{
 		 */ 
 		protected function buildApp(event:Event):void{			
 			this.removeEventListener(Event.ADDED_TO_STAGE, buildApp);
+			
+			setupStage();				
+			
 			//如果舞台大小为0
 			if(!stage.stageWidth) {
 				Logger.warn("Stage is unavailable, stop to build app!");

@@ -33,8 +33,8 @@ package com.pintu.widgets
 		private var drawStartX:Number;
 		private var drawStartY:Number;
 		
-		private var account:TextInput;
-		private var pswd:TextInput;
+		private var account:MustTextInput;
+		private var pswd:PswdInput;
 		private var submit:Button;
 
 		private var inputHint:SimpleText;
@@ -127,7 +127,7 @@ package com.pintu.widgets
 			this.addChild(actField);
 			
 			//账号输入
-			account = new TextInput();
+			account = new MustTextInput();
 			account.defaultText = "Email ...";
 			account.setStyle(TextInput.style.font, StyleParams.DEFAULT_TEXT_FONTNAME);
 			account.setSize(InitParams.LOGIN_FORM_WIDTH-2*padding,28);
@@ -197,12 +197,11 @@ package com.pintu.widgets
 			inputHint = new SimpleText("",StyleParams.DEFAULT_ERROR_RED);
 			inputHint.x = drawStartX+padding;
 			inputHint.y = submit.y+verticalGap;
+			inputHint.width = 120;
 			this.addChild(inputHint);
 		}
 		
-		private function checkToLogin(evt:Event):void{
-			//禁用
-			submit.enabled = false;
+		private function checkToLogin(evt:Event):void{			
 			
 			var email:String = account.text;
 			var password:String = pswd.text;
@@ -220,9 +219,13 @@ package com.pintu.widgets
 				inputHint.text = "";
 				//登录验证
 				_model.logon(email,password);
+				
 				showLoading();
+				
+				//禁用
+				submit.enabled = false;
 			}
-			
+						
 		}
 		
 		private function showLoading():void{
@@ -237,8 +240,10 @@ package com.pintu.widgets
 			if(account.text.length>0){
 				if(isValidEmail(account.text)){
 					emailValid = true;
+					account.resetToNormal();
 				}else{
 					emailValid = false;
+					account.showWarningBorder();
 					inputHint.text = "非法邮箱格式";
 				}
 			}

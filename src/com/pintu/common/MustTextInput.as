@@ -2,7 +2,7 @@ package com.pintu.common{
 	
 	import com.sibirjak.asdpc.textfield.Label;
 	import com.sibirjak.asdpc.textfield.TextInput;
-	
+	import com.sibirjak.asdpc.textfield.TextInputStyles;
 	
 	public class MustTextInput extends TextInput{
 		
@@ -11,6 +11,20 @@ package com.pintu.common{
 		public function MustTextInput()
 		{
 			super();
+		}
+		
+		public function showWarningBorder():void{
+			this.setStyle(TextInput.style.borderLightColor, 0xFF0000);
+			this.setStyle(TextInput.style.borderDarkColor, 0xFF0000);
+			this.invalidateProperty(TextInput.style.borderLightColor);
+			this.invalidateProperty(TextInput.style.borderDarkColor);
+		}
+		
+		public function resetToNormal():void{
+			this.setStyle(TextInput.style.borderLightColor, 0xCCCCCC);
+			this.setStyle(TextInput.style.borderDarkColor, 0x333333);
+			this.invalidateProperty(TextInput.style.borderLightColor);			
+			this.invalidateProperty(TextInput.style.borderDarkColor);			
 		}
 		
 		override protected function draw():void{
