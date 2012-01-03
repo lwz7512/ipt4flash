@@ -54,6 +54,7 @@ package com.pintu.widgets{
 		
 		override protected function initModelListener(evt:Event):void{			
 //			Logger.debug("to getUserEstate...");
+			this.removeEventListener(Event.ADDED_TO_STAGE,initModelListener);
 			
 			//获取个人信息			
 			_clonedModel.getUserEstate(PintuImpl(_clonedModel).currentUser);

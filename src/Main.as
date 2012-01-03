@@ -141,7 +141,7 @@ package{
 				_currentModule = navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
 				_currentModule = navigator.switchTo(GlobalNavigator.UNLOGGED);		
-			}	
+			}			
 			
 			//主菜单栏再顶部，好让菜单浮在画廊上面
 			moveHeaderBarTop();			
@@ -153,6 +153,7 @@ package{
 			}
 			
 			//app construction completed...
+			Logger.debug("... app construction completed...");
 		}
 		
 		private function hintToUser(info:String):void{

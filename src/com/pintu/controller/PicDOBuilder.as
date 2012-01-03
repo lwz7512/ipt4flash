@@ -25,6 +25,7 @@ package com.pintu.controller
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.external.ExternalInterface;
 	
 	import org.as3commons.collections.framework.IIterator;
 	import org.as3commons.ui.layout.CellConfig;
@@ -78,23 +79,34 @@ package com.pintu.controller
 				
 		//固定一个绘制路径的画布，必须是全局变量
 		//这样才能在render事件中重新调整位置
-		private var pathShape:CasaShape;
-				
+		private var pathShape:CasaShape;			
 		
 		//缩略图模式
 		private static const THUMBNAIL_MODE:String = "tbMode";		
 		//大图模式
 		private static const BIGPIC_MODE:String = "bpMode";
 		//当前模式
-		private static var currentMode:String;		
+		private static var currentMode:String;	
 		
-			
+		//是否显示返回按钮
+		private var showBackBtn:Boolean;
+		
+		
+		
+		
+		
+		
+		
+		/**
+		 * ------------------ construction ----------------------------------
+		 */ 	
 		public function PicDOBuilder(container:CasaSprite, model:IPintu){
 			_model = model;
 			//图片容器在原点
 			_context = container;
 			//每次渲染事件都重新排列位置
-			_context.addEventListener(Event.RENDER, delayRelayoutBigPicList);			
+			_context.addEventListener(Event.RENDER, delayRelayoutBigPicList);	
+			
 			//缩略图详情响应
 			PintuImpl(_model).addEventListener(ApiMethods.GETPICDETAIL,detailPicHandler);
 		}
@@ -126,16 +138,16 @@ package com.pintu.controller
 				
 				hintEvt = new PintuEvent(PintuEvent.HINT_USER, ">>>data parse error!");
 				_owner.dispatchEvent(hintEvt);	
-				
-				Logger.error(e.getStackTrace());
-				
+								
 				return 0;
 			}					
 			
 			//画廊没新图片
 			if(thumnails.length==0){
-				var hintEvt:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, "没有最新的图片，不然随便看看？");
-				_owner.dispatchEvent(hintEvt);				
+				var nopic:String = "没有最新的图片，不然随便看看？";
+				var hintEvt:PintuEvent = new PintuEvent(PintuEvent.HINT_USER, nopic);
+				_owner.dispatchEvent(hintEvt);			
+				Logger.debug(nopic);
 				return 0;
 			}
 			
@@ -344,14 +356,18 @@ package com.pintu.controller
 			cleanUp();	
 			
 			//CREATE PIC DETAILS...
-			var details:Object =  JSON.decode(ResponseEvent(event).data) as Object;
+			var details:Object =  JSON.decode(ResponseEvent(event).data) as Object;					
+			
 			var logged:Boolean = GlobalController.isLogged;
 			var picDetails:PicDetailView = new PicDetailView(objToTPicData(details), _model, logged);
 			picDetails.x = _drawStartX;
 			picDetails.y = _drawStartY;
 			//工具栏左侧给返回按钮让位
-			picDetails.showBackBtn = true;
+			if(showBackBtn) picDetails.showBackBtn = true;
 			_context.addChild(picDetails);					
+			
+			//如果不显示返回按钮，则不生成
+			if(!showBackBtn) return;
 			
 			//BACK BUTTON
 			var back:IconButton = new IconButton(26,26);
@@ -416,7 +432,10 @@ package com.pintu.controller
 			grid.layout(_context);
 		}
 		
-		private function getDetails(event:PintuEvent):void{			
+		private function getDetails(event:PintuEvent):void{	
+			
+			showBackBtn = true;
+			
 			//清空舞台		
 			cleanUp();
 			
@@ -424,6 +443,15 @@ package com.pintu.controller
 			_owner.showMiddleLoading();
 			//查询详情
 			var tpId:String = event.data;
+			_model.getPicDetail(tpId);
+			
+			//修改页面所在的url
+			ExternalInterface.call("setCurrentPicUrl", tpId);
+		}
+		
+		public function createPicDetailById(tpId:String):void{
+			showBackBtn = false;
+			//查询详情			
 			_model.getPicDetail(tpId);
 		}
 				
@@ -555,6 +583,7 @@ package com.pintu.controller
 			_context.removeEventListener(Event.RENDER, delayRelayoutBigPicList);
 			PintuImpl(_model).removeEventListener(ApiMethods.GETPICDETAIL,detailPicHandler);
 			bigPicViews = null;
+			_model = null;
 		}
 		
 		

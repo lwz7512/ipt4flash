@@ -60,6 +60,8 @@ package com.pintu.widgets
 		}
 		
 		private function initLogin(evt:Event):void{
+			this.removeEventListener(Event.ADDED_TO_STAGE, initLogin);
+			
 			PintuImpl(_model).addEventListener(ApiMethods.LOGON, logonHandler);
 		}
 		private function cleanUp(evt:Event):void{

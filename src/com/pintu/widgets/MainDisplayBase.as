@@ -97,14 +97,16 @@ package com.pintu.widgets{
 			if(!loading)
 				loading = new BusyIndicator(32);
 			loading.x = middleX-16;
-			loading.y = middleY-16;			
-			this.addChild(loading);
+			loading.y = middleY-16;
+			if(!this.contains(loading))
+				this.addChild(loading);
 			//打开查询开关，防止短时间重复查询
 			isRunning = true;
 		}		
 		public function hideMiddleLoading():void{
-			if(this.contains(loading))
-				this.removeChild(loading);
+			if(this.contains(loading)){
+				this.removeChild(loading);				
+			}
 			//查询结束
 			isRunning = false;
 			//这时查询开关打开

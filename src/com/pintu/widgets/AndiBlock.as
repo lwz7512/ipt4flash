@@ -62,7 +62,9 @@ package com.pintu.widgets{
 		}
 		
 		
-		override protected function initModelListener(evt:Event):void{
+		override protected function initModelListener(evt:Event):void{			
+			this.removeEventListener(Event.ADDED_TO_STAGE,initModelListener);
+			
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETUSERMSG, userMsgFetched);
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.CHANGEMSGSTATE, userMsgReaded);
 						

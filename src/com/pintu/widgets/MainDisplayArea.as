@@ -18,6 +18,7 @@ package com.pintu.widgets{
 		public static const THUMBNAIL_BYTAG:String = "thumbnailOfTag";
 		public static const SEARCHRESULT_BYTAG:String = "searchResultOfTag";
 		public static const GETPICS_BYUSER:String = "getPicsOfUser";
+		public static const GETPIC_BYID:String = "getPicDetail";
 		
 		private var _model:IPintu;
 		private var _picBuilder:PicDOBuilder;
@@ -42,10 +43,11 @@ package com.pintu.widgets{
 		private var _seachResultPageNum:int;
 		
 		//按标签查询参数
-		private var _tagKey:String;
-		
+		private var _tagKey:String;		
 		//按用户查询图片
 		private var _selectedUser:String;
+		//按图片id查询图片详情
+		private var _tpId:String;
 		
 		/**
 		 * 从非登陆状态切换到登陆状态时，很奇怪有两次事件响应
@@ -62,14 +64,7 @@ package com.pintu.widgets{
 			//父类MainDisplayBase用来创建显示内容
 			super();		
 						
-			_model = model;
-			//画廊内容生成工具
-			_picBuilder = new PicDOBuilder(_picsContainer,_model);
-			//图片工厂要知道放置起始位置
-			_picBuilder.drawStartX = drawStartX;
-			_picBuilder.drawStartY = drawStartY;
-			//为了让他可以调用以展示进度条和提示
-			_picBuilder.owner = this;
+			_model = model;			
 			
 			//初始化添加模型监听
 			this.addEventListener(Event.ADDED_TO_STAGE, initModelListener);
@@ -125,8 +120,29 @@ package com.pintu.widgets{
 			_selectedUser = userId;
 		}
 		
+		/**
+		 * 从url中获得图片Id，然后查询该图片详情
+		 */ 
+		public function set tpId(tpid:String):void{
+			_tpId = tpid;
+		}
+		
 		private function initModelListener(event:Event):void{
+			if(_initialized) return;
+			
 			_initialized = true;
+			Logger.debug("MainDisplayArea _initialized...");
+			
+			//FIXME, 必须延迟创建实例，以销毁事件监听器
+			//不能在构造函数中实例化
+			//2012/01/04
+			//画廊内容生成工具
+			_picBuilder = new PicDOBuilder(_picsContainer,_model);
+			//图片工厂要知道放置起始位置
+			_picBuilder.drawStartX = drawStartX;
+			_picBuilder.drawStartY = drawStartY;
+			//为了让他可以调用以展示进度条和提示
+			_picBuilder.owner = this;
 			
 			//初始化时，按照HomePage设置的模式进行查询			
 			queryPicByType();					
@@ -191,6 +207,8 @@ package com.pintu.widgets{
 			//查询前显示进度条
 			showMiddleLoading();
 			
+			Logger.debug("_browseType: "+_browseType);
+			
 			//按类型查询数据
 			switch(_browseType){
 				
@@ -250,6 +268,12 @@ package com.pintu.widgets{
 					//二者使用的事件都相同，所以数据处理逻辑一致
 					_myPostsPageNum ++;
 					_model.getPicsByUser(_selectedUser, _myPostsPageNum.toString());
+					break;
+				
+				case GETPIC_BYID:
+					Logger.debug("get pic by id: "+_tpId);
+					//图片详情是在内部获取的，不在这里直接调用模型方法
+					_picBuilder.createPicDetailById(_tpId);
 					break;
 				
 			}

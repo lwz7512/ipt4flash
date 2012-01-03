@@ -14,6 +14,7 @@ package com.pintu.modules{
 	import flash.display.DisplayObjectContainer;
 	import flash.display.Sprite;
 	import flash.display.Stage;
+	import flash.external.ExternalInterface;
 	
 	import org.as3commons.ui.layout.shortcut.display;
 	import org.casalib.display.CasaSprite;
@@ -50,6 +51,14 @@ package com.pintu.modules{
 			}else{
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;				
 			}
+			//设置显示网页url指定的图片详情
+			if(ExternalInterface.available){
+				var tpId:String = ExternalInterface.call("getPicIdAfterAnchor");
+				if(tpId && tpId!="") {
+					mainDisplayArea.browseType = MainDisplayArea.GETPIC_BYID;
+					mainDisplayArea.tpId = tpId;
+				}
+			}	
 			
 			//PicDetailView派发的事件，内部无法处理下载动作
 			mainDisplayArea.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);		
@@ -224,6 +233,7 @@ package com.pintu.modules{
 			mainDisplayArea.browseType = MainDisplayArea.SEARCHRESULT_BYTAG;
 			mainDisplayArea.tag = key;
 		}
+		
 		
 		public  function killMe():void{
 			super.destroy();

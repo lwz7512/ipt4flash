@@ -8,6 +8,7 @@ package com.pintu.modules
 	import com.pintu.widgets.*;
 	
 	import flash.display.Sprite;
+	import flash.external.ExternalInterface;
 	
 	import org.casalib.display.CasaSprite;
 	
@@ -37,6 +38,16 @@ package com.pintu.modules
 			}else{
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;				
 			}
+			
+			//检查是否为单个图片详情展示
+			if(ExternalInterface.available){
+				var tpId:String = ExternalInterface.call("getPicIdAfterAnchor");
+				if(tpId && tpId!="") {
+					mainDisplayArea.browseType = MainDisplayArea.GETPIC_BYID;
+					mainDisplayArea.tpId = tpId;
+				}
+				Logger.debug("to show the details of: "+tpId);
+			}		
 			
 			this.addChild(mainDisplayArea);			
 			
@@ -116,6 +127,8 @@ package com.pintu.modules
 		public function searchable(key:String):void{
 			trace(".... to search by: "+key);
 		}
+		
+	
 		
 		//重写销毁函数
 		public  function killMe():void{	
