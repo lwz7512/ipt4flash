@@ -1,6 +1,10 @@
 package com.pintu.widgets{
 	
 	import com.adobe.serialization.json.JSON;
+	
+	import com.greensock.TimelineLite;
+	import com.greensock.TweenLite;
+	
 	import com.pintu.api.*;
 	import com.pintu.common.*;
 	import com.pintu.config.*;
@@ -10,6 +14,7 @@ package com.pintu.widgets{
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.filters.DropShadowFilter;
 	
 	import org.casalib.display.CasaSprite;
 
@@ -48,6 +53,14 @@ package com.pintu.widgets{
 		//取回的消息存起来
 		private var msgList:Array;
 		
+		
+		//我的收藏菜单
+		private var myFavorites:TextMenu;
+		//有新收藏的提示+1
+		private var newlyMarked:CircleNumText;
+		
+		
+		
 		public function AndiBlock(model:IPintu){
 			super(model);
 			
@@ -59,6 +72,20 @@ package com.pintu.widgets{
 		//派发事件后，Homepage里来取这个数据
 		public function get msgs():Array{
 			return msgList;
+		}
+		
+		//由主模块调用，来显示有新收藏了的动画
+		public function showNewMarked():void{
+			var myTimeline:TimelineLite = new TimelineLite();
+			//一闪
+			myTimeline.append(new TweenLite(newlyMarked, 0.6, {alpha:1}));
+			myTimeline.append(new TweenLite(newlyMarked, 0.6, {alpha:0}));
+			//一闪
+			myTimeline.append(new TweenLite(newlyMarked, 0.6, {alpha:1}));
+			myTimeline.append(new TweenLite(newlyMarked, 0.6, {alpha:0}));
+			//一闪
+			myTimeline.append(new TweenLite(newlyMarked, 0.6, {alpha:1}));
+			myTimeline.append(new TweenLite(newlyMarked, 0.6, {alpha:0}));
 		}
 		
 		
@@ -83,7 +110,7 @@ package com.pintu.widgets{
 		}
 		
 		private function userMsgReaded(evt:Event):void{
-			if(evt is PTStatusEvent){
+			if(evt is ResponseEvent){
 				this.removeChild(msgNum);
 			}
 			if(evt is PTErrorEvent){
@@ -156,7 +183,7 @@ package com.pintu.widgets{
 			this.addChild(myPics);
 			
 			//我的收藏
-			var myFavorites:TextMenu = new TextMenu(menuWidth, titleBackgroudHeight);
+			myFavorites = new TextMenu(menuWidth, titleBackgroudHeight);
 			myFavorites.setSkinStyle(upColors,overColors,downColors);
 			myFavorites.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
 				StyleParams.DEFAULT_TEXT_FONTSIZE,
@@ -169,6 +196,16 @@ package com.pintu.widgets{
 			myFavorites.y = menuStartY+titleBackgroudHeight+menuVGap;
 			myFavorites.addEventListener(MouseEvent.CLICK, getMyFavors);
 			this.addChild(myFavorites);
+			//收藏提示
+			newlyMarked = new CircleNumText("+1");
+			newlyMarked.x = myFavorites.x+myFavorites.width - 20;
+			newlyMarked.y = myFavorites.y+3;
+			//先不显示
+			newlyMarked.alpha = 0;
+			//加个阴影
+			var shadow:DropShadowFilter = new DropShadowFilter(4,45,0x666666,0.8);
+			newlyMarked.filters = [shadow];
+			this.addChild(newlyMarked);
 			
 			//我的消息
 			myMsgs = new TextMenu(menuWidth, titleBackgroudHeight);

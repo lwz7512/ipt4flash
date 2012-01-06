@@ -49,6 +49,10 @@ package com.pintu.events
 		//HeaderBar派发事件，通知HomePage打开窗口
 		public static const OPEN_WIN:String = "openWin";
 		
+		//PicDetailView派发的事件，收藏成功后在右侧提示一个+1
+		public static const MARK_SUCCSS:String = "markSuccess";
+		
+		
 		//通常带的参数
 		public var data:String;
 		//第二参数

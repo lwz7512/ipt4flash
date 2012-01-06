@@ -1,6 +1,10 @@
 package com.pintu.widgets{
 	
 	import com.adobe.serialization.json.JSON;
+	
+	import com.greensock.TimelineLite;
+	import com.greensock.TweenLite;
+	
 	import com.pintu.api.*;
 	import com.pintu.common.*;
 	import com.pintu.config.*;
@@ -12,12 +16,16 @@ package com.pintu.widgets{
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
+	import org.casalib.display.CasaShape;
 	import org.casalib.display.CasaSprite;
 	
 	/**
 	 * 显示在应用右上角的个人详情部分
 	 */ 
 	public class UserDetailsBlock extends AbstractWidget{		
+		
+		private var titleBackgroudColor:uint = StyleParams.PICDETAIL_BACKGROUND_THIRD;
+		private var titleBackgroudHeight:int = InitParams.MAINMENUBAR_HEIGHT;
 		
 		private var drawStartX:Number;
 		private var drawStartY:Number;
@@ -27,11 +35,14 @@ package com.pintu.widgets{
 		
 		private var userDetailFetched:Boolean;
 		private var userInfoContainer:CasaSprite;
+		private var wealthContainer:CasaSprite;
+		private var wealthSwitcher:CasaSprite;
 		
-		private var titleBackgroudColor:uint = StyleParams.COLUMN_TITLE_BACKGROUND;
-		private var titleBackgroudHeight:int = InitParams.ANDI_TITLE_HEIGHT;
+		
 		private var iconYOffset:int = 0;
-		private var iconHGap:int = 58;
+		private var iconHGap:int = 66;
+		
+
 		
 		public function UserDetailsBlock(model:IPintu){
 			super(model);			
@@ -41,8 +52,21 @@ package com.pintu.widgets{
 			drawLoginBackGround();	
 			drawTitleBar();
 			
+			//当前区域的遮罩
+			addUserDetailsMask();
+			
 			userInfoContainer = new CasaSprite();
+			//向下移动，给工具栏让位
+			userInfoContainer.y = 4;			
 			this.addChild(userInfoContainer);
+			
+			//财富对象容器，运行时添加
+			wealthContainer = new CasaSprite();
+			drawWealthBackground();
+			
+			wealthSwitcher = new CasaSprite();
+			this.addChild(wealthSwitcher);
+			drawTriangleSwitcher();
 		}
 		
 		/**
@@ -72,43 +96,62 @@ package com.pintu.widgets{
 		private function drawTitleBar():void{
 			this.graphics.lineStyle(1, titleBackgroudColor);
 			this.graphics.beginFill(titleBackgroudColor, 1);
-			this.graphics.drawRect(drawStartX,drawStartY,InitParams.ANDI_ASSETS_WIDTH,titleBackgroudHeight);
+			this.graphics.drawRect(drawStartX+1,drawStartY+1,InitParams.ANDI_ASSETS_WIDTH-2,titleBackgroudHeight);
 			this.graphics.endFill();
 			
-			var overColors:Array = [StyleParams.HEADER_MENU_MOUSEOVER,StyleParams.HEADER_MENU_MOUSEOVER];
-			var downColors:Array = [StyleParams.DEFAULT_DARK_GREEN,StyleParams.DEFAULT_DARK_GREEN];
+			//icon button colors
+			var upColors:Array = [0xFFFFFF,0xFFFFFF];
+			var overColors:Array = [StyleParams.ICONMENU_MOUSEOVER_TOP,
+				StyleParams.ICONMENU_MOUSEOVER_BOTTOM];
+			var downColors:Array = [StyleParams.ICONMENU_SELECTED_TOP,
+				StyleParams.ICONMENU_SELECTED_BOTTOM];
+			
+			var buttonGap:Number = 2;
+			var buttonXoffset:Number = 4;
 			
 			//上传图片
-			var upload:IconButton = new IconButton(titleBackgroudHeight,titleBackgroudHeight);
-			upload.iconPath = "assets/post_pic.png";
+			var upload:IconButton = new IconButton(InitParams.MAINMENUBAR_HEIGHT,InitParams.MAINMENUBAR_HEIGHT-buttonGap);
+			upload.iconPath = "assets/post_pic_l.png";
 			upload.addEventListener(MouseEvent.CLICK, postImage);
-			upload.x = drawStartX;
-			upload.y = drawStartY+iconYOffset;
-			upload.textOnRight = true;
+			upload.x = drawStartX+buttonXoffset;
+			upload.y = drawStartY+iconYOffset;			
 			upload.label = "贴图";			
-			upload.setSkinStyle(null,overColors,downColors);			
+			upload.setSkinStyle(upColors,overColors,downColors);
+			upload.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+				StyleParams.DEFAULT_TEXT_FONTSIZE,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				StyleParams.DEFAULT_TEXT_COLOR);	
 			this.addChild(upload);
 			
 			//发消息
-			var writeMsg:IconButton = new IconButton(titleBackgroudHeight,titleBackgroudHeight);
-			writeMsg.iconPath = "assets/write_msg.png";
+			var writeMsg:IconButton = new IconButton(InitParams.MAINMENUBAR_HEIGHT,InitParams.MAINMENUBAR_HEIGHT-buttonGap);
+			writeMsg.iconPath = "assets/write_msg_l.png";
 			writeMsg.addEventListener(MouseEvent.CLICK, postMsg);
-			writeMsg.x = drawStartX+iconHGap;
-			writeMsg.y = drawStartY+iconYOffset;
-			writeMsg.textOnRight = true;
+			writeMsg.x = drawStartX+iconHGap+buttonXoffset;
+			writeMsg.y = drawStartY+iconYOffset;			
 			writeMsg.label = "写信";			
-			writeMsg.setSkinStyle(null,overColors,downColors);			
+			writeMsg.setSkinStyle(upColors,overColors,downColors);
+			writeMsg.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+				StyleParams.DEFAULT_TEXT_FONTSIZE,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				StyleParams.DEFAULT_TEXT_COLOR);			
 			this.addChild(writeMsg);
 			
 			//修改资料
-			var updateUser:IconButton = new IconButton(titleBackgroudHeight,titleBackgroudHeight);
-			updateUser.iconPath = "assets/update_user.png";
+			var updateUser:IconButton = new IconButton(InitParams.MAINMENUBAR_HEIGHT,InitParams.MAINMENUBAR_HEIGHT-buttonGap);
+			updateUser.iconPath = "assets/update_user_l.png";
 			updateUser.addEventListener(MouseEvent.CLICK, postUserInfo);
-			updateUser.x = drawStartX+2*iconHGap;
-			updateUser.y = drawStartY+iconYOffset;
-			updateUser.textOnRight = true;
+			updateUser.x = drawStartX+2*iconHGap+buttonXoffset;
+			updateUser.y = drawStartY+iconYOffset;			
 			updateUser.label = "修改资料";			
-			updateUser.setSkinStyle(null,overColors,downColors);			
+			updateUser.setSkinStyle(upColors,overColors,downColors);
+			updateUser.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+				StyleParams.DEFAULT_TEXT_FONTSIZE,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				StyleParams.DEFAULT_TEXT_COLOR,
+				StyleParams.DEFAULT_TEXT_COLOR);			
 			this.addChild(updateUser);
 			
 		}
@@ -145,9 +188,10 @@ package com.pintu.widgets{
 			var startX:Number = drawStartX;
 			var startY:Number = drawStartY+titleBackgroudHeight;
 			var xOffset:Number = 4;
-			var yOffset:Number = 4;
+			var yOffset:Number = 5;
 			
 			var dark:uint = StyleParams.BROWN_GRAY_COLOR;
+			var white:uint = StyleParams.WHITE_TEXT_COLOR;
 			var normalTXTSize:int = 12;
 			var bigTXTSize:int = 16;
 			var avatarToTextGap:Number = 4;
@@ -156,6 +200,7 @@ package com.pintu.widgets{
 			//修改用户资料后重新绘制
 			if(userInfoContainer.numChildren)
 				userInfoContainer.removeChildren();
+						
 			
 			//头像
 			var avatarUrl:String = _clonedModel.composeImgUrlByPath(userObj["avatar"]);
@@ -206,49 +251,52 @@ package com.pintu.widgets{
 			cmntNumTF.y = startY+40;
 			userInfoContainer.addChild(cmntNumTF);
 			
-			
 			var shellsY:Number = startY+avatarImg.maxSize+userNameTF.textHeight+4*yOffset;
+			
+			
+			//准备财富容器
+			userInfoContainer.addChild(wealthContainer);
 			
 			//海贝数目
 			var seaShell:SimpleImage = new SimpleImage("assets/shell_sea_24.png");
 			seaShell.x = startX+xOffset;
 			seaShell.y = shellsY;
-			userInfoContainer.addChild(seaShell);
-			var seaShellNum:SimpleText = new SimpleText(userObj["seaShell"],dark,normalTXTSize);
+			wealthContainer.addChild(seaShell);
+			var seaShellNum:SimpleText = new SimpleText(userObj["seaShell"],white,normalTXTSize);
 			seaShellNum.x = seaShell.x+24+xOffset;
 			seaShellNum.y = shellsY+yOffset;
-			userInfoContainer.addChild(seaShellNum);
+			wealthContainer.addChild(seaShellNum);
 			
 			//铜贝数目			
 			var copperShell:SimpleImage = new SimpleImage("assets/shell_copper_24.png");
 			copperShell.x = seaShellNum.x+2*textHGap;
 			copperShell.y = shellsY;
-			userInfoContainer.addChild(copperShell);
-			var copperShellNum:SimpleText = new SimpleText(userObj["copperShell"],dark,normalTXTSize);
+			wealthContainer.addChild(copperShell);
+			var copperShellNum:SimpleText = new SimpleText(userObj["copperShell"],white,normalTXTSize);
 			copperShellNum.x = copperShell.x+24+xOffset;
 			copperShellNum.y = shellsY+yOffset;
-			userInfoContainer.addChild(copperShellNum);
+			wealthContainer.addChild(copperShellNum);
 			
 			
 			//银贝数目
 			var silverShell:SimpleImage = new SimpleImage("assets/shell_silver_24.png");
 			silverShell.x = copperShellNum.x+2*textHGap;
 			silverShell.y = shellsY;
-			userInfoContainer.addChild(silverShell);
-			var silverShellNum:SimpleText = new SimpleText(userObj["silverShell"],dark,normalTXTSize);
+			wealthContainer.addChild(silverShell);
+			var silverShellNum:SimpleText = new SimpleText(userObj["silverShell"],white,normalTXTSize);
 			silverShellNum.x = silverShell.x+24+xOffset;
 			silverShellNum.y = shellsY+yOffset;
-			userInfoContainer.addChild(silverShellNum);			
+			wealthContainer.addChild(silverShellNum);			
 			
 			//金贝数目
 			var goldShell:SimpleImage = new SimpleImage("assets/shell_gold_24.png");
 			goldShell.x = silverShellNum.x+2*textHGap;
 			goldShell.y = shellsY;
-			userInfoContainer.addChild(goldShell);
-			var goldShellNum:SimpleText = new SimpleText(userObj["goldShell"],dark,normalTXTSize);
+			wealthContainer.addChild(goldShell);
+			var goldShellNum:SimpleText = new SimpleText(userObj["goldShell"],white,normalTXTSize);
 			goldShellNum.x = goldShell.x+24+xOffset;
 			goldShellNum.y = shellsY+yOffset;
-			userInfoContainer.addChild(goldShellNum);
+			wealthContainer.addChild(goldShellNum);
 			
 		}
 		
@@ -260,8 +308,70 @@ package com.pintu.widgets{
 			this.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR, 1);
 			this.graphics.drawRect(drawStartX,drawStartY,blockWidth,blockHeight);
 			this.graphics.endFill();
+						
+		}
+		
+		private function drawTriangleSwitcher():void{
+			//初始化颜色
+			renderTriangleByColor(StyleParams.DEFAULT_BORDER_COLOR);
 			
+			wealthSwitcher.addEventListener(MouseEvent.MOUSE_OVER, function():void{
+				renderTriangleByColor(StyleParams.HEADERBAR_NEARBOTTOM_LIGHTGREEN);
+			});
+			wealthSwitcher.addEventListener(MouseEvent.MOUSE_OUT, function():void{
+				renderTriangleByColor(StyleParams.DEFAULT_BORDER_COLOR);
+			});
+			wealthSwitcher.addEventListener(MouseEvent.MOUSE_DOWN, function():void{
+				renderTriangleByColor(StyleParams.HEADER_MENU_SELECTED);
+			});
+			wealthSwitcher.addEventListener(MouseEvent.CLICK, function():void{
+				slideUserWealth();
+			});			
 			
+		}
+		
+		private function drawWealthBackground():void{
+			wealthContainer.graphics.clear();
+			wealthContainer.graphics.beginFill(StyleParams.DEFAULT_BLACK_COLOR,0.8);
+			wealthContainer.graphics.drawRect(drawStartX, drawStartY+blockHeight-3, blockWidth, 30);
+			wealthContainer.graphics.endFill();
+		}
+		
+		private function slideUserWealth():void{
+			//已经弹出了，就不再动画了
+			if(wealthContainer.y<0) return;
+			
+			var myTimeline:TimelineLite = new TimelineLite();
+			//一闪
+			myTimeline.append(new TweenLite(wealthContainer, 0.4, {y : -30}));
+			//停留2秒回去
+			myTimeline.append(new TweenLite(wealthContainer, 0.4, {y:0}), 2);
+		}
+		
+		private function renderTriangleByColor(color:uint):void{
+			var triangleLength:Number = 16;
+			wealthSwitcher.graphics.clear();
+			//移动到底边向左顶点
+			wealthSwitcher.graphics.moveTo(drawStartX+blockWidth-triangleLength,drawStartY+blockHeight+1);
+			//开始填充
+			wealthSwitcher.graphics.beginFill(color);
+			//绘制到右边上顶点
+			wealthSwitcher.graphics.lineTo(drawStartX+blockWidth,drawStartY+blockHeight-triangleLength);
+			//绘制到区域右下角
+			wealthSwitcher.graphics.lineTo(drawStartX+blockWidth,drawStartY+blockHeight+1);
+			//回到起点
+			wealthSwitcher.graphics.lineTo(drawStartX+blockWidth-triangleLength,drawStartY+blockHeight+1);
+			//结束填充
+			wealthSwitcher.graphics.endFill();
+		}
+		
+		private function addUserDetailsMask():void{
+			var mask:CasaShape = new CasaShape();
+			mask.graphics.beginFill(StyleParams.DEFAULT_FILL_COLOR, 1);
+			mask.graphics.drawRect(drawStartX,drawStartY,blockWidth+1,blockHeight+1);
+			mask.graphics.endFill();
+			this.addChild(mask);
+			this.mask = mask;
 		}
 		
 		private function initDrawPoint():void{

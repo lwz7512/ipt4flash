@@ -13,6 +13,10 @@ package com.pintu.common{
 			
 			_txt = new SimpleText(text, 0xFFFFFF, 14, true, false);
 			this.addChild(_txt);
+			//如果是文本内容为+1或者是2位数数字，就往左移动下
+			if(_txt.textWidth>7){
+				_txt.x = -4;
+			}
 			
 			this.graphics.lineStyle(1, 0x999999);
 			this.graphics.beginFill(0x40de5a);

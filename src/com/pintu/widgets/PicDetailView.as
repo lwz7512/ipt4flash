@@ -4,6 +4,7 @@ package com.pintu.widgets{
 	import com.pintu.api.*;
 	import com.pintu.common.*;
 	import com.pintu.config.*;
+	import com.pintu.controller.GlobalController;
 	import com.pintu.events.*;
 	import com.pintu.utils.*;
 	import com.pintu.vos.CmntData;
@@ -48,10 +49,13 @@ package com.pintu.widgets{
 		}
 		
 		private function addModelListeners(evt:Event):void{
+			this.removeEventListener(Event.ADDED_TO_STAGE, addModelListeners);
+			
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.ADDSTORY, cmntPostHandler);
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.ADDVOTE, votePicHandler);
+			PintuImpl(_clonedModel).addEventListener(ApiMethods.SENDMSG, reportPicHandler);
 		}
 		
 		/**
@@ -63,6 +67,7 @@ package com.pintu.widgets{
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.GETSTORIESOFPIC, cmntListHandler);
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.ADDVOTE, votePicHandler);
+			PintuImpl(_clonedModel).removeEventListener(ApiMethods.SENDMSG, reportPicHandler);
 			//这个是复制出来的，一定要销毁
 			_clonedModel.destory();
 			_clonedModel = null;
@@ -120,6 +125,8 @@ package com.pintu.widgets{
 			if(evt is ResponseEvent){
 				//在主显示区弹出提示
 				this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "图片收藏成功"));
+				//通知HomePage，要给AndiBlock的收藏菜单旁边显示一个+1
+				this.dispatchEvent(new PintuEvent(PintuEvent.MARK_SUCCSS, null));
 			}
 			if(evt is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.MARKTHEPIC);
@@ -133,6 +140,16 @@ package com.pintu.widgets{
 			}
 			if(evt is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.ADDVOTE);
+			}
+		}
+		
+		private function reportPicHandler(evt:Event):void{
+			if(evt is ResponseEvent){
+				//在主显示区弹出提示
+				this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "感谢您的举报，我们会及时处理！"));
+			}
+			if(evt is PTErrorEvent){
+				Logger.error("Error in calling: "+ApiMethods.SENDMSG);
 			}
 		}
 	
@@ -285,6 +302,13 @@ package com.pintu.widgets{
 			}
 		}
 		
+		override protected function reportIt(evt:MouseEvent):void{			
+			//调用模型方法提交
+			Logger.debug("to report pic: "+_data.id);
+			var receiver:String = GlobalController.KEFU_ID;
+			var reportContent:String = "I think the picture: "+_data.id+" is illegal, isn't it?";
+			_clonedModel.postMsg(receiver,reportContent);
+		}
 		override protected function todo(evt:MouseEvent):void{
 			//TODO, ADD FORWARD TO WEIBO,  AND REPORT ...
 			

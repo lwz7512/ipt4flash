@@ -10,6 +10,7 @@ package com.pintu.widgets{
 	
 	import flash.display.JointStyle;
 	import flash.events.MouseEvent;
+	import flash.external.ExternalInterface;
 	import flash.geom.Point;
 	import flash.text.TextFormat;
 	
@@ -130,7 +131,11 @@ package com.pintu.widgets{
 				mobImage.x = (InitParams.DEFAULT_BIGPIC_WIDTH-mobImage.bitmap.width);
 			}
 			//这回该重新显示图片了
-			this.addChild(mobImage);						
+			this.addChild(mobImage);	
+			
+			//点击图片能修改连接，这样能得到这个图片的有效URL地址
+			//FIXME, 2012/01/05
+			mobImage.addEventListener(MouseEvent.CLICK, resetPictureUrl);
 			
 			//-------------- toolHolder -----------------------------
 			//最后创建图片工具栏，使其浮在顶部
@@ -140,6 +145,11 @@ package com.pintu.widgets{
 			
 			//图片加载结束，第一次通知外围，渲染完成
 			rendered();		
+		}
+		
+		private function resetPictureUrl(evt:MouseEvent):void{
+			//修改页面所在的url
+			ExternalInterface.call("setCurrentPicUrl", _data.id);
 		}
 		
 		private function drawImgePlaceHolder():void{
@@ -536,12 +546,11 @@ package com.pintu.widgets{
 			//TODO, REPORT TO ADMIN BUTTON
 			var report:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			report.iconPath = "assets/report.png";
-			report.addEventListener(MouseEvent.CLICK, todo);
+			report.addEventListener(MouseEvent.CLICK, reportIt);
 			report.x = forward.x +iconHGap;
 			report.y = iconYOffset;
 			report.textOnRight = true;
-			report.label = "举报";
-			report.enabled = false;
+			report.label = "举报";			
 			report.setSkinStyle(null,overColors,downColors);	
 			toolHolder.addChild(report);
 						
@@ -558,6 +567,9 @@ package com.pintu.widgets{
 			//do nothing here, for sub class to implementation
 		}
 		protected function saveToLocal(evt:MouseEvent):void{
+			//do nothing here, for sub class to implementation
+		}
+		protected function reportIt(evt:MouseEvent):void{
 			//do nothing here, for sub class to implementation
 		}
 		protected function todo(evt:MouseEvent):void{

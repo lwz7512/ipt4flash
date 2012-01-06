@@ -39,11 +39,21 @@ package com.pintu.modules{
 		public function HomePage(model:IPintu){
 			super();
 			_model = model;	
-			_fileManager = new FileManager(_model);				
+			_fileManager = new FileManager(_model);
+			//监听我的资产和消息回复动作派发的事件
+			this.addEventListener(PintuEvent.POST_MSG, editMsg);
 			
+			buildMainDisplayArea();
+			buildSlideToolBar();
+			buildUserDetail();
+			buildAndiMenu();
+			buildHotTags();
+		
+		}
+		
+		private function buildMainDisplayArea():void{
 			//呈现图片的主要区域，大部分逻辑都在这里
-			mainDisplayArea = new MainDisplayArea(_model);
-			
+			mainDisplayArea = new MainDisplayArea(_model);			
 			//设置即将执行的查询模式：缩略图模式画廊
 			var savedBrowseType:String = GlobalController.browseType;
 			if(savedBrowseType){
@@ -61,31 +71,39 @@ package com.pintu.modules{
 			}	
 			
 			//PicDetailView派发的事件，内部无法处理下载动作
-			mainDisplayArea.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);		
+			mainDisplayArea.addEventListener(PintuEvent.DNLOAD_IMAGE, downLoadRawPic);
+			mainDisplayArea.addEventListener(PintuEvent.MARK_SUCCSS, showMarkHint);
 			this.addChild(mainDisplayArea);
-			
+		}
+		
+		private function buildSlideToolBar():void{
 			slideToolBar = new SlideToolBar();
 			slideToolBar.alpha = 0;
 			slideToolBar.addEventListener(PintuEvent.BROWSE_CHANGED, browseTypeChanged);
 			this.addChild(slideToolBar);
-			
+		}
+		
+		private function buildUserDetail():void{
 			userDetails = new UserDetailsBlock(_model);
-			userDetails.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);
-			userDetails.addEventListener(PintuEvent.POST_MSG, editMsg);
+			userDetails.addEventListener(PintuEvent.UPLOAD_IMAGE, editPic);			
 			userDetails.addEventListener(PintuEvent.POST_USERINFO, editUserInfo);
 			this.addChild(userDetails);
-			
+		}
+		
+		private function buildAndiMenu():void{
 			andiAssets = new AndiBlock(_model);
 			andiAssets.addEventListener(PintuEvent.SHOW_MSGS, displayMsgList);
 			andiAssets.addEventListener(PintuEvent.GET_MYPICS, displayMyPics);
 			andiAssets.addEventListener(PintuEvent.GET_MYFAVS, displayMyFavs);
 			this.addChild(andiAssets);
-			
+		}
+		
+		private function buildHotTags():void{
 			hotTags = new HotTags(_model);
 			hotTags.addEventListener(PintuEvent.GETTB_BYTAG, displayThumbnailsOfTag);
 			this.addChild(hotTags);
-			
 		}
+		
 		
 		private function displayThumbnailsOfTag(evt:PintuEvent):void{
 			mainDisplayArea.browseType = MainDisplayArea.THUMBNAIL_BYTAG;
@@ -117,6 +135,10 @@ package com.pintu.modules{
 			var picName:String = evt.extra;
 			//打开文件保存路径选择窗口，确定后开始下载
 			_fileManager.download(evt.data, picName);
+		}
+		
+		private function showMarkHint(evt:PintuEvent):void{
+			andiAssets.showNewMarked();
 		}
 		
 		
