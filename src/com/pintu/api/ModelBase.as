@@ -197,15 +197,15 @@ package com.pintu.api{
 		private function useLiteClient(method:String):Boolean{
 			var result:Boolean = false;
 			if(method==ApiMethods.GETGALLERYFORWEB ||
-				ApiMethods.GETGALLERYBYTIME ||
-				ApiMethods.GETGALLERYRANDOM ||
-				ApiMethods.GETHOTPICTURE ||
-				ApiMethods.CLASSICALSTATISTICS ||
-				ApiMethods.COLLECTSTATISTICS ||
-				ApiMethods.GETTHUMBNAILSBYTAG ||
-				ApiMethods.GETTPICSBYUSER ||
-				ApiMethods.GETFAVORITEPICS ||
-				ApiMethods.SEARCHBYTAG){
+				method==ApiMethods.GETGALLERYBYTIME ||
+				method==ApiMethods.GETGALLERYRANDOM ||
+				method==ApiMethods.GETHOTPICTURE ||
+				method==ApiMethods.CLASSICALSTATISTICS ||
+				method==ApiMethods.COLLECTSTATISTICS ||
+				method==ApiMethods.GETTHUMBNAILSBYTAG ||
+				method==ApiMethods.GETTPICSBYUSER ||
+				method==ApiMethods.GETFAVORITEPICS ||
+				method==ApiMethods.SEARCHBYTAG){
 				result = true;
 			}
 			return result;

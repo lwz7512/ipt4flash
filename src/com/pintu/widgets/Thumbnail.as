@@ -97,7 +97,7 @@ package com.pintu.widgets{
 			isLost = false;
 			//第一次载人的图片
 			var bitmap:Bitmap = _imgLoader.contentAsBitmap;				
-			var imgContainer:CasaSprite = this;
+		
 			var canvas:CasaShape = new CasaShape();
 			this.addChild(canvas);
 			//重设样式
@@ -113,18 +113,19 @@ package com.pintu.widgets{
 			}else{//正常图片显示
 				bitmap.x = 1;
 				bitmap.y = 1;
-				imgContainer.addChild(bitmap);
+				this.addChild(bitmap);
 							
 				//图片发布时间				
 				tf.text = PintuUtils.getRelativeTimeByMiliSeconds(_data.creationTime);
 				tf.x = (100-tf.textWidth)/2;
 				tf.y = 78;
-				imgContainer.swapChildren(bitmap,tf);											
+//				this.swapChildren(bitmap,tf);											
 			}						
 			
 			_initialized = true;
 			//文字置顶
-			imgContainer.setChildIndex(tf, imgContainer.numChildren-1);
+			if(this.contains(tf))
+				this.setChildIndex(tf, this.numChildren-1);
 			//画文字所在背景，及边框
 			drawBackground(canvas);		
 		}
