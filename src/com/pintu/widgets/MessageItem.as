@@ -67,7 +67,9 @@ package com.pintu.widgets{
 			this.addChild(reply);
 			
 			//内容高度让它自动扩展，不写死了
-			msgContent = new SimpleText(_msg.content, txtColor);
+			//消息内容可以选择拷贝
+			//2012/01/11
+			msgContent = new SimpleText(_msg.content, txtColor, 12, false, true, true);
 			msgContent.x = sender.x;
 			msgContent.y = sender.y+textVGap;
 			msgContent.width = InitParams.GALLERY_WIDTH-sender.x-rightMarging;
