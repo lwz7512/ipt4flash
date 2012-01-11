@@ -54,8 +54,9 @@ package com.pintu.widgets{
 			//draw mask
 			var clip:CasaShape = new CasaShape();
 			clip.graphics.beginFill(0x000000);
-			//稍微宽点容纳图片
-			clip.graphics.drawRoundRect(0,0,101,100,_roundRadius,_roundRadius);
+			//FIXME, 稍微宽点容纳图片
+			//2012/01/11
+			clip.graphics.drawRoundRect(0,0,102,100,_roundRadius,_roundRadius);
 			clip.graphics.endFill();
 			this.addChild(clip);
 			this.mask = clip;
@@ -98,8 +99,7 @@ package com.pintu.widgets{
 			//第一次载人的图片
 			var bitmap:Bitmap = _imgLoader.contentAsBitmap;				
 		
-			var canvas:CasaShape = new CasaShape();
-			this.addChild(canvas);
+			
 			//重设样式
 			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.GREEN_TEXT_COLOR);
 			
@@ -119,15 +119,17 @@ package com.pintu.widgets{
 				tf.text = PintuUtils.getRelativeTimeByMiliSeconds(_data.creationTime);
 				tf.x = (100-tf.textWidth)/2;
 				tf.y = 78;
-//				this.swapChildren(bitmap,tf);											
 			}						
 			
-			_initialized = true;
-			//文字置顶
-			if(this.contains(tf))
-				this.setChildIndex(tf, this.numChildren-1);
 			//画文字所在背景，及边框
-			drawBackground(canvas);		
+			drawBackground();		
+			
+			//移除在底部的文字
+			this.removeChild(tf);
+			//放在顶部
+			this.addChild(tf);
+			
+			_initialized = true;			
 		}
 		
 		private function _onError(event:IOErrorEvent):void{
@@ -139,16 +141,19 @@ package com.pintu.widgets{
 			this.graphics.endFill();
 		}
 		
-		private function drawBackground(cavas:CasaShape):void{
+		private function drawBackground():void{
+			//再画底部背景条						
+			var canvas:CasaShape = new CasaShape();
+			this.addChild(canvas);
 			//黑色背景，这样暗示详情背景是黑色的
-			cavas.graphics.beginFill(StyleParams.DEFAULT_TEXT_COLOR, 0.8);
+			canvas.graphics.beginFill(StyleParams.DEFAULT_TEXT_COLOR, 0.8);
 			//稍微宽点容纳图片
-			cavas.graphics.drawRect(0, (100-timeBarHeight),100,timeBarHeight);
-			cavas.graphics.endFill();					
+			canvas.graphics.drawRect(0, (100-timeBarHeight),101,timeBarHeight);
+			canvas.graphics.endFill();					
 			
 			//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
-			cavas.graphics.lineStyle(1,StyleParams.PICDETAIL_BACKGROUND_BROWN,1,true);
-			cavas.graphics.drawRect(0, 0, 100, 100);
+			canvas.graphics.lineStyle(1,StyleParams.PICDETAIL_BACKGROUND_BROWN,1,true);
+			canvas.graphics.drawRect(0, 0, 101, 100);
 		}
 		
 	} //end of class
