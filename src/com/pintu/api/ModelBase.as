@@ -205,8 +205,11 @@ package com.pintu.api{
 				method==ApiMethods.GETTHUMBNAILSBYTAG ||
 				method==ApiMethods.GETTPICSBYUSER ||
 				method==ApiMethods.GETFAVORITEPICS ||
-				method==ApiMethods.SEARCHBYTAG){
+				method==ApiMethods.SEARCHBYTAG ||
+				method==ApiMethods.ACTIVEUSERRANKING){
+				
 				result = true;
+				
 			}
 			return result;
 		}
