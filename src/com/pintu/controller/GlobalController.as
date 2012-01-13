@@ -79,6 +79,10 @@ package com.pintu.controller{
 			
 		}
 		
+		public static function isGuestLogin(user:String):Boolean{
+			if(user==GUEST_USER_ACCOUNT) return true;
+			return false;
+		}
 		
 		public static function rememberUser(user:String, role:String):void{			
 			//当前应用要保存下来

@@ -208,6 +208,10 @@ package com.pintu.modules{
 		 * 在Main中的browseTypeChanged监听器中调用该方法
 		 */ 
 		public function menuHandler(operation:String, extra:String):void{
+			//FIXME, 恢复URL地址，去掉#...
+			//2012/01/13
+			ExternalInterface.call("resetAppUrl");			
+			
 			//随机模式
 			if(operation==PintuEvent.BROWSE_CHANGED 
 				&& extra==BrowseMode.CATEGORY_RANDOM_TBMODE){

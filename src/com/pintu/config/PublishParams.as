@@ -8,8 +8,8 @@ package com.pintu.config{
 		
 		public static const PRODUCER:String = "北京远博畅享科技有限公司出品";
 		
-		public static const VERSION:String = "v 1.0";
-		public static const RELEASE_TIME:String = "2012/01/09";
+		public static const VERSION:String = "v 1.02";
+		public static const RELEASE_TIME:String = "2012/01/13";
 		
 		public static const WEIBO_URL:String = "http://weibo.com/ipintu";
 		public static const HOME_URL:String = "http://ipintu.com";

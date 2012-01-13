@@ -106,10 +106,15 @@ package com.pintu.widgets
 			if(result.indexOf("@")>-1){
 				var role:String = result.split("@")[0];
 				var userId:String = result.split("@")[1];
-				//缓存下来
-				GlobalController.rememberUser(userId,role);
-				//更新用户信息到模型中
-				_model.updateUser(userId);
+								
+				//FIXME, 只有注册用户登录才缓存
+				//2012/01/13
+				if(!GlobalController.isGuestLogin(userId)){
+					GlobalController.rememberUser(userId,role);
+					//更新用户信息到模型中
+					_model.updateUser(userId);					
+				}				
+				
 				//派发时间通知主应用导航到主页
 				dispatchEvent(new PintuEvent(PintuEvent.NAVIGATE,GlobalNavigator.HOMPAGE));
 				//标记登录成功
