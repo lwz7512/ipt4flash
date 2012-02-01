@@ -110,7 +110,7 @@ package com.pintu.widgets{
 		}
 		
 		private function userMsgReaded(evt:Event):void{
-			if(evt is ResponseEvent){
+			if(evt is PTStatusEvent){
 				this.removeChild(msgNum);
 			}
 			if(evt is PTErrorEvent){

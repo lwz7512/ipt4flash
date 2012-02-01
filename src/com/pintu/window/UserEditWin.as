@@ -99,7 +99,9 @@ package com.pintu.window{
 			var translucent:CasaSprite = new CasaSprite();
 			translucent.x = _elementStartX;
 			translucent.y = _elementStartY;
-			translucent.graphics.beginFill(0x000000, 0.8);
+			//FIXME, 太黑了看不清楚，现在应该可以了
+			//2012/02/01
+			translucent.graphics.beginFill(0x000000, 0.6);
 			translucent.graphics.drawRect(0,0,_maxLoadImgWidth,_maxLoadImgHeight);
 			translucent.graphics.endFill();
 			translucent.addEventListener(MouseEvent.MOUSE_DOWN, mouseDownInImage);

@@ -56,7 +56,9 @@ package com.pintu.controller{
 			_context = context;
 			
 			try{
-				cs = SharedObject.getLocal("ipintu");				
+				//FIXME, ADD LOACALPATH FOR MULTI SWF ACCESS
+				//2012/02/01
+				cs = SharedObject.getLocal("ipintu", "/");				
 			}catch(e:Error){
 				Logger.error("Can not create client data storage!");
 				
@@ -90,8 +92,10 @@ package com.pintu.controller{
 			roleName = role;
 			_isLogged = true;
 			
+			//FIXME, ADD LOACALPATH FOR MULTI SWF ACCESS
+			//2012/02/01
 			//同时保存到sharedobject文件
-			cs = SharedObject.getLocal("ipintu");			
+			cs = SharedObject.getLocal("ipintu", "/");			
 			cs.data["userId"] = user;
 			cs.data["roleName"] = role;
 			//存文件
@@ -107,7 +111,7 @@ package com.pintu.controller{
 			
 			_browseType = browseType;
 			
-			cs = SharedObject.getLocal("ipintu");			
+			cs = SharedObject.getLocal("ipintu", "/");			
 			cs.data["browseType"] = browseType;
 			var result:String = cs.flush(500);
 			//判断是否保存成功

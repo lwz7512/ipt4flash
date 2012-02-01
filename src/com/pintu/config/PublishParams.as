@@ -8,11 +8,13 @@ package com.pintu.config{
 		
 		public static const PRODUCER:String = "北京远博畅享科技有限公司出品";
 		
-		public static const VERSION:String = "v 1.02";
-		public static const RELEASE_TIME:String = "2012/01/13";
+		public static const VERSION:String = "v 1.03";
+		public static const RELEASE_TIME:String = "2012/02/01";
 		
 		public static const WEIBO_URL:String = "http://weibo.com/ipintu";
 		public static const HOME_URL:String = "http://ipintu.com";
+		
+		public static const MODIFY_PASSWORD_URL:String = "http://ipintu.com/ipintu/html/retrieve.html";
 		
 		//客服联系，也接受用户反馈
 		public static const SERVICE_MAIL:String = "service@ipintu.com";

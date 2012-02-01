@@ -112,7 +112,7 @@ package com.pintu.widgets{
 			
 			if(evt is ResponseEvent){
 				var jsonCmnt:String = ResponseEvent(evt).data;
-//				Logger.debug("json comments: "+jsonCmnt);
+				Logger.debug("json comments: "+jsonCmnt);
 				createCommentList(jsonCmnt);
 			}
 			if(evt is PTErrorEvent){

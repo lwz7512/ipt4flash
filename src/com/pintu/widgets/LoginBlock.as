@@ -16,7 +16,11 @@ package com.pintu.widgets
 	import flash.display.GradientType;
 	import flash.display.Sprite;
 	import flash.events.Event;
+	import flash.events.MouseEvent;
 	import flash.geom.Matrix;
+	
+	import flash.net.URLRequest;
+	import flash.net.navigateToURL;
 	
 	import org.casalib.display.CasaSprite;
 	import org.casalib.util.StringUtil;
@@ -203,9 +207,24 @@ package com.pintu.widgets
 			//提示
 			inputHint = new SimpleText("",StyleParams.DEFAULT_ERROR_RED);
 			inputHint.x = drawStartX+padding;
-			inputHint.y = submit.y+verticalGap;
+			//FIXME, 往下移动点，给忘记密码链接让出位置
+			//2012/02/01
+			inputHint.y = submit.y+verticalGap+10;
 			inputHint.width = 120;
 			this.addChild(inputHint);
+			
+			//忘记密码
+			var forgetPassword:SimpleLinkTxt = new SimpleLinkTxt("忘记密码?", 0x0066CC);
+			forgetPassword.x = drawStartX+padding;
+			forgetPassword.y = pswd.y+pswd.height+6;
+			forgetPassword.addEventListener(MouseEvent.CLICK, openBrowseWin);
+			this.addChild(forgetPassword);
+			
+		}
+		
+		private function openBrowseWin(evt:MouseEvent):void{
+			var address:URLRequest = new URLRequest(PublishParams.MODIFY_PASSWORD_URL);
+			navigateToURL(address, "_blank");
 		}
 		
 		private function checkToLogin(evt:Event):void{			
