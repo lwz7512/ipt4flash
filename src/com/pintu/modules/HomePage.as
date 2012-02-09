@@ -59,7 +59,10 @@ package com.pintu.modules{
 			if(savedBrowseType){
 				mainDisplayArea.browseType = savedBrowseType;
 			}else{
-				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;				
+				//FIXME, 改成随机模式，这样上来好看点
+				//2012/02/08
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;				
+//				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;				
 			}
 			//设置显示网页url指定的图片详情
 			if(ExternalInterface.available){

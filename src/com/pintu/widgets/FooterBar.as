@@ -40,7 +40,7 @@ package com.pintu.widgets
 		private function createTextMenus():void{
 			var vOffset:Number = 2;
 			//	版权				
-			var copyRightStr:String = "Copyright © 2011 北京远博畅享科技有限公司 保留所有权利";
+			var copyRightStr:String = PublishParams.COPYRIGHT;
 			var copyRightST:SimpleText = new SimpleLinkTxt(copyRightStr,StyleParams.HEADERBAR_BOTTOM_LIGHTGREEN);
 			copyRightST.width = 500;
 			copyRightST.x = InitParams.startDrawingX()+10;
@@ -55,7 +55,7 @@ package com.pintu.widgets
 			var rightSide:Number = InitParams.startDrawingX()+InitParams.MINAPP_WIDTH;
 			
 			//联系我们
-			var contactUs:SimpleText = new SimpleText("联系我们："+PublishParams.CONTACT_MAIL,
+			var contactUs:SimpleText = new SimpleText(PublishParams.CONTACT_US+PublishParams.CONTACT_MAIL,
 				StyleParams.HEADERBAR_BOTTOM_LIGHTGREEN,12,false,false,true);
 			contactUs.width = 150;
 			contactUs.x = rightSide-250;
@@ -63,7 +63,7 @@ package com.pintu.widgets
 			this.addChild(contactUs);
 			
 			//官方微博
-			var weibo:SimpleLinkTxt = new SimpleLinkTxt("新浪微博",StyleParams.HEADERBAR_BOTTOM_LIGHTGREEN);
+			var weibo:SimpleLinkTxt = new SimpleLinkTxt(PublishParams.SINA_WEIBO, StyleParams.HEADERBAR_BOTTOM_LIGHTGREEN);
 			weibo.x = rightSide-60;
 			weibo.y = copyRightST.y;
 			weibo.addEventListener(MouseEvent.CLICK, openWeiboWin);
