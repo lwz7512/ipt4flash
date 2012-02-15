@@ -48,6 +48,10 @@ package com.pintu.window{
 		private var _localImagePath:String = "assets/folder32.png";
 		private var _cameraImagePath:String = "assets/webcamera32.png";
 		
+		//移动时记下位置
+		private var _currentImageXPos:Number = 0;
+		private var _currentImageYPos:Number = 0;
+		
 		
 		public function UserEditWin(ctxt:Stage, manager:FileManager){
 			super(ctxt, 400, 350, "编辑头像和昵称");
@@ -184,7 +188,12 @@ package com.pintu.window{
 				
 				//记下来下次用
 				_oldGlobalMouseX = mouseGlobalX;
-				_oldGlobalMouseY = mouseGlobalY;				
+				_oldGlobalMouseY = mouseGlobalY;	
+				
+				//记下当前位置，缩放时使用
+				_currentImageXPos = _loader.content.x;
+				_currentImageYPos = _loader.content.y;
+				
 			}
 			
 		}
@@ -229,6 +238,10 @@ package com.pintu.window{
 			
 			//清除错误提示
 			updateSuggest("");
+			
+			//初始化图片位置
+			_currentImageXPos = 0;
+			_currentImageYPos = 0;
 		}	
 		
 		
@@ -293,6 +306,7 @@ package com.pintu.window{
 			_slider.value = 100;
 			//清除输入框文字
 			_nickName.text = "";
+						
 		}		
 		
 		//移除克隆模型的事件监听，并销毁克隆模型
@@ -346,15 +360,23 @@ package com.pintu.window{
 		
 		private function resizeImage(evt:SliderEvent):void{
 			var value:Number = evt.value;			
-			
+			var ratio:Number = value/100;
 			if(_loader.content){
-				var m:Matrix =  new Matrix();
-				m.scale(value/100,value/100);
-
+				var m:Matrix =  new Matrix();								
+				//旧版老是从窗口左上角缩放，图片老跑
+				//FIXME, 从图片被移动后的左上角缩放
+				//2012/02/15				
+				m.translate(_currentImageXPos/ratio, _currentImageYPos/ratio);	
+				//开始缩放
+				m.scale(ratio,ratio);				
 				_loader.content.transform.matrix = m;
-				_clonedBitmap.transform.matrix = m;
+				_clonedBitmap.transform.matrix = m;				
+				
 			}
+			
 		}
+		
+
 		
 		private function createLocalImageBtn():void{
 			//icon button colors
