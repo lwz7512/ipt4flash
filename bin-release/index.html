@@ -56,6 +56,9 @@
         	function removeLogo(){
         	   var logo = document.getElementById("logo");
         		document.body.removeChild(logo);
+        		
+        		//set focus now....
+        		//setFocusOnFlash();
         	}
         	//获取页面#后面的图片Id
         	function getPicIdAfterAnchor() { 
@@ -82,23 +85,35 @@
 					window.location.href = url.substring(0, url.indexOf("#")+1);
 				}
 			}
-        
+			
+			//页面载入后聚焦FLASH对象
+			function setFocusOnFlash() {
+		      var f=swfobject.getObjectById('Main');
+		      if (f) { f.tabIndex = 0; f.focus(); }
+		    } 
+		   
+		           
             // For version detection, set to min. required Flash Player version, or 0 (or 0.0.0), for no version detection. 
-            var swfVersionStr = "10.2.0";
+            var swfVersionStr = "11.0.0";
             // To use express install, set to playerProductInstall.swf, otherwise the empty string. 
+           
             var xiSwfUrlStr = "";
             var flashvars = {};
             var params = {};
+            
             params.quality = "high";
             params.bgcolor = "#ffffff";
             params.allowscriptaccess = "sameDomain";
             params.allowfullscreen = "true";
+            params.wmode = "opaque";
+            
             var attributes = {};
             attributes.id = "Main";
             attributes.name = "Main";
             attributes.align = "middle";
+            
             swfobject.embedSWF(
-                "Main.swf?v=0118", "flashContent", 
+                "Main.swf", "flashContent", 
                 "100%", "100%", 
                 swfVersionStr, xiSwfUrlStr, 
                 flashvars, params, attributes);
@@ -106,6 +121,7 @@
             swfobject.createCSS("#flashContent", "display:block;text-align:left;");
         </script>
     </head>
+    
     <body>
         <!-- SWFObject's dynamic embed method replaces this alternative HTML content with Flash content when enough 
              JavaScript and Flash plug-in support is available. The div is initially hidden so that it doesn't show
@@ -113,8 +129,7 @@
         -->
         <div id="flashContent">
             <p>
-                To view this page ensure that Adobe Flash Player version 
-                10.2.0 or greater is installed. 
+                您需要升级Flash播放器版本到11以上才能运行爱品图桌面版，点击下面的图片进行版本升级！
             </p>
             <script type="text/javascript"> 
                 var pageHost = ((document.location.protocol == "https:") ? "https://" : "http://"); 
@@ -152,9 +167,6 @@
                 </object>
                 <!--<![endif]-->
             </object>
-        </noscript>
-        <div id ="cnzz" style="display:none;">
-        	<script src="http://s13.cnzz.com/stat.php?id=3797512&web_id=3797512" language="JavaScript"></script>
-        </div>
+        </noscript>     
    </body>
 </html>

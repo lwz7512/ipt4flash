@@ -114,6 +114,9 @@ package com.pintu.widgets{
 				var jsonCmnt:String = ResponseEvent(evt).data;
 				Logger.debug("json comments: "+jsonCmnt);
 				createCommentList(jsonCmnt);
+				//FIXME, HIDE PROGRESS...
+				//2012/02/12
+				this.dispatchEvent(new PintuEvent(PintuEvent.HIDE_PROGRESS,null));				
 			}
 			if(evt is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.ADDSTORY);
@@ -221,6 +224,9 @@ package com.pintu.widgets{
 			//如果评论数大于0，获取评论列表，评论获得后增加视图高度	
 			if(Number(_data.commentsNum)){
 				_clonedModel.getComments(_data.id);
+				//FIXME, ADD PROGRESS...
+				//2012/02/12
+				this.dispatchEvent(new PintuEvent(PintuEvent.SHOW_PROGRESS,null));
 			}
 			//通知外围，渲染完成
 			rendered();		

@@ -51,8 +51,13 @@ package com.pintu.widgets{
 		private var loading:BusyIndicator;					
 		//画廊移动速度
 		private var _galleryMoveYSpeed:Number = 0;		
+		
 		//加速度系数
-		private var _acceleration:int = 40;
+		//FIXME, 增加滚动速度，这样大图列表滚的快些
+		//2012/02/11
+		private var _acceleration:int = 80;
+//		private var _acceleration:int = 40;
+		
 		//保留上次鼠标位置以判断移动方向
 		private var _lastMouseY:Number = 0;		
 		
@@ -84,6 +89,14 @@ package com.pintu.widgets{
 			//监听大图派发的滚动提升图片事件，方便添加评论输入
 			this.addEventListener(PintuEvent.SCROLL_UP, raiseUpGallery);
 			
+			//FIXME, LOADING EVENT PROCESS
+			//2012/02/12
+			this.addEventListener(PintuEvent.SHOW_PROGRESS, function():void{
+				showMiddleLoading();
+			});
+			this.addEventListener(PintuEvent.HIDE_PROGRESS, function():void{
+				hideMiddleLoading();
+			});
 		}		
 		
 		/**

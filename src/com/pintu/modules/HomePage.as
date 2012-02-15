@@ -61,7 +61,10 @@ package com.pintu.modules{
 			}else{
 				//FIXME, 改成随机模式，这样上来好看点
 				//2012/02/08
-				mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;				
+				//改成大图列表，似乎更好
+				//2012/02/11
+				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_BPMODE;				
+//				mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;				
 //				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;				
 			}
 			//设置显示网页url指定的图片详情

@@ -53,6 +53,11 @@ package com.pintu.events
 		public static const MARK_SUCCSS:String = "markSuccess";
 		
 		
+		public static const SHOW_PROGRESS:String = "showLoading";
+		public static const HIDE_PROGRESS:String = "hideLoading";
+		
+		
+		
 		//通常带的参数
 		public var data:String;
 		//第二参数

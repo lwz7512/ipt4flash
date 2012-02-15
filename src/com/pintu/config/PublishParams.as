@@ -4,7 +4,7 @@ package com.pintu.config{
 	public class PublishParams{
 		
 		public static const PRODUCT_NAME:String = "爱品图 ";
-		public static const PRODUCT_INTRO:String = "爱品图是一个为插画、动漫、平面创意作品爱好者开发的一款移动互联网应用，通过手机和web端可以随时随地欣赏好的作品，激发自己的创意并分享自己的发现。";
+		public static const PRODUCT_INTRO:String = "爱品图是一个为插画、动漫、平面创意作品爱好者开发的一款移动互联网应用，通过手机、平板、桌面浏览器可以随时随地欣赏优美的作品并分享自己的发现。";
 				
 		public static const COPYRIGHT:String = "Copyright © 2011 北京远博畅享科技有限公司 保留所有权利";
 		public static const PRODUCER:String = "北京远博畅享科技有限公司出品";

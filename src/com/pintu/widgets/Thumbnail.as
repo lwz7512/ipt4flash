@@ -101,7 +101,9 @@ package com.pintu.widgets{
 		
 			
 			//重设样式
-			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.GREEN_TEXT_COLOR);
+			//FIXME, 2012/02/15
+			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.WHITE_TEXT_COLOR);
+//			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.GREEN_TEXT_COLOR);
 			
 			//如果比缩略图默认尺寸大，就按默认图显示，这可能是不合法图片
 			//这样防止缓动效果出问题
@@ -146,7 +148,7 @@ package com.pintu.widgets{
 			var canvas:CasaShape = new CasaShape();
 			this.addChild(canvas);
 			//黑色背景，这样暗示详情背景是黑色的
-			canvas.graphics.beginFill(StyleParams.DEFAULT_TEXT_COLOR, 0.8);
+			canvas.graphics.beginFill(StyleParams.DEFAULT_TEXT_COLOR, 0.5);
 			//稍微宽点容纳图片
 			canvas.graphics.drawRect(0, (100-timeBarHeight),101,timeBarHeight);
 			canvas.graphics.endFill();					
