@@ -70,6 +70,10 @@ package com.pintu.widgets{
 
 		private var _isLoggedIn:Boolean = false;
 		
+		//暴露评论数，以便及时更新数目
+		private var commentsTF:SimpleLinkTxt;
+		
+		
 		public function PicDetailBase(data:TPicDetails, logged:Boolean){
 			_data = data;
 			_isLoggedIn = logged;
@@ -406,7 +410,9 @@ package com.pintu.widgets{
 			var commentColor:uint = dark;
 			//如果有评论，就变成绿色字
 			if(Number(_data.commentsNum)) commentColor = StyleParams.GREEN_TEXT_COLOR;
-			var commentsTF:SimpleLinkTxt = new SimpleLinkTxt(commentsStr,commentColor, normalTXTSize);
+			//FIXME, 暴露评论数，方便更新
+			//2012/02/21
+			commentsTF = new SimpleLinkTxt(commentsStr,commentColor, normalTXTSize);
 			commentsTF.x = browseCountTF.x+browseCountTF.textWidth+textItemHGap;
 			commentsTF.y = isOriginalTF.y+textItemVGap;
 			if(_isLoggedIn){
@@ -447,6 +453,12 @@ package com.pintu.widgets{
 			descTF.height = _mobImgHeight-descTF.y-15;
 			imgInfoHolder.addChild(descTF);			
 			
+		}
+		
+		//客户端添加一条评论后执行
+		protected function addCommentNum():void{
+			_data.commentsNum = (Number(_data.commentsNum)+1).toString();
+			commentsTF.text = "评论 "+_data.commentsNum;
 		}
 		
 		/**

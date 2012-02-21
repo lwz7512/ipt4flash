@@ -95,7 +95,11 @@ package com.pintu.widgets{
 				commentsHolder.addChild(cmntItem);
 				
 				//移除loading
-				hideCmntLoading();	
+				hideCmntLoading();
+				
+				//FIXME, 评论数加1
+				//2012/02/21
+				this.addCommentNum();
 			}
 			
 			if(evt is PTErrorEvent){
@@ -174,7 +178,8 @@ package com.pintu.widgets{
 			
 			//初始化
 			if(!commentsHolder) commentsHolder = new CasaSprite();
-			//如果存在就销毁
+			
+			//如果已经展开评论列表了，就销毁评论列表，合上内容
 			if(this.contains(commentsHolder)){
 				commentsHolder.removeChildren(true,true);
 				this.removeChild(commentsHolder);				
@@ -182,7 +187,7 @@ package com.pintu.widgets{
 				rendered();						
 				return;
 				
-			}else{
+			}else{//如果没有展开列表，先添加一个评论容器
 				commentsHolder.x = _xStartOffset;
 				commentsHolder.y = 2*_yStartOffset+_mobImgHeight;
 				this.addChild(commentsHolder);
