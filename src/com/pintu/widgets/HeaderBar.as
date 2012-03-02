@@ -1,5 +1,6 @@
 package com.pintu.widgets
 {
+	import com.pintu.api.IPintu;
 	import com.pintu.common.*;
 	import com.pintu.config.*;
 	import com.pintu.controller.*;
@@ -67,12 +68,16 @@ package com.pintu.widgets
 		//首页子菜单
 		private var browseMode:BrowseMode;
 		
+		//这里需要个模型，没办法只能通过构造函数传进来了
+		private var _model:IPintu;
+		private var miniAds:MiniAds;
 		
-		
-		
-		public function HeaderBar(isLogged:Boolean){
+		//本来不需要模型，但是为了MiniAds传个模型进来
+		//2012/03/02
+		public function HeaderBar(isLogged:Boolean, mdl:IPintu){
 			super();			
 			_isLogged = isLogged;
+			_model = mdl;
 			
 			elementStartX = InitParams.startDrawingX();
 			
@@ -82,16 +87,13 @@ package com.pintu.widgets
 			
 			//主菜单内容后放，在上面
 			mainMenuContainer = new CasaSprite();
+			//绿色渐变背景条画在主容器中
+			drawBackground();			
 			this.addChild(mainMenuContainer);
-			//画在主容器中
-			drawBackground();
-			//加个阴影是不是好看点
-//			var shadow:DropShadowFilter = new DropShadowFilter(4,45,0x666666,0.8);
-//			mainMenuContainer.filters = [shadow];			
 			
+			//所有的东西，都得等到logo加载后创建
 			showLogo();
-			
-//			showVersion();
+						
 		}
 		
 		/**
@@ -149,6 +151,13 @@ package com.pintu.widgets
 			//放在HeaderBar后面隐藏，鼠标点击菜单滑出
 			createSubMenus();
 			
+			//微广告部件
+			//2012/03/02
+			miniAds = new MiniAds(_model);
+			//搜索框的左边
+			miniAds.x = searchInput.x-miniAds.width-10;
+			miniAds.y = 0;
+			this.addChild(miniAds);
 		}
 		
 		private function goBacktoHomePage(evt:MouseEvent):void{

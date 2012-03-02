@@ -102,7 +102,7 @@ package{
 			//这个内容是为chrome生成缩略图准备的
 			//生产模式下使用
 			//2012/12/15
-			if(ExternalInterface.available && !GlobalController.isDebug){
+			if(ExternalInterface.available){
 				ExternalInterface.call("removeLogo");
 				Logger.debug("logo div removed!");
 			}			
@@ -131,7 +131,7 @@ package{
 			PintuImpl(model).addEventListener(PintuEvent.HINT_USER, hintTextHandler);			
 			
 			//全局模块固定不变
-			buildHeaderMenu(isLogged);			
+			buildHeaderBar(isLogged);			
 			buildFooterContent();			
 
 			//初始化导航器
@@ -218,8 +218,8 @@ package{
 			Toast.getInstance(this).show(hint,middleX,middleY);
 		}
 			
-		private function buildHeaderMenu(isLogged:Boolean):void{
-			header = new HeaderBar(isLogged);
+		private function buildHeaderBar(isLogged:Boolean):void{
+			header = new HeaderBar(isLogged, model);
 			header.addEventListener(PintuEvent.BROWSE_CHANGED, browseTypeChanged);
 			header.addEventListener(PintuEvent.SEARCH_BYTAGS, searchHandler);
 			header.addEventListener(PintuEvent.OPEN_WIN, popUpWinHandler);

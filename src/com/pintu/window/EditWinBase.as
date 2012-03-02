@@ -5,7 +5,7 @@ package com.pintu.window{
 	import com.pintu.api.PintuImpl;
 	import com.pintu.common.BusyIndicator;
 	import com.pintu.common.GreenButton;
-	import com.pintu.common.SimpleImage;
+	import com.pintu.common.LazyImage;
 	import com.pintu.common.SimpleText;
 	import com.pintu.config.*;
 	import com.pintu.controller.FileManager;
@@ -58,7 +58,7 @@ package com.pintu.window{
 		private var _sendBtn:Button;		
 		private var _loading:BusyIndicator;
 		private var _modalOverlay:CasaSprite;
-		private var _closemeBtn:SimpleImage;
+		private var _closemeBtn:LazyImage;
 		
 		private var _loadingX:Number = 0;
 		private var _loadingY:Number = 0;		
@@ -123,7 +123,7 @@ package com.pintu.window{
 		
 		private function createCloseBtn():void{
 			var closeIconPath:String = "assets/closeme.png";
-			_closemeBtn = new SimpleImage(closeIconPath);
+			_closemeBtn = new LazyImage(closeIconPath);
 			_closemeBtn.buttonMode = true;
 			_closemeBtn.x = _width-26;
 			_closemeBtn.y = 0;

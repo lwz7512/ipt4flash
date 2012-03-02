@@ -66,6 +66,10 @@ package com.pintu.api
 		function getActiveUserRanking():void;
 		function getPicsByUser(userId:String, pageNum:String):void;
 		
+		//获取微广告数据
+		//2012/03/02
+		function getMiniAds():void;
+		
 		/**
 		 * 多个视图用到同样的模型，为了防止事件监听干扰，各自使用各自的模型 
 		 * 比如在PicDetailView组件中，多个图片都要有各自的动作，都要用到模型

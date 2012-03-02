@@ -16,7 +16,6 @@ package com.pintu.modules{
 	import flash.display.Stage;
 	import flash.external.ExternalInterface;
 	
-	import org.as3commons.ui.layout.shortcut.display;
 	import org.casalib.display.CasaSprite;
 	
 	

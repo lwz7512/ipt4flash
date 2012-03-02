@@ -16,7 +16,7 @@ package com.pintu.common{
 	/**
 	 * 就是一个图片
 	 */ 
-	public class SimpleImage extends CasaSprite{
+	public class LazyImage extends CasaSprite{
 		
 		
 		protected var _iconPath:String;
@@ -27,19 +27,40 @@ package com.pintu.common{
 		private var _maxsize:Number = 0;
 		private var _isButtonMode:Boolean = false;
 		
-		public function SimpleImage(path:String){
+		private var _loading:BusyIndicator;
+		
+		public function LazyImage(path:String){
 			_iconPath = path;
-			_imgLoader = new ImageLoad(path);
-			_imgLoader.addEventListener(LoadEvent.COMPLETE,onLoaded);
-			_imgLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
-			//延迟加载，好让set属性生效
-			this.addEventListener(Event.ADDED_TO_STAGE,function():void{
-				//不要重复加载，否则就叠上去了
-				if(!_bitmap)
-					_imgLoader.start();				
-			});
+			//路径有可能为空，后指定
+			if(path){
+				_imgLoader = new ImageLoad(path);
+				_imgLoader.addEventListener(LoadEvent.COMPLETE,onLoaded);
+				_imgLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);				
+			}
+			
+			this.addEventListener(Event.ADDED_TO_STAGE,onAddedToStage);
 						
-		}		
+		}
+		
+		private function onAddedToStage(evt:Event):void{
+			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			
+			if(!_imgLoader && _iconPath){
+				_imgLoader = new ImageLoad(_iconPath);
+				_imgLoader.addEventListener(LoadEvent.COMPLETE,onLoaded);
+				_imgLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
+			}
+			//不要重复加载，否则就叠上去了
+			if(!_bitmap) _imgLoader.start();	
+			
+			_loading = new BusyIndicator();
+			this.addChild(_loading);
+			
+		}
+		
+		public function set imgPath(url:String):void{
+			_iconPath = url;
+		}
 		
 		
 		public function get bitmap():Bitmap{
@@ -63,6 +84,11 @@ package com.pintu.common{
 		}
 		
 		private function onLoaded(e:LoadEvent):void {
+			
+			if(this.contains(_loading)){
+				this.removeChild(_loading);
+			}
+			
 			_bitmap = this._imgLoader.contentAsBitmap;
 			_bitmap.x = 2;
 			_bitmap.y = 2;

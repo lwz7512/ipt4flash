@@ -67,7 +67,9 @@ package com.pintu.api
 			addClientListener(ApiMethods.GETTHUMBNAILSBYTAG);					
 			addClientListener(ApiMethods.SEARCHBYTAG);	
 			
-			addClientListener(ApiMethods.ACTIVEUSERRANKING);					
+			addClientListener(ApiMethods.ACTIVEUSERRANKING);
+			
+			addClientListener(ApiMethods.GETMINIADS);					
 			
 		}		
 				
@@ -215,7 +217,9 @@ package com.pintu.api
 			addHttpTask(params, ApiMethods.GETTPICSBYUSER);
 		}
 		
-		
+		public function getMiniAds():void{
+			addHttpTask([], ApiMethods.GETMINIADS);
+		}
 		
 		
 		/**

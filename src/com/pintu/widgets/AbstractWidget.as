@@ -29,8 +29,8 @@ package com.pintu.widgets{
 		 * 而不能在构造函数中直接添加_clonedModel的事件监听
 		 */ 
 		protected function initModelListener(evt:Event):void{
-			//TODO, TO ADD MODEL EVENT LISTENRER...
-			
+			//防止重复添加事件
+			this.removeEventListener(Event.ADDED_TO_STAGE, initModelListener);
 		}
 		
 		/**

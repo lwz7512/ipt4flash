@@ -28,7 +28,7 @@ package com.pintu.widgets{
 		//图片加载结束标志
 		private var imgLoadedFlag:Boolean;	
 		//详情内容
-		private var mobImage:SimpleImage;
+		private var mobImage:LazyImage;
 		//图片未展示前出现
 		private var mobImgPlaceHolder:CasaShape;
 		private var imgLoading:CasaTextField;	
@@ -53,7 +53,7 @@ package com.pintu.widgets{
 			drawLoadingText();
 			
 			//先生成图片，等图片加载完成后，再生成其他内容
-			mobImage = new SimpleImage(data.mobImgUrl);
+			mobImage = new LazyImage(data.mobImgUrl);
 			mobImage.addEventListener(PintuEvent.IMAGE_LOADED,imgLoaded);
 			this.addChild(mobImage);		
 			

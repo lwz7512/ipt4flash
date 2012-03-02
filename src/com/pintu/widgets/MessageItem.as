@@ -1,6 +1,6 @@
 package com.pintu.widgets{
 	import com.cartogrammar.drawing.DashedLine;
-	import com.pintu.common.SimpleImage;
+	import com.pintu.common.LazyImage;
 	import com.pintu.common.SimpleLinkTxt;
 	import com.pintu.common.SimpleText;
 	import com.pintu.config.InitParams;
@@ -18,7 +18,7 @@ package com.pintu.widgets{
 		private var _msg:TPMessage;
 		
 		//头像
-		private var avatar:SimpleImage;		
+		private var avatar:LazyImage;		
 		//用户名
 		private var sender:SimpleText;
 		//时间
@@ -38,7 +38,7 @@ package com.pintu.widgets{
 			var textVGap:Number = 26;
 			var rightMarging:Number = 4;
 			
-			avatar = new SimpleImage(_msg.senderAvatarUrl);
+			avatar = new LazyImage(_msg.senderAvatarUrl);
 			avatar.x = drawStartX;
 			avatar.y = 2*drawStartY;
 			avatar.maxSize = 64;

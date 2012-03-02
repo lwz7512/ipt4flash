@@ -49,7 +49,7 @@ package com.pintu.widgets{
 		}
 		
 		override protected function initModelListener(evt:Event):void{
-			this.removeEventListener(Event.ADDED_TO_STAGE,initModelListener);
+			super.initModelListener(evt);
 			
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETHOTTAGS, hotTagsHandler);
 			_clonedModel.getHotTags();

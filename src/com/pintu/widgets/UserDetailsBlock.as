@@ -77,8 +77,7 @@ package com.pintu.widgets{
 		}
 		
 		override protected function initModelListener(evt:Event):void{			
-//			Logger.debug("to getUserEstate...");
-			this.removeEventListener(Event.ADDED_TO_STAGE,initModelListener);
+			super.initModelListener(evt);
 			
 			//获取个人信息			
 			_clonedModel.getUserEstate(PintuImpl(_clonedModel).currentUser);
@@ -204,7 +203,7 @@ package com.pintu.widgets{
 			
 			//头像
 			var avatarUrl:String = _clonedModel.composeImgUrlByPath(userObj["avatar"]);
-			var avatarImg:SimpleImage = new SimpleImage(avatarUrl);
+			var avatarImg:LazyImage = new LazyImage(avatarUrl);
 			avatarImg.x = startX;
 			avatarImg.y = startY;	
 			avatarImg.maxSize = 64;
@@ -258,7 +257,7 @@ package com.pintu.widgets{
 			userInfoContainer.addChild(wealthContainer);
 			
 			//海贝数目
-			var seaShell:SimpleImage = new SimpleImage("assets/shell_sea_24.png");
+			var seaShell:LazyImage = new LazyImage("assets/shell_sea_24.png");
 			seaShell.x = startX+xOffset;
 			seaShell.y = shellsY;
 			wealthContainer.addChild(seaShell);
@@ -268,7 +267,7 @@ package com.pintu.widgets{
 			wealthContainer.addChild(seaShellNum);
 			
 			//铜贝数目			
-			var copperShell:SimpleImage = new SimpleImage("assets/shell_copper_24.png");
+			var copperShell:LazyImage = new LazyImage("assets/shell_copper_24.png");
 			copperShell.x = seaShellNum.x+2*textHGap;
 			copperShell.y = shellsY;
 			wealthContainer.addChild(copperShell);
@@ -279,7 +278,7 @@ package com.pintu.widgets{
 			
 			
 			//银贝数目
-			var silverShell:SimpleImage = new SimpleImage("assets/shell_silver_24.png");
+			var silverShell:LazyImage = new LazyImage("assets/shell_silver_24.png");
 			silverShell.x = copperShellNum.x+2*textHGap;
 			silverShell.y = shellsY;
 			wealthContainer.addChild(silverShell);
@@ -289,7 +288,7 @@ package com.pintu.widgets{
 			wealthContainer.addChild(silverShellNum);			
 			
 			//金贝数目
-			var goldShell:SimpleImage = new SimpleImage("assets/shell_gold_24.png");
+			var goldShell:LazyImage = new LazyImage("assets/shell_gold_24.png");
 			goldShell.x = silverShellNum.x+2*textHGap;
 			goldShell.y = shellsY;
 			wealthContainer.addChild(goldShell);

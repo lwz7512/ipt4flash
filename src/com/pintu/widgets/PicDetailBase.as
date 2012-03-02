@@ -46,7 +46,7 @@ package com.pintu.widgets{
 		
 		
 		//详情内容
-		private var mobImage:SimpleImage;
+		private var mobImage:LazyImage;
 		//图片加载结束标志
 		private var imgLoadedFlag:Boolean = false;		
 		//工具栏背景宽度
@@ -85,7 +85,7 @@ package com.pintu.widgets{
 			drawLoadingText();
 								
 			//先生成图片，等图片加载完成后，再生成其他内容
-			mobImage = new SimpleImage(data.mobImgUrl);
+			mobImage = new LazyImage(data.mobImgUrl);
 			mobImage.addEventListener(PintuEvent.IMAGE_LOADED,imgLoaded);
 			this.addChild(mobImage);							
 			
@@ -330,7 +330,7 @@ package com.pintu.widgets{
 			var bigTXTSize:int = 16;
 			
 			//头像
-			var avatarImg:SimpleImage = new SimpleImage(_data.avatarUrl);
+			var avatarImg:LazyImage = new LazyImage(_data.avatarUrl);
 			avatarImg.x = startX;
 			avatarImg.y = startY;	
 			avatarImg.maxSize = 64;

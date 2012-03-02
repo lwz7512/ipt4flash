@@ -170,10 +170,11 @@ package com.pintu.api{
 					var vs:URLVariables = arrayToURLVariables(params);
 					vs["method"] = method;
 					lite.send(vs);
+					Logger.debug("Start Execute: "+method+" -- liteClient...");
 				}else{
-					client.post(params, method);					
+					client.post(params, method);	
+					Logger.debug("Start Execute: "+method+" -- socketClient...");
 				}
-				Logger.debug("Start Execute: "+method);
 			}
 		}
 		/**
@@ -194,6 +195,8 @@ package com.pintu.api{
 			return values;
 		}
 		
+		//FIXME, 新加的方法，获取数据的操作，都要在这里添加
+		//2012/03/02
 		private function useLiteClient(method:String):Boolean{
 			var result:Boolean = false;
 			if(method==ApiMethods.GETGALLERYFORWEB ||
@@ -206,7 +209,8 @@ package com.pintu.api{
 				method==ApiMethods.GETTPICSBYUSER ||
 				method==ApiMethods.GETFAVORITEPICS ||
 				method==ApiMethods.SEARCHBYTAG ||
-				method==ApiMethods.ACTIVEUSERRANKING){
+				method==ApiMethods.ACTIVEUSERRANKING ||
+				method==ApiMethods.GETMINIADS){
 				
 				result = true;
 				

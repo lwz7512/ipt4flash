@@ -1,4 +1,5 @@
-package com.pintu.common{
+package com.pintu.common
+{
 	
 	import com.pintu.config.StyleParams;
 	

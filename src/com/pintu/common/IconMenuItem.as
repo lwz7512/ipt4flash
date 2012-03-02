@@ -31,7 +31,7 @@ package com.pintu.common{
 			
 			drawBackground(_firstBGColor);		
 			
-			var iconImg:SimpleImage = new SimpleImage(_iconPath);
+			var iconImg:LazyImage = new LazyImage(_iconPath);
 			iconImg.x = 2;
 			iconImg.y = 2;
 			this.addChild(iconImg);

@@ -64,5 +64,9 @@ package com.pintu.api
 		//获取活跃用户排行榜
 		public static const ACTIVEUSERRANKING:String = "getActiveUserRanking";
 		
+		//获取微广告
+		//2012/03/02
+		public static const GETMINIADS:String = "getTodayAds";
+		
 	}
 }

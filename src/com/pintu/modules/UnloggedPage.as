@@ -7,7 +7,6 @@ package com.pintu.modules
 	import com.pintu.utils.Logger;
 	import com.pintu.widgets.*;
 	
-	import flash.display.Sprite;
 	import flash.external.ExternalInterface;
 	
 	import org.casalib.display.CasaSprite;
@@ -23,7 +22,7 @@ package com.pintu.modules
 		private var slideToolBar:SlideToolBar;
 		private var login:LoginBlock;
 		private var activeUser:ActiveUserBlock;
-		
+				
  
 		public function UnloggedPage(model:IPintu){
 			super();
@@ -41,8 +40,6 @@ package com.pintu.modules
 				//改成大图列表，似乎更好
 				//2012/02/11
 				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_BPMODE;				
-//				mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;				
-//				mainDisplayArea.browseType = BrowseMode.CATEGORY_GALLERY_TBMODE;				
 			}
 			
 			//检查是否为单个图片详情展示
@@ -63,7 +60,7 @@ package com.pintu.modules
 			activeUser = new ActiveUserBlock(_model);
 			activeUser.addEventListener(PintuEvent.GETPICS_BYUSER, getPicsOfUser);
 			this.addChild(activeUser);
-			
+						
 		}
 		
 		private function changeBrowseType(event:PintuEvent):void{
@@ -71,13 +68,6 @@ package com.pintu.modules
 			mainDisplayArea.browseType = type;		
 		}
 
-		private function refreshGallery(evt:PintuEvent):void{
-//			mainDisplayArea.browseType = categoryTree.browseType;
-		}
-		private function randomGallery(evt:PintuEvent):void{			
-			//告诉显示区，按照随机模式查询
-			mainDisplayArea.browseType = BrowseMode.CATEGORY_RANDOM_TBMODE;
-		}
 		
 		private function getPicsOfUser(evt:PintuEvent):void{
 			mainDisplayArea.browseType = MainDisplayArea.GETPICS_BYUSER;

@@ -13,7 +13,7 @@ package com.pintu.common
 	/**
 	 * 只有图片没有文字的，可交互按钮
 	 */ 
-	public class SimpleIcon extends SimpleImage
+	public class SimpleIcon extends LazyImage
 	{
 		
 		private var _icon:Bitmap;

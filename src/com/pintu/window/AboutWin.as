@@ -1,6 +1,6 @@
 package com.pintu.window{
 	
-	import com.pintu.common.SimpleImage;
+	import com.pintu.common.LazyImage;
 	import com.pintu.common.SimpleText;
 	import com.pintu.config.PublishParams;
 	import com.pintu.config.StyleParams;
@@ -47,7 +47,7 @@ package com.pintu.window{
 			var itemVGap:Number = 10;
 			var logoSize:Number = 72;
 			
-			var logo:SimpleImage = new SimpleImage(logoPath);
+			var logo:LazyImage = new LazyImage(logoPath);
 			logo.x = _elementStartX+this.width/2-36;
 			logo.y = _elementStartY;
 			this.addChild(logo);
