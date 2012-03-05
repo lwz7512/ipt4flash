@@ -3,9 +3,7 @@ package com.pintu.widgets{
 	import com.adobe.serialization.json.JSON;
 	import com.greensock.TweenLite;
 	import com.pintu.api.*;
-	import com.pintu.common.BusyIndicator;
-	import com.pintu.common.LazyImage;
-	import com.pintu.common.SimpleLinkTxt;
+	import com.pintu.common.*;
 	import com.pintu.config.StyleParams;
 	import com.pintu.events.*;
 	import com.pintu.utils.Logger;
@@ -19,8 +17,6 @@ package com.pintu.widgets{
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
 	import flash.utils.Timer;
-	
-	import org.as3commons.collections.utils.NullComparator;
 	
 	public class MiniAds extends AbstractWidget{
 		
@@ -54,7 +50,6 @@ package com.pintu.widgets{
 		}
 		
 		private function timeToRolling(evt:TimerEvent):void{
-			Logger.debug("timeToRolling....");
 			showRollingAds();
 		}
 		
@@ -67,46 +62,17 @@ package com.pintu.widgets{
 			//设置广告条的遮罩
 			this.mask = _mask;
 			
-//			_loading = new BusyIndicator();
-//			this.addChild(_loading);
-			
-			adObjs = [];
-			adObjs.push({id:"aaaa", type:"text", content:"爱品图：随时随地，发现创意。。。", link:"ipintu.com"});
-			adObjs.push({id:"bbbb", type:"text", content:"微博：随时随地发现身边的新鲜事儿", link:"weibo.com"});
-			adObjs.push({id:"cccc", type:"text", content:"点点：文艺范儿的轻博客社区", link:"diandian.com"});
-			adObjs.push({id:"dddd", type:"text", content:"苏打苏塔：设计量贩铺", link:"sudasuta.com"});
+			_loading = new BusyIndicator();
+			_loading.y = 6;
+			this.addChild(_loading);
 			
 		}
-		
-		
-		override protected function initModelListener(evt:Event):void{
-			super.initModelListener(evt);
-			//TODO, 添加模型事件，触发方法
-			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETMINIADS, adsDataHandler);
-//			_clonedModel.getMiniAds();
-		}
-		
-		private function adsDataHandler(evt:Event):void{
-			if(evt is ResponseEvent){
-				var adStr:String = ResponseEvent(evt).data;
-				adObjs = JSON.decode(adStr);				
 				
-				if(this.contains(_loading)){
-					this.removeChild(_loading);
-				}
-			}
-			if(evt is PTErrorEvent){
-				Logger.error("get mini ads error!!!");
-			}
-			
-		}
 		
 		private function showRollingAds():void{
 			if(!adObjs) return;
-			
-			Logger.debug("showRollingAds....");
-			
-			//增加数组下标
+					
+			//播放下一条广告
 			adItemIndex ++;
 			if(adItemIndex>(adObjs.length-1)){
 				adItemIndex = 0;
@@ -121,23 +87,28 @@ package com.pintu.widgets{
 			tempDO.x = 0;	
 			
 			//设置内容和点击事件
-			if(tempDO is SimpleLinkTxt){
-				SimpleLinkTxt(tempDO).text = newadDat["content"];
-				SimpleLinkTxt(tempDO).addEventListener(MouseEvent.CLICK, openBrowse);
+			if(tempDO is HandCursorLink){
+				HandCursorLink(tempDO).text = newadDat["content"];				
 			}else if(tempDO is LazyImage){
-				//TODO, ADD IMAGE HERE...
-				
+				//ADD IMAGE HERE...
+				LazyImage(tempDO).imgPath = newadDat["imgPath"];				
 			}
+			//添加交互
+			tempDO.addEventListener(MouseEvent.CLICK, openBrowse);	
 			//显示
 			this.addChild(tempDO);
 			
-			//落下来，稍微时间长点
-			TweenLite.to(tempDO, 0.6, {y : 9, onComplete: rememberAd});
+			//落下来，稍微时间长点，图片和文字位置稍微不同
+			if(tempDO is HandCursorLink){
+				TweenLite.to(tempDO, 0.6, {y : 7, onComplete: rememberAd});				
+			}else if(tempDO is LazyImage){
+				TweenLite.to(tempDO, 0.6, {y : -2, onComplete: rememberAd});
+			}
 			
-			//当前的往下面走并消失
+			//当前的往下面走并迅速消失
 			if(currentAd){
 				//落下来
-				TweenLite.to(currentAd, 0.5, {y : 36, onComplete: destroyAdItem});
+				TweenLite.to(currentAd, 0.1, {y : _height, alpha : 0, onComplete: destroyAdItem});
 			}
 			
 		}
@@ -161,14 +132,46 @@ package com.pintu.widgets{
 		
 		private function createAdItemByType(type:String):DisplayObject{
 			if(type=="text"){				
-				var liteTxt:SimpleLinkTxt = new SimpleLinkTxt("...", StyleParams.DEFAULT_BLACK_COLOR);
+				var liteTxt:HandCursorLink = new HandCursorLink("...", StyleParams.DEFAULT_BLACK_COLOR);
 				liteTxt.filters = [new DropShadowFilter(1,45,0xFFFFFF,1,0,0)];
 				return liteTxt;
 			}else if(type=="image"){
 				var image:LazyImage = new LazyImage(null);
+				image.visibleWidth = _width;
+				image.visibleHeight = _height;
+				image.buttonMode = true;
+				image.useHandCursor = true;
+				image.mouseChildren = false;
 				return image;
 			}
 			return null;
+		}
+		
+		override protected function initModelListener(evt:Event):void{
+			super.initModelListener(evt);
+			//添加模型事件，触发方法
+			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETMINIADS, adsDataHandler);
+			_clonedModel.getMiniAds();
+		}
+		
+		private function adsDataHandler(evt:Event):void{
+			if(evt is ResponseEvent){
+				var adStr:String = ResponseEvent(evt).data;
+				adObjs = JSON.decode(adStr);				
+				for each(var obj:Object in adObjs){
+					//如果是图片广告
+					if(obj["type"]=="image")
+						//将文件路径转换为URL
+						obj["imgPath"] = _clonedModel.composeImgUrlByRelativePath(obj["imgPath"]);
+				}
+				if(this.contains(_loading)){
+					this.removeChild(_loading);
+				}
+			}
+			if(evt is PTErrorEvent){
+				Logger.error("get mini ads error!!!");
+			}
+			
 		}
 		
 		override protected function cleanUpModelListener(evt:Event):void{
@@ -176,6 +179,8 @@ package com.pintu.widgets{
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.GETMINIADS, adsDataHandler);
 			
 			rollingTimer.stop();
+			rollingTimer.removeEventListener(TimerEvent.TIMER,timeToRolling);
+			rollingTimer = null;
 			
 			//后清空模型
 			super.cleanUpModelListener(evt);	

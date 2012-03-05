@@ -1,6 +1,9 @@
 package com.pintu.common{
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.text.TextFormat;
+	
+	import org.casalib.display.CasaSprite;
 	
 	
 	public class SimpleLinkTxt extends SimpleText{
@@ -10,21 +13,23 @@ package com.pintu.common{
 		protected var _mouseOverFormat:TextFormat;
 		
 		
-		
 		public function SimpleLinkTxt(text:String, color:uint=0, fontSize:int=12, bold:Boolean=false, wrap:Boolean=false, overColor:uint=0x177cb0)
 		{
 			super(text, color, fontSize, bold, wrap);
 			
-			_mouseOverFormat = new TextFormat(null,fontSize,overColor,bold,null,true);		
+			_mouseOverFormat = new TextFormat(null,fontSize,overColor,bold,null,true);						
 			
 			this.addEventListener(MouseEvent.MOUSE_OVER, drawOverColor);
 			this.addEventListener(MouseEvent.MOUSE_OUT, resetColor);
+						
 		}
+			
 		
 		override public function set text(value:String):void{
 			super.text = value;
 			this._txt = value;
 		}
+		
 		
 		private function drawOverColor(evt:MouseEvent):void{
 			this.defaultTextFormat = _mouseOverFormat;

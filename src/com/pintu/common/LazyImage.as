@@ -5,6 +5,7 @@ package com.pintu.common{
 	import com.pintu.utils.Logger;
 	
 	import flash.display.Bitmap;
+	import flash.display.Shape;
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
@@ -25,7 +26,9 @@ package com.pintu.common{
 		private var _bitmap:Bitmap;
 		
 		private var _maxsize:Number = 0;
-		private var _isButtonMode:Boolean = false;
+		
+		private var _visibleWidth:Number;
+		private var _visibleHeight:Number;
 		
 		private var _loading:BusyIndicator;
 		
@@ -77,10 +80,14 @@ package com.pintu.common{
 		
 		public function get maxSize():Number{
 			return _maxsize;
-		}
+		}		
 		
-		override public function set buttonMode(v:Boolean):void{
-			_isButtonMode = v;
+		
+		public function set visibleWidth(w:Number):void{
+			_visibleWidth = w;
+		}
+		public function set visibleHeight(h:Number):void{
+			_visibleHeight = h;
 		}
 		
 		private function onLoaded(e:LoadEvent):void {
@@ -99,34 +106,22 @@ package com.pintu.common{
 				_bitmap.width = _maxsize*ratio;
 			}
 			this.addChild(_bitmap);	
-			//普通模式
-			if(!_isButtonMode){
-				//图片淡出效果
-				TweenLite.from(_bitmap,0.4,{alpha: 0});				
-			}else{
-				_bitmap.alpha = 0.6;
-				addButtonBehavior();
-			}
+						
+			//图片淡出效果
+			TweenLite.from(_bitmap,0.4,{alpha: 0});				
+			
 			
 			var evt:PintuEvent = new PintuEvent(PintuEvent.IMAGE_LOADED,null);
 			this.dispatchEvent(evt);
 		}
 		
-		private function addButtonBehavior():void{
-			
-			this.addEventListener(MouseEvent.MOUSE_OVER,function():void{
-				_bitmap.alpha = 1;
-			});
-			this.addEventListener(MouseEvent.MOUSE_OUT,function():void{
-				_bitmap.alpha = 0.6;
-			});
-			this.addEventListener(Event.REMOVED_FROM_STAGE,function():void{
-				_bitmap.alpha = 0.6;
-			});
-		}
+
 		
 		private function onError(event:IOErrorEvent):void{
 			Logger.error("load icon error: "+_iconPath);
+			if(this.contains(_loading)){
+				this.removeChild(_loading);
+			}
 		}
 		
 	} //end of class

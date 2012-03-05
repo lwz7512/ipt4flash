@@ -91,6 +91,12 @@ package com.pintu.api{
 				+ "&path="+ imgPath;
 		}
 		
+		public function composeImgUrlByRelativePath(relaPath:String):String{
+			return getServiceUrl() + "?method=" + ApiMethods.GETIMAGEBYRELAPATH
+				+ "&relativePath="+ relaPath;
+		}
+		
+		
 		public function get currentUser():String{
 			return _currentUser;
 		}

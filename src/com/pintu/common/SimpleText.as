@@ -25,6 +25,10 @@ package com.pintu.common{
 			this.text = _txt;
 		}
 		
+		public function get defaultTF():TextFormat{
+			return _normalFormat;
+		}
+		
 		
 	} //end of class
 }

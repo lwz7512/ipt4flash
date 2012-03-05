@@ -24,7 +24,10 @@ package com.pintu.api
 		//服务地址
 		function getServiceUrl():String;				
 		function composeImgUrlById(imgId:String):String;
-		function composeImgUrlByPath(imgPath:String):String;	
+		function composeImgUrlByPath(imgPath:String):String;
+		//新增根据相对路径获取图片
+		//2012/03/05
+		function composeImgUrlByRelativePath(relaPath:String):String;
 		
 		//-------------- 业务逻辑方法 -------------------------------------------
 		

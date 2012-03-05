@@ -27,6 +27,8 @@ package com.pintu.api
 		
 		public static const GETIMAGEFILE:String = "getImageFile";
 		public static const GETIMAGEBYPATH:String = "getImageByPath";
+		//2012/03/05
+		public static const GETIMAGEBYRELAPATH:String = "getImgByRelativePath";
 		
 		//添加评论
 		public static const ADDSTORY:String = "addStory";
