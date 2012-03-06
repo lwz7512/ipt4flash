@@ -12,8 +12,8 @@ package com.pintu.config{
 		public static const SINA_WEIBO:String = "新浪微博";
 		public static const CONTACT_US:String = "联系我们：";
 		
-		public static const VERSION:String = "v 1.05";
-		public static const RELEASE_TIME:String = "2012/02/21";
+		public static const VERSION:String = "v 1.06";
+		public static const RELEASE_TIME:String = "2012/03/06";
 		
 		public static const WEIBO_URL:String = "http://weibo.com/ipintu";
 		public static const HOME_URL:String = "http://ipintu.com";

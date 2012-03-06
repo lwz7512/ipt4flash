@@ -37,7 +37,7 @@ package{
 	//lwz7512
 	[Frame(factoryClass="Preloader")]
 	public class Main extends Sprite{
-						
+
 		/**
 		 * 整个应用只有一个模型，即服务实现的一个实例
 		 * 各个widget都是用的这同一个实例

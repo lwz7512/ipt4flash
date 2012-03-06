@@ -18,6 +18,12 @@ package com.pintu.widgets{
 	import flash.net.navigateToURL;
 	import flash.utils.Timer;
 	
+	/**
+	 * 迷你广告，也叫微广告
+	 * 以滚动的方式显示文字或者图片
+	 * 
+	 * 2012/03/02
+	 */ 
 	public class MiniAds extends AbstractWidget{
 		
 		private var _width:Number = 254;
@@ -35,9 +41,12 @@ package com.pintu.widgets{
 		private var tempDO:DisplayObject;
 		
 		//单条广告停留时间，毫秒
-		private var adStayTime:Number = 3000;
+		private var adStayTime:Number = 6000;
 		
 		private var rollingTimer:Timer;
+		
+		private var defaultAds:String = "报雨鸟微广告系统...";
+		private var defaultAdTF:SimpleText;
 		
 		public function MiniAds(model:IPintu){
 			super(model);
@@ -50,6 +59,9 @@ package com.pintu.widgets{
 		}
 		
 		private function timeToRolling(evt:TimerEvent):void{
+			if(this.contains(defaultAdTF)){
+				this.removeChild(defaultAdTF);
+			}
 			showRollingAds();
 		}
 		
@@ -60,12 +72,13 @@ package com.pintu.widgets{
 			_mask.graphics.endFill();			
 			this.addChild(_mask);
 			//设置广告条的遮罩
-			this.mask = _mask;
+			this.mask = _mask;					
 			
-			_loading = new BusyIndicator();
-			_loading.y = 6;
-			this.addChild(_loading);
-			
+			defaultAdTF = new SimpleText(defaultAds, 0x666666);
+			defaultAdTF.x = 30;
+			defaultAdTF.y = 7;
+			defaultAdTF.width = _width;
+			this.addChild(defaultAdTF);
 		}
 				
 		
@@ -108,13 +121,16 @@ package com.pintu.widgets{
 			//当前的往下面走并迅速消失
 			if(currentAd){
 				//落下来
-				TweenLite.to(currentAd, 0.1, {y : _height, alpha : 0, onComplete: destroyAdItem});
+				TweenLite.to(currentAd, 0.3, {y : _height, alpha : 0, onComplete: destroyAdItem});
 			}
 			
 		}
 		
 		private function openBrowse(evt:MouseEvent):void{
 			var url:String = adObjs[adItemIndex]["link"];
+			//没有链接内容，不弹出窗口
+			if(!url || url.length==0) return;
+			
 			if(url.indexOf("http")==-1){
 				url = "http://"+url;
 			}
@@ -127,13 +143,17 @@ package com.pintu.widgets{
 		}
 		
 		private function destroyAdItem():void{
-			if(this.contains(currentAd)) this.removeChild(currentAd);
+			if(this.contains(currentAd)) {
+				this.removeChild(currentAd);
+				currentAd.removeEventListener(MouseEvent.CLICK, openBrowse);
+				currentAd = null;
+			}
 		}
 		
 		private function createAdItemByType(type:String):DisplayObject{
 			if(type=="text"){				
-				var liteTxt:HandCursorLink = new HandCursorLink("...", StyleParams.DEFAULT_BLACK_COLOR);
-				liteTxt.filters = [new DropShadowFilter(1,45,0xFFFFFF,1,0,0)];
+				var liteTxt:HandCursorLink = new HandCursorLink("...", StyleParams.MENUBAR_TOP_ICE);
+				liteTxt.filters = [new DropShadowFilter(1,45,0x333333,1,0,0)];
 				return liteTxt;
 			}else if(type=="image"){
 				var image:LazyImage = new LazyImage(null);
@@ -151,7 +171,12 @@ package com.pintu.widgets{
 			super.initModelListener(evt);
 			//添加模型事件，触发方法
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.GETMINIADS, adsDataHandler);
+			//FIXME, TO GET ADS DATA...
 			_clonedModel.getMiniAds();
+			
+			_loading = new BusyIndicator();
+			_loading.y = 6;
+			this.addChild(_loading);
 		}
 		
 		private function adsDataHandler(evt:Event):void{

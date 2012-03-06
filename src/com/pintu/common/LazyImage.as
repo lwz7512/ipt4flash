@@ -16,6 +16,9 @@ package com.pintu.common{
 	
 	/**
 	 * 就是一个图片
+	 * 
+	 * 修改为延迟载入图片
+	 * 2012/03/05
 	 */ 
 	public class LazyImage extends CasaSprite{
 		
@@ -47,14 +50,17 @@ package com.pintu.common{
 		
 		private function onAddedToStage(evt:Event):void{
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
-			
+			//第二次机会来创建图片加载器
 			if(!_imgLoader && _iconPath){
 				_imgLoader = new ImageLoad(_iconPath);
 				_imgLoader.addEventListener(LoadEvent.COMPLETE,onLoaded);
 				_imgLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
 			}
 			//不要重复加载，否则就叠上去了
-			if(!_bitmap) _imgLoader.start();	
+			if(!_bitmap && _imgLoader) {
+				_imgLoader.start();	
+//				Logger.debug("> start to loading image: "+_iconPath);
+			}
 			
 			_loading = new BusyIndicator();
 			this.addChild(_loading);

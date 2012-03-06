@@ -231,8 +231,10 @@ package com.pintu.window{
 			_tagsInput.setSize(300,28);
 			_tagsInput.setStyle(TextInput.style.font, StyleParams.DEFAULT_TEXT_FONTNAME);
 			_tagsInput.setStyle(TextInput.style.size,12);
-			_tagsInput.setStyle(TextInput.style.borderDarkColor,StyleParams.DARKER_BORDER_COLOR);			
-			_tagsInput.setStyle(TextInput.style.maxChars,12);			
+			_tagsInput.setStyle(TextInput.style.borderDarkColor,StyleParams.DARKER_BORDER_COLOR);
+			//修改字数限制
+			//2012/03/07
+			_tagsInput.setStyle(TextInput.style.maxChars,18);			
 			_tagsInput.x = _elementStartX;
 			_tagsInput.y = _elementStartY+_maxLoadImgHeight+_elementPadding+2;
 			_tagsInput.addEventListener(TextInputEvent.CHANGED, autoComplete);
@@ -250,8 +252,10 @@ package com.pintu.window{
 			_descInput.setSize(300,120);
 			_descInput.setStyle(TextInput.style.font, StyleParams.DEFAULT_TEXT_FONTNAME);
 			_descInput.setStyle(TextInput.style.size,12);
-			_descInput.setStyle(TextInput.style.borderDarkColor,StyleParams.DARKER_BORDER_COLOR);			
-			_descInput.setStyle(TextInput.style.maxChars,140);			
+			_descInput.setStyle(TextInput.style.borderDarkColor,StyleParams.DARKER_BORDER_COLOR);
+			//修改字数限制
+			//2012/03/07
+			_descInput.setStyle(TextInput.style.maxChars,180);			
 			_descInput.x = _elementStartX;
 			_descInput.y =_tagsInput.y+_elementPadding+30;
 			this.addChild(_descInput);
