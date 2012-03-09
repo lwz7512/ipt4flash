@@ -45,11 +45,11 @@ package com.pintu.common{
 			}
 			
 			this.addEventListener(Event.ADDED_TO_STAGE,onAddedToStage);
-						
 		}
 		
 		private function onAddedToStage(evt:Event):void{
 			this.removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			
 			//第二次机会来创建图片加载器
 			if(!_imgLoader && _iconPath){
 				_imgLoader = new ImageLoad(_iconPath);
@@ -58,13 +58,16 @@ package com.pintu.common{
 			}
 			//不要重复加载，否则就叠上去了
 			if(!_bitmap && _imgLoader) {
+				//发起请求
 				_imgLoader.start();	
-//				Logger.debug("> start to loading image: "+_iconPath);
+				
+				//显示运行指针
+				_loading = new BusyIndicator();
+				this.addChild(_loading);
+				
+				Logger.debug("> start to loading image: "+_iconPath);
 			}
-			
-			_loading = new BusyIndicator();
-			this.addChild(_loading);
-			
+						
 		}
 		
 		public function set imgPath(url:String):void{

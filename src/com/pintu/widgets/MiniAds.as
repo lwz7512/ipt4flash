@@ -1,7 +1,10 @@
 package com.pintu.widgets{
 	
+	import com.adobe.crypto.MD5;
 	import com.adobe.serialization.json.JSON;
 	import com.greensock.TweenLite;
+	import com.hurlant.crypto.hash.MD2;
+	import com.hurlant.crypto.hash.MD5;
 	import com.pintu.api.*;
 	import com.pintu.common.*;
 	import com.pintu.config.StyleParams;
@@ -16,6 +19,7 @@ package com.pintu.widgets{
 	import flash.filters.DropShadowFilter;
 	import flash.net.URLRequest;
 	import flash.net.navigateToURL;
+	import flash.utils.Dictionary;
 	import flash.utils.Timer;
 	
 	/**
@@ -48,10 +52,16 @@ package com.pintu.widgets{
 		private var defaultAds:String = "报雨鸟微广告系统...";
 		private var defaultAdTF:SimpleText;
 		
+		//新增图片缓存处理，节省服务器资源
+		//2012/03/09
+		private var imageCache:Dictionary;
+		
 		public function MiniAds(model:IPintu){
 			super(model);
 			
 			buildUI();
+			
+			imageCache = new Dictionary();
 			
 			rollingTimer = new Timer(adStayTime);
 			rollingTimer.addEventListener(TimerEvent.TIMER, timeToRolling);
@@ -97,7 +107,9 @@ package com.pintu.widgets{
 			tempDO = createAdItemByType(newadDat["type"]);
 			//先放在外面
 			tempDO.y = -36;
-			tempDO.x = 0;	
+			tempDO.x = 0;
+			//图片要循环使用，隐藏时透明度变为0了，这里恢复
+			tempDO.alpha = 1;
 			
 			//设置内容和点击事件
 			if(tempDO is HandCursorLink){
@@ -156,12 +168,23 @@ package com.pintu.widgets{
 				liteTxt.filters = [new DropShadowFilter(1,45,0x333333,1,0,0)];
 				return liteTxt;
 			}else if(type=="image"){
+				//先看缓存中有没有
+				var imgURL:String = adObjs[adItemIndex]["imgPath"];
+				var imgKey:String = com.adobe.crypto.MD5.hash(imgURL);
+				var result:LazyImage = imageCache[imgKey];
+				if(result){
+					return result;
+				}
+				//没有就创建一个
 				var image:LazyImage = new LazyImage(null);
 				image.visibleWidth = _width;
 				image.visibleHeight = _height;
 				image.buttonMode = true;
 				image.useHandCursor = true;
 				image.mouseChildren = false;
+				//放入缓存
+				imageCache[imgKey] = image;
+				
 				return image;
 			}
 			return null;
