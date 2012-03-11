@@ -65,7 +65,7 @@ package com.pintu.common{
 				_loading = new BusyIndicator();
 				this.addChild(_loading);
 				
-				Logger.debug("> start to loading image: "+_iconPath);
+//				Logger.debug("> start to loading image: "+_iconPath);
 			}
 						
 		}

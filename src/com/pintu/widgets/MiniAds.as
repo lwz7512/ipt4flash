@@ -84,11 +84,17 @@ package com.pintu.widgets{
 			//设置广告条的遮罩
 			this.mask = _mask;					
 			
-			defaultAdTF = new SimpleText(defaultAds, 0x666666);
+			defaultAdTF = new SimpleText(defaultAds, 0xFFFFFF);
 			defaultAdTF.x = 30;
 			defaultAdTF.y = 7;
 			defaultAdTF.width = _width;
 			this.addChild(defaultAdTF);
+			
+			var countDown:CountDownCircle = new CountDownCircle(10,6,0xCCCCCC);
+			countDown.x = _width-30;
+			//放到标题栏一半的高度
+			countDown.y = 18;
+			this.addChild(countDown);
 		}
 				
 		

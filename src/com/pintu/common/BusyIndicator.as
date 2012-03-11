@@ -1,5 +1,5 @@
-package com.pintu.common
-{
+package com.pintu.common{
+	
 	import flash.display.CapsStyle;
 	import flash.display.Graphics;
 	import flash.display.LineScaleMode;
