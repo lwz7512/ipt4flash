@@ -86,6 +86,10 @@ package com.pintu.widgets{
 								
 			//先生成图片，等图片加载完成后，再生成其他内容
 			mobImage = new LazyImage(data.mobImgUrl);
+			//FIXME, 设置默认大小，以正确居中Loading
+			//2012/03/18
+			mobImage.visibleWidth = _mobImgDefaultSize;
+			mobImage.visibleHeight = _mobImgDefaultSize;
 			mobImage.addEventListener(PintuEvent.IMAGE_LOADED,imgLoaded);
 			this.addChild(mobImage);							
 			

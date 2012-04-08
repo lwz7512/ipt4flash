@@ -218,7 +218,11 @@ package com.pintu.api
 		}
 		
 		public function getMiniAds():void{
-			addHttpTask([], ApiMethods.GETMINIADS);
+			//查询管理员发布的广告
+			//2012/03/21
+			var venderId:String = GlobalController.ADMIN_ID;
+			var params:Array = [{name:"venderId",value:venderId}];
+			addHttpTask(params, ApiMethods.GETMINIADS);
 		}
 		
 		

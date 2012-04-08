@@ -27,6 +27,10 @@ package com.pintu.controller{
 		//FIXME, 是否为调试模式
 		public static const isDebug:Boolean = false;
 		
+		//FIXME, 管理员账号liu3385ml@163.com，用于取回管理员发布的广告
+		//2012/03/21
+		public static const ADMIN_ID:String = "a053beae20125b5b";
+		
 		//默认收信人，客服
 		public static const KEFU_ID:String = "b8931b314c24dca4";
 		public static const KEFU_NAME:String = "客服小辣椒";

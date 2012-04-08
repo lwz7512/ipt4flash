@@ -232,7 +232,7 @@ package com.pintu.widgets
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR);
 			homeMenu.label = "首页";
-			homeMenu.x = logoBitmap.x+logoBitmap.width+100;
+			homeMenu.x = logoBitmap.x+logoBitmap.width+InitParams.HEADERMENU_BG_WIDTH;
 			homeMenu.y = 0;
 			homeMenu.selected = true;
 			homeMenu.addEventListener(MouseEvent.MOUSE_OVER, onHomeMenuOver);
@@ -309,7 +309,9 @@ package com.pintu.widgets
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR);
 			feedbackMenu.label = "反馈";
-			feedbackMenu.x = searchInput.x+searchInput.width+InitParams.HEADERMENU_BG_WIDTH+menuGap;
+			//FIXME, 1280分辨率下退出菜单跑到屏幕外面了
+			//2012/04/08
+			feedbackMenu.x = InitParams.appWidth-2*InitParams.HEADERMENU_BG_WIDTH-menuGap;
 			feedbackMenu.y = 0;
 			feedbackMenu.addEventListener(MouseEvent.CLICK, openFeedbackWin);
 			mainMenuContainer.addChild(feedbackMenu);
@@ -368,7 +370,9 @@ package com.pintu.widgets
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR);
 			exitMenu.label = "退出";
-			exitMenu.x = feedbackMenu.x+InitParams.HEADERMENU_BG_WIDTH+menuGap;
+			//FIXME, 1280分辨率下菜单位置跑到外面了
+			//2012/04/08
+			exitMenu.x = InitParams.appWidth-InitParams.HEADERMENU_BG_WIDTH;
 			exitMenu.y = 0;
 			
 			exitMenu.visible = false;

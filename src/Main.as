@@ -8,23 +8,15 @@ package{
 	import com.greensock.TweenLite;
 	import com.pintu.api.*;
 	import com.pintu.common.Toast;
-	import com.pintu.config.InitParams;
-	import com.pintu.config.PopWinNames;
+	import com.pintu.config.*;
 	import com.pintu.controller.*;
 	import com.pintu.events.PintuEvent;
 	import com.pintu.modules.IMenuClickResponder;
 	import com.pintu.utils.Logger;
-	import com.pintu.widgets.FooterBar;
-	import com.pintu.widgets.HeaderBar;
-	import com.pintu.window.AboutWin;
-	import com.pintu.window.EditWinBase;
-	import com.pintu.window.FeedbackWin;
-	import com.pintu.window.SettingWin;
+	import com.pintu.widgets.*;
+	import com.pintu.window.*;
 	
-	import flash.display.BitmapData;
-	import flash.display.Sprite;
-	import flash.display.StageAlign;
-	import flash.display.StageScaleMode;
+	import flash.display.*;
 	import flash.events.Event;
 	import flash.external.ExternalInterface;
 	
@@ -36,7 +28,7 @@ package{
 	//2011/12/31
 	//lwz7512
 	[Frame(factoryClass="Preloader")]
-	public class Main extends Sprite{
+	public class Main extends BaseApp{
 
 		/**
 		 * 整个应用只有一个模型，即服务实现的一个实例
@@ -66,74 +58,60 @@ package{
 		
 					
 		public function Main(){
-			super();			
-			
-			//舞台准备好后创建应用
-			this.addEventListener(Event.ADDED_TO_STAGE, buildApp);						
-		}
-		
-		private function setupStage():void{
-			//不允许图形缩放
-			this.stage.scaleMode =StageScaleMode.NO_SCALE;
-			//从左上角开始绘制
-			this.stage.align = StageAlign.TOP_LEFT;
-			//隐藏所有默认右键菜单
-			this.stage.showDefaultContextMenu = false;
-			//阻止浏览器滚动条
-			SWFWheel.initialize(stage);
-			SWFWheel.browserScroll = false;		
-		}
+			super();												
+		}		
 		
 		/**
 		 * 初始化系统参数，构建系统界面，并监听导航事件
 		 */ 
-		protected function buildApp(event:Event):void{			
-			this.removeEventListener(Event.ADDED_TO_STAGE, buildApp);
+		override protected function buildApp(event:Event):void{			
+			super.buildApp(event);						
 			
-			setupStage();				
+			initConfig();
 			
-			//如果舞台大小为0
-			if(!stage.stageWidth) {
-				Logger.warn("Stage is unavailable, stop to build app!");
-				return;
-			}
+			addGlobalListener();
 			
-			//移除html页面中的div logo内容
-			//这个内容是为chrome生成缩略图准备的
-			//生产模式下使用
-			//2012/12/15
-			if(ExternalInterface.available){
-				ExternalInterface.call("removeLogo");
-				Logger.debug("logo div removed!");
-			}			
+			buildModel();
 			
-			//主应用只监听来自headerbar退出和loginBlock的登录引起的导航事件
-			//其他系统事件一概不予处理，放在各自的模块中处理
-			//2011/11/26
-			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
-			//监听系统事件：弹出提示
-			this.addEventListener(PintuEvent.HINT_USER, hintTextHandler);		
+			buildView();
 			
+			finishAppBuild();
+		}
+		
+		private function initConfig():void{
 			//init stage size
 			InitParams.appWidth = this.stage.stageWidth;
 			InitParams.appHeight = this.stage.stageHeight;	
 			
 			//初始化客户端缓存对象
 			GlobalController.initClientStorage(this);
-			//这时该知道是否已经登录过了没
-			var isLogged:Boolean = GlobalController.isLogged;
+		}
+		
+		private function addGlobalListener():void{
+			//主应用只监听来自headerbar退出和loginBlock的登录引起的导航事件
+			//其他系统事件一概不予处理，放在各自的模块中处理
+			//2011/11/26
+			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);
+			//监听系统事件：弹出提示
+			this.addEventListener(PintuEvent.HINT_USER, hintTextHandler);		
+		}
+		
+		private function buildModel():void{
 			//得到缓存的用户
-			var currentUser:String = GlobalController.loggedUser;
-			
+			var currentUser:String = GlobalController.loggedUser;			
 			//初始化模型
 			model = new PintuImpl(currentUser);
 			//后台错误提示
-			PintuImpl(model).addEventListener(PintuEvent.HINT_USER, hintTextHandler);			
-			
+			PintuImpl(model).addEventListener(PintuEvent.HINT_USER, hintTextHandler);
+		}
+		
+		private function buildView():void{
+			//这时该知道是否已经登录过了没
+			var isLogged:Boolean = GlobalController.isLogged;
 			//全局模块固定不变
 			buildHeaderBar(isLogged);			
 			buildFooterContent();			
-
+			
 			//初始化导航器
 			navigator = new GlobalNavigator(this,model);
 			//展示首页
@@ -144,14 +122,23 @@ package{
 			}			
 			
 			//主菜单栏再顶部，好让菜单浮在画廊上面
-			moveHeaderBarTop();			
-			
+			moveHeaderBarTop();	
+		}
+		
+		private function finishAppBuild():void{
 			//判断运行状态
 			var runningMode:Boolean = GlobalController.isDebug;
 			if(runningMode){
 				hintToUser("Warning, I'm in DEBUG mode!");
 			}
-			
+			//移除html页面中的div logo内容
+			//这个内容是为chrome生成缩略图准备的
+			//生产模式下使用
+			//2012/12/15
+			if(ExternalInterface.available){
+				ExternalInterface.call("removeLogo");
+				Logger.debug("logo div removed!");
+			}			
 			//app construction completed...
 			Logger.debug("... app construction completed...");
 		}

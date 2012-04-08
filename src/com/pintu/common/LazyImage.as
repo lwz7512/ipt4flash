@@ -65,6 +65,12 @@ package com.pintu.common{
 				_loading = new BusyIndicator();
 				this.addChild(_loading);
 				
+				//FIXME, 居中显示，在设置图片大小情况下
+				//2012/03/18
+				if(_visibleWidth && _visibleHeight){
+					_loading.x = _visibleWidth/2-10;
+					_loading.y = _visibleHeight/2-10;
+				}
 //				Logger.debug("> start to loading image: "+_iconPath);
 			}
 						
