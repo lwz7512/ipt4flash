@@ -49,7 +49,7 @@ package com.pintu.widgets{
 		
 		private var rollingTimer:Timer;
 		
-		private var defaultAds:String = "报雨鸟微广告系统...";
+		private var defaultAds:String = "精彩马上呈现...";
 		private var defaultAdTF:SimpleText;
 		
 		//新增图片缓存处理，节省服务器资源
@@ -90,7 +90,7 @@ package com.pintu.widgets{
 			defaultAdTF.width = _width;
 			this.addChild(defaultAdTF);
 			
-			var countDown:CountDownCircle = new CountDownCircle(10,6,0xCCCCCC);
+			var countDown:CountDownCircle = new CountDownCircle(10,5,0xCCCCCC);
 			countDown.x = _width-30;
 			//放到标题栏一半的高度
 			countDown.y = 18;

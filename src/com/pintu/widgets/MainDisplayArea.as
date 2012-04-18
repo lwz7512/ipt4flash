@@ -83,10 +83,7 @@ package com.pintu.widgets{
 		public function set browseType(type:String):void{
 			//检查查看分类是否发生变化，如果变化就重置所有分页数
 			if(type!=_browseType){
-				_galleryPageNum = 0;
-				_tagPageNum = 0;
-				_myPostsPageNum = 0;
-				_myFavoPageNum = 0;				
+				resetPageNumber();							
 			}
 			//保存当前查看类型
 			_browseType = type;									
@@ -446,6 +443,16 @@ package com.pintu.widgets{
 		public function createUserMsgs(msgs:Array):void{
 			//放心创建吧，外面校验过了
 			_picBuilder.createMsgList(msgs);
+			//FIXME, RESET PAGENUMBER
+			//2012/04/13
+			resetPageNumber();
+		}
+		
+		private function resetPageNumber():void{
+			_galleryPageNum = 0;
+			_tagPageNum = 0;
+			_myPostsPageNum = 0;
+			_myFavoPageNum = 0;
 		}
 				
 		//重写销毁函数
