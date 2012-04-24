@@ -211,6 +211,7 @@ package com.pintu.widgets{
 		private function adsDataHandler(evt:Event):void{
 			if(evt is ResponseEvent){
 				var adStr:String = ResponseEvent(evt).data;
+//				Logger.debug("adstr: "+adStr);
 				adObjs = JSON.decode(adStr);				
 				for each(var obj:Object in adObjs){
 					//如果是图片广告
