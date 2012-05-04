@@ -4,6 +4,7 @@ package com.pintu.widgets{
 	import com.pintu.api.*;
 	import com.pintu.common.*;
 	import com.pintu.config.*;
+	import com.pintu.controller.GlobalController;
 	import com.pintu.events.*;
 	import com.pintu.utils.*;
 	import com.pintu.vos.TPicDetails;
@@ -550,12 +551,18 @@ package com.pintu.widgets{
 			//TODO, FORWAR TO WEIBO BUTTON
 			var forward:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			forward.iconPath = "assets/forward.png";
-			forward.addEventListener(MouseEvent.CLICK, todo);
+			forward.addEventListener(MouseEvent.CLICK, sendToWeibo);
 			forward.x = save.x +iconHGap;
 			forward.y = iconYOffset;
 			forward.textOnRight = true;
 			forward.label = "转发";
-			forward.enabled = false;
+			//FIXME, 如果是管理员，就放开
+			//2011/05/04
+			if(GlobalController.isAdmin()){
+				forward.enabled = true;				
+			}else{
+				forward.enabled = false;
+			}
 			forward.setSkinStyle(null,overColors,downColors);	
 			toolHolder.addChild(forward);
 			
@@ -591,6 +598,14 @@ package com.pintu.widgets{
 		protected function todo(evt:MouseEvent):void{
 			//do nothing here, for sub class to implementation
 		}
+		
+		protected function sendToWeibo(evt:MouseEvent):void{
+			//点一次，就禁用掉，不管成功与否
+			TextMenu(evt.currentTarget).enabled = false;
+			
+		}
+		
+		
 		
 		protected function showCmntLoading():void{
 			cmtLoading = new BusyIndicator(24);

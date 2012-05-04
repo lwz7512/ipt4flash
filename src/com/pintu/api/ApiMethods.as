@@ -70,5 +70,10 @@ package com.pintu.api
 		//2012/03/02
 		public static const GETMINIADS:String = "getTodayAds";
 		
+		//转发到微博
+		//2012/05/04
+		public static const FORWARDTOWEIBO:String = "forwardToWeibo";
+		
+		
 	}
 }

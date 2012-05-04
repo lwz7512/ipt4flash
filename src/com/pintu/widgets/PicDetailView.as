@@ -56,6 +56,7 @@ package com.pintu.widgets{
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.ADDVOTE, votePicHandler);
 			PintuImpl(_clonedModel).addEventListener(ApiMethods.SENDMSG, reportPicHandler);
+			PintuImpl(_clonedModel).addEventListener(ApiMethods.FORWARDTOWEIBO, forwardHandler);
 		}
 		
 		/**
@@ -68,6 +69,8 @@ package com.pintu.widgets{
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.MARKTHEPIC, markPicHandler);
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.ADDVOTE, votePicHandler);
 			PintuImpl(_clonedModel).removeEventListener(ApiMethods.SENDMSG, reportPicHandler);
+			PintuImpl(_clonedModel).removeEventListener(ApiMethods.FORWARDTOWEIBO, forwardHandler);
+			
 			//这个是复制出来的，一定要销毁
 			_clonedModel.destory();
 			_clonedModel = null;
@@ -157,6 +160,23 @@ package com.pintu.widgets{
 			}
 			if(evt is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.SENDMSG);
+			}
+		}
+		
+		private function forwardHandler(evt:Event):void{
+			if(evt is ResponseEvent){
+				//提示用户结果
+				var result:String = ResponseEvent(evt).data;
+				if(result=="true"){
+					//在主显示区弹出提示
+					this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "转发成功！"));
+				}else{
+					//在主显示区弹出提示
+					this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "转发失败！"));
+				}
+			}
+			if(evt is PTErrorEvent){
+				Logger.error("Error in calling: "+ApiMethods.FORWARDTOWEIBO);
 			}
 		}
 	
@@ -320,6 +340,16 @@ package com.pintu.widgets{
 			var reportContent:String = "I think the picture: "+_data.id+" is illegal, isn't it?";
 			_clonedModel.postMsg(receiver,reportContent);
 		}
+		
+		//FIXME, 暂时先用爱品图账号转发
+		//2012/05/04
+		override protected function sendToWeibo(evt:MouseEvent):void{
+			super.sendToWeibo(evt);
+			var userId:String = GlobalController.IPINTU_ID;
+			_clonedModel.forwardToWeibo(userId, _data.id);
+		}
+		
+		
 		override protected function todo(evt:MouseEvent):void{
 			//TODO, ADD FORWARD TO WEIBO,  AND REPORT ...
 			

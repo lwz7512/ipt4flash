@@ -27,6 +27,10 @@ package com.pintu.controller{
 		//FIXME, 是否为调试模式
 		public static const isDebug:Boolean = false;
 		
+		//爱品图账号，用于转发微博到爱品图
+		//2012/05/04
+		public static const IPINTU_ID:String = "833a99772360fcfb";
+		
 		//FIXME, 微广告系统中的ipint用户ID，用于取回管理员发布的广告
 		//2012/04/24
 		public static const ADMIN_ID:String = "96a28a3e859a66b1";
@@ -157,8 +161,11 @@ package com.pintu.controller{
 			return true;
 		}
 		
-		public function GlobalController()
-		{
+		public static function isAdmin():Boolean{
+			if(roleName=="admin") return true;
+			return false;
 		}
+		
+		
 	}
 }

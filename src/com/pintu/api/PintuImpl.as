@@ -69,7 +69,9 @@ package com.pintu.api
 			
 			addClientListener(ApiMethods.ACTIVEUSERRANKING);
 			
-			addClientListener(ApiMethods.GETMINIADS);					
+			addClientListener(ApiMethods.GETMINIADS);		
+			
+			addClientListener(ApiMethods.FORWARDTOWEIBO);					
 			
 		}		
 				
@@ -223,6 +225,11 @@ package com.pintu.api
 			var venderId:String = GlobalController.ADMIN_ID;
 			var params:Array = [{name:"venderId",value:venderId}];
 			addHttpTask(params, ApiMethods.GETMINIADS);
+		}
+		
+		public function forwardToWeibo(userId:String, picId:String):void{
+			var params:Array = [{name:"userId",value:userId}, {name:"picId", value:picId}];
+			addHttpTask(params, ApiMethods.FORWARDTOWEIBO);
 		}
 		
 		

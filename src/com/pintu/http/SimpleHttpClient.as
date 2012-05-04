@@ -71,8 +71,9 @@ package com.pintu.http
 			
 			params = params.concat([ {name:"method", value: method}]);
 			
-			//如果已经指定了用户，就不再添加该属性了
-			//这一定是查看新用户的资料
+			//如果参数中已经指定了用户，就不再添加该属性了，常用于查看其他用户的资料
+			//如果没有指定用户，用登录用户ID
+			//2012/05/04
 			if(!hasUserId){
 				params = params.concat([ {name:"userId", value: _userId}]);			
 			}

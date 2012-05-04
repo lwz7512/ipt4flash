@@ -73,6 +73,13 @@ package com.pintu.api
 		//2012/03/02
 		function getMiniAds():void;
 		
+		//转发到新浪微博
+		//2012/05/04
+		function forwardToWeibo(userId:String, picId:String):void;
+		
+		
+		
+		
 		/**
 		 * 多个视图用到同样的模型，为了防止事件监听干扰，各自使用各自的模型 
 		 * 比如在PicDetailView组件中，多个图片都要有各自的动作，都要用到模型

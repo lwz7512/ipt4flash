@@ -17,7 +17,7 @@ package com.pintu.widgets{
 	import org.casalib.display.CasaSprite;
 	
 	/**
-	 * 图片浏览工具栏，事件自身监听，在HomePage中处理
+	 * 图片浏览模式菜单，事件自身监听，在HomePage中处理
 	 */ 
 	public class SlideToolBar extends CasaSprite{
 		
@@ -28,6 +28,7 @@ package com.pintu.widgets{
 		private var toolbarHeight:Number = InitParams.TREEITEM_HEIGHT;	
 		//宽度与画廊相同
 		private var toolbarWidth:Number = InitParams.GALLERY_WIDTH;
+		
 		
 		public function SlideToolBar(){
 			super();
