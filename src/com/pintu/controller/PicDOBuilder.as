@@ -5,7 +5,6 @@ package com.pintu.controller
 	import com.pintu.api.*;
 	import com.pintu.common.IconButton;
 	import com.pintu.config.*;
-	import com.pintu.controller.GlobalController;
 	import com.pintu.events.*;
 	import com.pintu.utils.Logger;
 	import com.pintu.utils.PintuUtils;
@@ -13,7 +12,6 @@ package com.pintu.controller
 	import com.pintu.vos.TPicDesc;
 	import com.pintu.vos.TPicDetails;
 	import com.pintu.vos.TPicItem;
-	import com.pintu.widgets.MainDisplayArea;
 	import com.pintu.widgets.MainDisplayBase;
 	import com.pintu.widgets.MessageItem;
 	import com.pintu.widgets.PicDetailView;
@@ -22,16 +20,10 @@ package com.pintu.controller
 	
 	import flash.display.DisplayObject;
 	import flash.display.JointStyle;
-	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
 	import flash.external.ExternalInterface;
 	
-	import org.as3commons.collections.framework.IIterator;
-	import org.as3commons.ui.layout.CellConfig;
-	import org.as3commons.ui.layout.HLayout;
-	import org.as3commons.ui.layout.constants.Align;
-	import org.as3commons.ui.layout.framework.IDisplay;
 	import org.casalib.display.CasaShape;
 	import org.casalib.display.CasaSprite;
 
@@ -162,7 +154,7 @@ package com.pintu.controller
 			tpics = tpics.reverse();
 			
 			//布局缩略图
-			layoutThumbnails();
+			layoutThumbnailsGrid();
 			
 			//记下当前模式，好从详情返回
 			currentMode = THUMBNAIL_MODE;
@@ -395,43 +387,44 @@ package com.pintu.controller
 			if(currentMode == BIGPIC_MODE){
 				layoutPicItems();
 			}else if(currentMode == THUMBNAIL_MODE){
-				layoutThumbnails();				
+				layoutThumbnailsGrid();
 			}
-		}		
+		}
 
-		
-		private function layoutThumbnails():void{
+		/**
+		 * 手工计算出来的网格
+		 * 
+		 * 2012/05/07
+		 */ 
+		private function layoutThumbnailsGrid():void{
 			//画廊剩余宽度减去左右边距，然后按列数平分
 			var columnGap:Number = (InitParams.GALLERY_WIDTH-
-				_miniGalleryColumnNum*_thumbnailSize-2*_margin)/(_miniGalleryColumnNum-1);						
+				_miniGalleryColumnNum*_thumbnailSize-2*_margin)/(_miniGalleryColumnNum-1);
 			
-			var grid:HLayout = new HLayout();
-			//每行最多放7个
-			grid.maxItemsPerRow = _miniGalleryColumnNum;
-			grid.minWidth = InitParams.GALLERY_WIDTH;
-			grid.minHeight = rowNum*(_thumbnailSize+columnGap);
-			var xOffset:Number = _margin;
-			var yOffset:Number = _margin;	
 			//指定画廊起始位置
-			grid.marginX = _drawStartX +xOffset;
-			grid.marginY = _drawStartY +yOffset;			
-			grid.vGap = columnGap;
-			grid.hGap = columnGap;
+			var galleryStartX:Number = _drawStartX +_margin;
+			var galleryStartY:Number = _drawStartY +_margin;			
 			
-			var cellConfig:CellConfig = new CellConfig();			
-			cellConfig.width = _thumbnailSize;
-			cellConfig.height = _thumbnailSize;
-			grid.setCellConfig(cellConfig);
-			
-			for(var i:int=0; i<tpics.length; i++){
-				var thumbnail:Thumbnail = new Thumbnail(TPicDesc(tpics[i]));
-				thumbnail.addEventListener(PintuEvent.GETPICDETAILS,getDetails);				
-				grid.add(thumbnail);
+			var showItemNum:int;
+			if(tpics.length==64){//显示整9行
+				showItemNum = 63;
+			}else{
+				showItemNum = tpics.length;
 			}
-			//展示画廊
-			grid.layout(_context);
+			
+			for(var i:int=0; i<showItemNum; i++){
+				var rowIndex:int = i/_miniGalleryColumnNum;
+				var colIndex:int = i % _miniGalleryColumnNum;
+				var thumbnail:Thumbnail = new Thumbnail(TPicDesc(tpics[i]));
+				thumbnail.x = galleryStartX+colIndex*(_thumbnailSize+columnGap);
+				thumbnail.y = galleryStartY+rowIndex*(_thumbnailSize+columnGap);
+				thumbnail.addEventListener(PintuEvent.GETPICDETAILS,getDetails);
+				_context.addChild(thumbnail);
+			}
+			
 		}
 		
+	
 		private function getDetails(event:PintuEvent):void{	
 			
 			showBackBtn = true;
