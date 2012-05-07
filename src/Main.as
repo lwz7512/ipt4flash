@@ -88,7 +88,7 @@ package{
 		}
 		
 		private function addGlobalListener():void{
-			//主应用只监听来自headerbar退出和loginBlock的登录引起的导航事件
+			//主应用只监听来自headerbar的导航事件
 			//其他系统事件一概不予处理，放在各自的模块中处理
 			//2011/11/26
 			this.addEventListener(PintuEvent.NAVIGATE, navigateTo);

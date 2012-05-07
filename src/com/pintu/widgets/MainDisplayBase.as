@@ -89,7 +89,7 @@ package com.pintu.widgets{
 			//监听大图派发的滚动提升图片事件，方便添加评论输入
 			this.addEventListener(PintuEvent.SCROLL_UP, raiseUpGallery);
 			
-			//FIXME, LOADING EVENT PROCESS
+			//FIXME, LOADING EVENT PROCESS，从PicDetailView中派发出的事件
 			//2012/02/12
 			this.addEventListener(PintuEvent.SHOW_PROGRESS, function():void{
 				showMiddleLoading();
@@ -97,7 +97,7 @@ package com.pintu.widgets{
 			this.addEventListener(PintuEvent.HIDE_PROGRESS, function():void{
 				hideMiddleLoading();
 			});
-		}		
+		}
 		
 		/**
 		 * 显示进度条，并打开查询开关

@@ -54,9 +54,9 @@ package com.pintu.widgets{
 			//draw mask
 			var clip:CasaShape = new CasaShape();
 			clip.graphics.beginFill(0x000000);
-			//FIXME, 稍微宽点容纳图片
-			//2012/01/11
-			clip.graphics.drawRoundRect(0,0,102,100,_roundRadius,_roundRadius);
+			//FIXME, 稍微宽点容纳图片，稍微高点容纳文字条
+			//2012/01/11, 2012/05/07
+			clip.graphics.drawRoundRect(0,0,102,102,_roundRadius,_roundRadius);
 			clip.graphics.endFill();
 			this.addChild(clip);
 			this.mask = clip;
@@ -102,8 +102,10 @@ package com.pintu.widgets{
 			
 			//重设样式
 			//FIXME, 2012/02/15
-			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.WHITE_TEXT_COLOR);
+//			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.WHITE_TEXT_COLOR);
 //			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.GREEN_TEXT_COLOR);
+			//FIXME, 2012/05/07
+			tf.defaultTextFormat = new TextFormat(null,12, StyleParams.HEADERBAR_TOP_LIGHTGREEN);
 			
 			//如果比缩略图默认尺寸大，就按默认图显示，这可能是不合法图片
 			//这样防止缓动效果出问题
@@ -147,15 +149,16 @@ package com.pintu.widgets{
 			//再画底部背景条						
 			var canvas:CasaShape = new CasaShape();
 			this.addChild(canvas);
-			//黑色背景，这样暗示详情背景是黑色的
-			canvas.graphics.beginFill(StyleParams.DEFAULT_TEXT_COLOR, 0.5);
-			//稍微宽点容纳图片
-			canvas.graphics.drawRect(0, (100-timeBarHeight),101,timeBarHeight);
+			//灰色背景，这样暗示详情背景是黑色的
+			//2012/05/07
+			canvas.graphics.beginFill(0xF5F5F5, 0.8);
+			//稍微宽点容纳图片，高度窄点，否则盖住边框了
+			canvas.graphics.drawRect(0, (100-timeBarHeight),101,timeBarHeight+1);
 			canvas.graphics.endFill();					
 			
 			//花白：白色和黑色混杂的。斑白的、夹杂有灰色的白
 			canvas.graphics.lineStyle(1,StyleParams.PICDETAIL_BACKGROUND_BROWN,1,true);
-			canvas.graphics.drawRect(0, 0, 101, 100);
+			canvas.graphics.drawRect(0, 0, 101, 101);
 		}
 		
 	} //end of class

@@ -19,6 +19,8 @@ package com.pintu.controller{
 		//module names...
 		public static const HOMPAGE:String = "homepage";
 		public static const UNLOGGED:String = "unloggedin";
+		public static const COMMUNITY:String = "community";
+		public static const MARKET:String = "market";
 				
 		//need to known what module currently in stage
 		private var _currentModule:CasaSprite;
@@ -59,7 +61,17 @@ package com.pintu.controller{
 					transition(_currentModule,unlogged);
 					break;
 				
-				//...
+				case COMMUNITY:
+					var community:CommunityPage = new CommunityPage(_model);
+					nextModule = IMenuClickResponder(community);
+					transition(_currentModule,community);					
+					break;
+				
+				case MARKET:
+					var market:MarketPage = new MarketPage(_model);			
+					nextModule = IMenuClickResponder(market);
+					transition(_currentModule,market);					
+					break;				
 				
 			}
 			

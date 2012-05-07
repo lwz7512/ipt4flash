@@ -17,6 +17,19 @@ package com.pintu.modules{
 			
 		}
 		
+		/**
+		 * 在Main中的browseTypeChanged监听器中调用该方法
+		 */ 
+		public function menuHandler(operation:String, extra:String):void{
+			
+		}
+		
+		public function searchable(key:String):void{
+			trace(".... to search by: "+key);
+		}
+		
+		
+		
 		//重写销毁函数
 		public  function killMe():void{
 			//移除自己，并销毁事件监听

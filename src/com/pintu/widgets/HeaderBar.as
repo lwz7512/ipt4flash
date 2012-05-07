@@ -251,6 +251,7 @@ package com.pintu.widgets
 			communityMenu.label = "社区";
 			communityMenu.x = homeMenu.x+InitParams.HEADERMENU_BG_WIDTH+menuGap;
 			communityMenu.y = 0;
+			//TODO, TO USE THIE MENU...
 			communityMenu.enabled = false;
 			mainMenuContainer.addChild(communityMenu);
 			

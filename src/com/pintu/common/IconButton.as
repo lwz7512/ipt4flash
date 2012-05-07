@@ -18,6 +18,7 @@ package com.pintu.common
 		
 		private var _iconPath:String;
 		private var _iconLoader:ImageLoad;
+		private var icon:Bitmap;
 		
 		private var margin:Number = 4;
 		
@@ -49,7 +50,7 @@ package com.pintu.common
 		}
 		
 		private function onLoaded(e:LoadEvent):void {
-			var icon:Bitmap = this._iconLoader.contentAsBitmap;
+			icon = this._iconLoader.contentAsBitmap;
 			this.addChild(icon);
 			icon.x = this._width/2 - icon.width/2;
 			
@@ -80,7 +81,14 @@ package com.pintu.common
 			Logger.error("load icon error: "+_iconPath);
 		}
 		
-
+		//FIXME, 图标可以运行时设置禁用风格
+		//2012/05/07
+		override public function set enabled(enabled : Boolean) : void {
+			super.enabled = enabled;
+			if(!enabled && icon){
+				icon.alpha = 0.6;
+			}
+		}
 		
 	}
 }

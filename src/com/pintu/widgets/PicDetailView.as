@@ -120,15 +120,14 @@ package com.pintu.widgets{
 			if(evt is ResponseEvent){
 				var jsonCmnt:String = ResponseEvent(evt).data;
 				Logger.debug("json comments: "+jsonCmnt);
-				createCommentList(jsonCmnt);
-				//FIXME, HIDE PROGRESS...
-				//2012/02/12
-				this.dispatchEvent(new PintuEvent(PintuEvent.HIDE_PROGRESS,null));				
+				createCommentList(jsonCmnt);						
 			}
 			if(evt is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.ADDSTORY);
 			}
-			
+			//FIXME, HIDE PROGRESS...
+			//2012/02/12
+			this.dispatchEvent(new PintuEvent(PintuEvent.HIDE_PROGRESS,null));	
 		}
 		
 		private function markPicHandler(evt:Event):void{
@@ -178,6 +177,9 @@ package com.pintu.widgets{
 			if(evt is PTErrorEvent){
 				Logger.error("Error in calling: "+ApiMethods.FORWARDTOWEIBO);
 			}
+			//FIXME, HIDE PROGRESS...
+			//2012/05/07
+			this.dispatchEvent(new PintuEvent(PintuEvent.HIDE_PROGRESS,null));	
 		}
 	
 
@@ -347,6 +349,9 @@ package com.pintu.widgets{
 			super.sendToWeibo(evt);
 			var userId:String = GlobalController.IPINTU_ID;
 			_clonedModel.forwardToWeibo(userId, _data.id);
+			//FIXME, ADD PROGRESS...
+			//2012/05/07
+			this.dispatchEvent(new PintuEvent(PintuEvent.SHOW_PROGRESS,null));
 		}
 		
 		
