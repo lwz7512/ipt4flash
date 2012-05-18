@@ -10,8 +10,8 @@ package com.pintu.common{
 		protected var _normalFormat:TextFormat;
 		protected var _txt:String;
 		
-		public function SimpleText(text:String, color:uint=0, fontSize:int=12, bold:Boolean=false, wrap:Boolean=true, selectable:Boolean=false){
-			this.autoSize = "left";
+		public function SimpleText(text:String, color:uint=0, fontSize:int=12, bold:Boolean=false, wrap:Boolean=true, selectable:Boolean=false, isHTML:Boolean=false){
+			this.autoSize = "left";			
 			this.wordWrap = wrap;
 			this.multiline = true;			
 			this.selectable = selectable;
@@ -22,7 +22,11 @@ package com.pintu.common{
 			this.defaultTextFormat = _normalFormat;
 			
 			//先有样式，后设置文字内容
-			this.text = _txt;
+			if(isHTML){
+				this.htmlText = _txt;
+			}else{
+				this.text = _txt;				
+			}
 		}
 		
 		public function get defaultTF():TextFormat{

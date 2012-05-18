@@ -47,7 +47,7 @@ package com.pintu.modules{
 			buildUserDetail();
 			buildAndiMenu();
 			buildHotTags();
-		
+
 		}
 		
 		private function buildMainDisplayArea():void{

@@ -31,6 +31,14 @@ package com.pintu.widgets{
 		protected function initModelListener(evt:Event):void{
 			//防止重复添加事件
 			this.removeEventListener(Event.ADDED_TO_STAGE, initModelListener);
+			safeAddModelListener();
+		}
+		
+		/**
+		 * 只用来添加模型的事件
+		 */ 
+		protected function safeAddModelListener():void{
+			
 		}
 		
 		/**
@@ -40,10 +48,17 @@ package com.pintu.widgets{
 		protected function cleanUpModelListener(evt:Event):void{
 			//TODO, TO REMOVE MODEL EVENT LISTENER IN SUB WIDGET...
 			//THEN, USE: super.cleanUpModelListener(evt);
-			
+			safeClearModelListener();
 			//这个是复制出来的，一定要销毁
 			_clonedModel.destory();
 			_clonedModel = null;
+		}
+		
+		/**
+		 * 只用来清除子类添加的模型事件
+		 */ 
+		protected function safeClearModelListener():void{
+			
 		}
 		
 		

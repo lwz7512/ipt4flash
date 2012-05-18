@@ -2,11 +2,21 @@ package com.pintu.events
 {
 	import flash.events.Event;
 	
-	public class PintuEvent extends Event
-	{
+	public class PintuEvent extends Event{
+		
+		/**
+		 * 全局进度条
+		 */ 
+		public static const SHOW_PROGRESS:String = "showLoading";
+		public static const HIDE_PROGRESS:String = "hideLoading";		
+		/**
+		 * 弹出提示事件，这是系统事件只有Main来监听并处理
+		 */ 
+		public static const HINT_USER:String = "hintToUser";
 		
 		public static const NAVIGATE:String = "navigate";
 		public static const BROWSE_CHANGED:String = "browseChanged";
+		
 		public static const GETPICDETAILS:String = "getPicDetails";
 		public static const IMAGE_LOADED:String = "imageLoaded";		
 		public static const SEARCH_BYTAGS:String = "searchByTags";
@@ -21,10 +31,7 @@ package com.pintu.events
 		//修改用户资料
 		public static const POST_USERINFO:String = "modifyUserInfo";
 		
-		/**
-		 * 弹出提示事件，这是系统事件只有Main来监听并处理
-		 */ 
-		public static const HINT_USER:String = "hintToUser";
+
 		//进度条事件
 		public static const PROGRESS:String = "progress";
 		//大图中点击评论按钮，通知画廊向上滚动事件
@@ -52,16 +59,19 @@ package com.pintu.events
 		//PicDetailView派发的事件，收藏成功后在右侧提示一个+1
 		public static const MARK_SUCCSS:String = "markSuccess";
 		
-		
-		public static const SHOW_PROGRESS:String = "showLoading";
-		public static const HIDE_PROGRESS:String = "hideLoading";
-		
+		//贴条子
+		public static const POST_NOTE:String = "postNote";
+		//放大条子看详情
+		public static const VIEW_NOTE:String = "viewNote";
 		
 		
 		//通常带的参数
 		public var data:String;
 		//第二参数
 		public var extra:String;
+		
+		
+		
 		
 		public function PintuEvent(type:String, context:String){
 			//都是冒泡事件，可以传播到顶级对象

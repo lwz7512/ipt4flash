@@ -76,5 +76,13 @@ package com.pintu.utils{
 			return account;
 		}
 		
+		//FIXME, 先简单搞搞。。。
+		public static function truncateStr(str:String, strictLength:Number):String{
+			if(str.length<strictLength) return str;
+			return str.substr(0,strictLength)+"...";
+		}
+		
+		
+		
 	} //end of class
 }

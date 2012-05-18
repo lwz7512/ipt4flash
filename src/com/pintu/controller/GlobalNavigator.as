@@ -7,11 +7,13 @@ package com.pintu.controller{
 	import com.pintu.modules.*;
 	
 	import flash.display.Sprite;
+	import flash.utils.Dictionary;
 	
 	import org.casalib.display.CasaSprite;
 	
 	/**
-	 * 主要用于模块之间的切换，例如登录和退出状态的切换
+	 * 主要用于模块之间的切换，例如登录和退出状态的切换，每个模块移除时，被销毁了，所以无需缓存
+	 * 
 	 * 2011/12/21
 	 */ 
 	public class GlobalNavigator{		
@@ -22,19 +24,26 @@ package com.pintu.controller{
 		public static const COMMUNITY:String = "community";
 		public static const MARKET:String = "market";
 				
-		//need to known what module currently in stage
+		/**
+		 * 保存当前模块，好移除
+		 */ 
 		private var _currentModule:CasaSprite;
 		
+		/**
+		 * 保留当前模块名称，做导航同一模块时判断重复
+		 */ 
 		private var _moduleName:String;
+		
 		
 		//top level sprite: Main
 		private var _canvas:Sprite;
 		private var _model:IPintu;
 		
+
 		
 		public function GlobalNavigator(canvas:Sprite, model:IPintu){
 			this._canvas = canvas;
-			this._model = model;
+			this._model = model;			
 		}
 
 		
@@ -49,26 +58,26 @@ package com.pintu.controller{
 			
 			
 			switch(module){
-				case HOMPAGE:
-					var homePage:CasaSprite = new HomePage(_model);
+				case HOMPAGE:								
+					var homePage:CasaSprite  = new HomePage(_model);
 					nextModule = IMenuClickResponder(homePage);
 					transition(_currentModule,homePage);
 					break;
 				
-				case 	UNLOGGED:
+				case 	UNLOGGED:								
 					var unlogged:CasaSprite = new UnloggedPage(_model);
 					nextModule = IMenuClickResponder(unlogged);
 					transition(_currentModule,unlogged);
 					break;
 				
-				case COMMUNITY:
-					var community:CommunityPage = new CommunityPage(_model);
+				case COMMUNITY:					
+					var community:CasaSprite = new CommunityPage(_model);
 					nextModule = IMenuClickResponder(community);
 					transition(_currentModule,community);					
 					break;
 				
-				case MARKET:
-					var market:MarketPage = new MarketPage(_model);			
+				case MARKET:								
+					var market:CasaSprite = new MarketPage(_model);
 					nextModule = IMenuClickResponder(market);
 					transition(_currentModule,market);					
 					break;				
@@ -83,7 +92,7 @@ package com.pintu.controller{
 		
 		
 		/**
-		 * 模块切换时渐变过渡
+		 * 模块切换时渐变过渡，每个模块被切换后直接销毁了，所以不需要缓存
 		 */
 		private function transition(prev:CasaSprite, next:CasaSprite):void{
 			//校验
@@ -98,7 +107,7 @@ package com.pintu.controller{
 				return;
 			}
 				
-			//销毁前一个模块，销毁自己的事件监听和子对象
+			//****** 销毁前一个模块，销毁自己的事件监听和子对象 ******
 			//并将自己从显示列表中移除
 			//这些模块都是IDestroyableModule
 			IDestroyableModule(_currentModule).killMe();

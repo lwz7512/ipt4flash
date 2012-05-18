@@ -34,7 +34,11 @@ package com.pintu.widgets
 		
 		//主菜单容器，放所有的功能菜单，并画背景
 		//置于顶层
-		private var mainMenuContainer:CasaSprite;		
+		private var mainMenuContainer:CasaSprite;	
+		
+		//当前被选中的菜单，方便做切换状态
+		private var selectedMenu:TextMenu;
+		
 		//主菜单
 		private var homeMenu:TextMenu;
 		private var communityMenu:TextMenu;
@@ -142,8 +146,11 @@ package com.pintu.widgets
 			maskLogo.addEventListener(MouseEvent.CLICK,goBacktoHomePage);
 			
 			//主菜单，都在主容器中
-			createMainMenus();				
-			createSearchInput();				
+			createMainMenus();
+			//先记下主菜单的选择
+			switchSelectedMenu(homeMenu);
+			
+			createSearchInput();
 			createFeedbackMenu();
 			createExitMenu();	
 			
@@ -157,7 +164,8 @@ package com.pintu.widgets
 			//搜索框的左边
 			miniAds.x = searchInput.x-miniAds.width-10;
 			miniAds.y = 0;
-			this.addChild(miniAds);
+			//FIXME, 调试社区模块，先屏蔽掉
+//			this.addChild(miniAds);
 		}
 		
 		private function goBacktoHomePage(evt:MouseEvent):void{
@@ -234,6 +242,7 @@ package com.pintu.widgets
 			homeMenu.label = "首页";
 			homeMenu.x = logoBitmap.x+logoBitmap.width+InitParams.HEADERMENU_BG_WIDTH;
 			homeMenu.y = 0;
+			//默认选中主菜单
 			homeMenu.selected = true;
 			homeMenu.addEventListener(MouseEvent.MOUSE_OVER, onHomeMenuOver);
 			homeMenu.addEventListener(MouseEvent.MOUSE_OUT, onHomeMenuOut);
@@ -252,7 +261,8 @@ package com.pintu.widgets
 			communityMenu.x = homeMenu.x+InitParams.HEADERMENU_BG_WIDTH+menuGap;
 			communityMenu.y = 0;
 			//TODO, TO USE THIE MENU...
-			communityMenu.enabled = false;
+//			communityMenu.enabled = false;
+			communityMenu.addEventListener(MouseEvent.CLICK, onSwitchToCommunity);
 			mainMenuContainer.addChild(communityMenu);
 			
 			//夜市模块，对应市场模块
@@ -414,8 +424,17 @@ package com.pintu.widgets
 		 */ 
 		private function onHomeMenuClick(evt:MouseEvent):void{
 			if(homeMenu.selected) return;
-			//TODO, 展开子菜单，以及切换模块
-			
+			//展开子菜单，以及切换模块
+			switchTo(GlobalNavigator.HOMPAGE, homeMenu);
+		}
+		
+		
+		/**
+		 * 打开社区模块
+		 */ 
+		private function onSwitchToCommunity(evt:MouseEvent):void{
+			if(communityMenu.selected) return;
+			switchTo(GlobalNavigator.COMMUNITY, communityMenu);
 		}
 		
 		/**
@@ -440,7 +459,26 @@ package com.pintu.widgets
 			this.dispatchEvent(openEvt);
 		}
 		
-
+		/**
+		 * 导航事件
+		 */
+		private function switchTo(moduleName:String, currentMenu:TextMenu):void{
+			dispatchEvent(new PintuEvent(PintuEvent.NAVIGATE, moduleName));
+			switchSelectedMenu(currentMenu);
+		}
+		
+		/**
+		 * 选择某菜单前，先清空上次主菜单项的选中状态，然后记下当前选中的菜单项
+		 */ 
+		private function switchSelectedMenu(current:TextMenu):void{
+			if(selectedMenu){
+				selectedMenu.selected = false;				
+			}
+			selectedMenu = current;
+			current.selected = true;
+		}
+		
+		
 		
 		
 	} //end of class

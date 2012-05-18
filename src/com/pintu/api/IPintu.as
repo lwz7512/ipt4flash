@@ -77,6 +77,19 @@ package com.pintu.api
 		//2012/05/04
 		function forwardToWeibo(userId:String, picId:String):void;
 		
+		//-------------- 社区模块使用方法 -----------------------
+		function getCommunityNotesBy(pageNum:String):void;
+		function createNote(userId:String,type:String,title:String,content:String):void;
+		function deleteNoteBy(noteId:String):void;
+		function updateNoteBy(noteId:String, type:String, title:String, content:String):void;
+		function addAttentionBy(noteId:String, count:String):void;
+		function addInterestBy(noteId:String, count:String):void;
+		function getUserNotesBy(userId:String):void;
+		
+		
+		//--------------- 市场模块使用的方法 -------------------
+		
+		
 		
 		
 		

@@ -74,6 +74,28 @@ package com.pintu.api
 		//2012/05/04
 		public static const FORWARDTOWEIBO:String = "forwardToWeibo";
 		
+		//-------------社区模块相关API------------------
+		//2012/05/17
+		
+		//翻页查看社区的条子
+		public static const GETCOMMUNITYNOTES:String = "getCommunityNotes";
+		//添加新条子
+		public static const ADDNOTE:String = "addNote";
+		//删除某个条子
+		public static const DELETENOTE:String = "deleteNoteById";
+		//修改某个条子
+		public static const UPDATENOTE:String = "updateNoteById";
+		//增加关注数
+		public static const ADDATTENTION:String = "addAttentionById";
+		//增加感兴趣数
+		public static const ADDINTEREST:String = "addInterestById";
+		//获取自己所发的条子
+		public static const GETUSERNOTES:String = "getUserNotes";
+		
+		//----------------市场相关API--------------------------
+		//TODO, COMING SOON....
+		
+		
 		
 	}
 }

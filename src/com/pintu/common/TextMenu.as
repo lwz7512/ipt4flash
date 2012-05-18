@@ -196,6 +196,14 @@ package com.pintu.common
 			
 		}		
 		
+		/**
+		 * 更新显示，属性改变后，要调用该方法<br/>
+		 * 
+		 * 2012/05/18
+		 */ 
+		public function invalidate():void{
+			setState();
+		}
 		
 		/**
 		 * Calculates the current state and sets skin, icon and label.
@@ -417,7 +425,7 @@ package com.pintu.common
 			_label.defaultTextFormat = labelFormat;	
 			//按照新的样式重新渲染文字
 			_label.text = _labelText;			
-		}
+		}		
 		
 		//for subclass to call...
 		protected function moveLabelY(y:Number):void{

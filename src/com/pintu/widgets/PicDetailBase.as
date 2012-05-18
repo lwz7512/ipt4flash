@@ -91,6 +91,7 @@ package com.pintu.widgets{
 			//2012/03/18
 			mobImage.visibleWidth = _mobImgDefaultSize;
 			mobImage.visibleHeight = _mobImgDefaultSize;
+			//图片载入后，重新调整高度
 			mobImage.addEventListener(PintuEvent.IMAGE_LOADED,imgLoaded);
 			this.addChild(mobImage);							
 			
@@ -103,11 +104,14 @@ package com.pintu.widgets{
 		}
 		
 		/**
-		 * 顺序别弄乱了，否则盖住了，最终顺序从下到上：
-		 * -----imgInfoHolder-----
-		 * -----mobImgPlaceHolder-----
-		 * -----mobImage-----
-		 * -----toolHolder-----
+		 * 图片载入后，重新渲染详情内容<br/>
+		 * <br/>
+		 * 顺序别弄乱了，否则盖住了，最终顺序从下到上：<br/>
+		 * -----imgInfoHolder-----<br/>
+		 * -----mobImgPlaceHolder-----<br/>
+		 * -----mobImage-----<br/>
+		 * -----toolHolder-----<br/>
+		 * <br/>
 		 * 2012/12/15
 		 */ 
 		private function imgLoaded(evt:PintuEvent):void{	
@@ -119,7 +123,12 @@ package com.pintu.widgets{
 			//固定图片宽度为默认宽度让文字都能对齐
 			//这个数据是绘制其他内容的依据
 			_mobImgWidth = InitParams.DEFAULT_BIGPIC_WIDTH;
-			_mobImgHeight = mobImage.bitmap.height;	
+			//FIXME, 图片高度有时候很小，需要保证一个最小高度，否则文字没法显示了
+			//2012/05/17
+			_mobImgHeight = mobImage.bitmap.height;
+			if(_mobImgHeight<200){
+				_mobImgHeight = 200;
+			}
 			
 			//----------- imgInfoHolder ----------------
 			//右侧详情所在背景，先放让它能位于图的底部，使得图片的一部分绘制内容能露出来			

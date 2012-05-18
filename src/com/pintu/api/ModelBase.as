@@ -42,8 +42,13 @@ package com.pintu.api{
 		private var taskQueue:ArrayList;
 		private var taskTimer:Timer;
 				
-		private var debugService:String = "http://localhost:8080/ipintu/pintuapi";
-		private var remoteService:String = "http://ipintu.com/ipintu/pintuapi";		
+		private var debugService:String = "http://192.168.11.23:8080/ipintu/pintuapi";
+		private var remoteService:String = "http://ipintu.com/ipintu/pintuapi";
+		
+		/**
+		 * 添加时间监听时，存放取数据的方法名称
+		 */ 
+		private var useLiteClientMethods:Array = [];
 		
 		
 		public function ModelBase(userId:String){
@@ -124,10 +129,20 @@ package com.pintu.api{
 		}		
 		
 		/**
-		 * 模型对client运行状态的监听
-		 * 添加新的服务事件
+		 * 模型对client运行状态的监听，添加新的服务事件
+		 * 
+		 * @param method, 监听的方法名称
+		 * @param isFetchingMethd, 是否为取数据方法，如果是就用liteClient
 		 */ 
-		protected function addClientListener(method:String):void{
+		//FIXME, 简化模型基础类的对应使用何种客户端的检查
+		//后面添加新的方法时，不用在改这个底层类
+		//2012/05/17
+		protected function addClientListener(method:String, isFetchingMethd:Boolean=true):void{
+			
+			if(isFetchingMethd){
+				useLiteClientMethods.push(method);
+			}
+			
 			if(useLiteClient(method)){
 				lite.addEventListener(method, responseHander);			
 			}else{
@@ -201,26 +216,11 @@ package com.pintu.api{
 			return values;
 		}
 		
-		//FIXME, 新加的方法，获取数据的操作，都要在这里添加
-		//2012/03/02
 		private function useLiteClient(method:String):Boolean{
 			var result:Boolean = false;
-			if(method==ApiMethods.GETGALLERYFORWEB ||
-				method==ApiMethods.GETGALLERYBYTIME ||
-				method==ApiMethods.GETGALLERYRANDOM ||
-				method==ApiMethods.GETHOTPICTURE ||
-				method==ApiMethods.CLASSICALSTATISTICS ||
-				method==ApiMethods.COLLECTSTATISTICS ||
-				method==ApiMethods.GETTHUMBNAILSBYTAG ||
-				method==ApiMethods.GETTPICSBYUSER ||
-				method==ApiMethods.GETFAVORITEPICS ||
-				method==ApiMethods.SEARCHBYTAG ||
-				method==ApiMethods.ACTIVEUSERRANKING ||
-				method==ApiMethods.GETMINIADS){
-				
-				result = true;
-				
-			}
+			
+			if(useLiteClientMethods.indexOf(method)>-1) return true;
+						
 			return result;
 		}
 		

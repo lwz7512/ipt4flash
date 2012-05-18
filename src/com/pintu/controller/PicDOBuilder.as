@@ -121,11 +121,9 @@ package com.pintu.controller
 		public function createScrollableMiniGallery(json:String):int{		
 			var thumnails:Array;
 			//捕捉解析异常
-			try{
-				
-//				Logger.debug("mini gallery: \n"+json);
-				
-				thumnails = JSON.decode(json) as Array;
+			try{				
+//				Logger.debug("mini gallery: \n"+json);				
+				thumnails = JSON.decode(json) as Array;				
 			}catch(e:JSONParseError){
 				
 				hintEvt = new PintuEvent(PintuEvent.HINT_USER, ">>>data parse error!");

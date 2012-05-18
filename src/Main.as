@@ -58,8 +58,8 @@ package{
 		
 					
 		public function Main(){
-			super();												
-		}		
+			super();	
+		}
 		
 		/**
 		 * 初始化系统参数，构建系统界面，并监听导航事件
@@ -98,7 +98,11 @@ package{
 		
 		private function buildModel():void{
 			//得到缓存的用户
-			var currentUser:String = GlobalController.loggedUser;			
+			var currentUser:String = GlobalController.loggedUser;
+			
+			//FIXME, JUST FOR DEBUG...
+			Logger.debug("currentUser: "+currentUser);			
+			
 			//初始化模型
 			model = new PintuImpl(currentUser);
 			//后台错误提示
@@ -116,7 +120,9 @@ package{
 			navigator = new GlobalNavigator(this,model);
 			//展示首页
 			if(isLogged){
-				_currentModule = navigator.switchTo(GlobalNavigator.HOMPAGE);				
+				//FIXME, 调试社区模块
+				_currentModule = navigator.switchTo(GlobalNavigator.COMMUNITY);				
+//				_currentModule = navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
 				_currentModule = navigator.switchTo(GlobalNavigator.UNLOGGED);		
 			}			
@@ -202,7 +208,7 @@ package{
 			var displayAreaWidth:Number = InitParams.GALLERY_WIDTH;
 			var middleX:Number = drawStartX+displayAreaWidth/2;
 			var middleY:Number = drawStartY+displayAreaHeight/2;
-			Toast.getInstance(this).show(hint,middleX,middleY);
+			Toast.getInstance(this.stage).show(hint,middleX,middleY);
 		}
 			
 		private function buildHeaderBar(isLogged:Boolean):void{

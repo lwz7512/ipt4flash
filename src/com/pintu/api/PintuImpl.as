@@ -36,7 +36,7 @@ package com.pintu.api
 		public function PintuImpl(userId:String){
 			super(userId);															
 			
-			addClientListener(ApiMethods.LOGON);		
+			addClientListener(ApiMethods.LOGON,false);		
 			
 			addClientListener(ApiMethods.GETGALLERYBYTIME);			
 			addClientListener(ApiMethods.GETGALLERYFORWEB);			
@@ -48,17 +48,17 @@ package com.pintu.api
 			
 			addClientListener(ApiMethods.GETPICDETAIL);	
 			
-			addClientListener(ApiMethods.ADDSTORY);			
+			addClientListener(ApiMethods.ADDSTORY,false);			
 			addClientListener(ApiMethods.GETSTORIESOFPIC);			
-			addClientListener(ApiMethods.MARKTHEPIC);			
-			addClientListener(ApiMethods.ADDVOTE);
+			addClientListener(ApiMethods.MARKTHEPIC,false);			
+			addClientListener(ApiMethods.ADDVOTE,false);
 			
 			addClientListener(ApiMethods.GETUSERDETAIL);			
 			addClientListener(ApiMethods.GETUSERESTATE);	
 			
-			addClientListener(ApiMethods.SENDMSG);			
+			addClientListener(ApiMethods.SENDMSG,false);			
 			addClientListener(ApiMethods.GETUSERMSG);			
-			addClientListener(ApiMethods.CHANGEMSGSTATE);			
+			addClientListener(ApiMethods.CHANGEMSGSTATE,false);			
 			
 			addClientListener(ApiMethods.GETTPICSBYUSER);	
 			addClientListener(ApiMethods.GETFAVORITEPICS);	
@@ -71,7 +71,20 @@ package com.pintu.api
 			
 			addClientListener(ApiMethods.GETMINIADS);		
 			
-			addClientListener(ApiMethods.FORWARDTOWEIBO);					
+			addClientListener(ApiMethods.FORWARDTOWEIBO);	
+			
+			//---------- 社区方法 -------------------------
+			addClientListener(ApiMethods.GETCOMMUNITYNOTES);	
+			addClientListener(ApiMethods.GETUSERNOTES);	
+			addClientListener(ApiMethods.ADDNOTE,false);	
+			addClientListener(ApiMethods.DELETENOTE,false);	
+			addClientListener(ApiMethods.UPDATENOTE,false);	
+			addClientListener(ApiMethods.ADDATTENTION,false);	
+			addClientListener(ApiMethods.ADDINTEREST,false);				
+			
+			
+			//TODO, add market event listener...
+			
 			
 		}		
 				
@@ -232,6 +245,52 @@ package com.pintu.api
 			addHttpTask(params, ApiMethods.FORWARDTOWEIBO);
 		}
 		
+		//-------------- 社区模块使用的方法 ----------------------------
+		public function getCommunityNotesBy(pageNum:String):void{
+			var params:Array = [{name:"pageNum",value:pageNum}];
+			addHttpTask(params, ApiMethods.GETCOMMUNITYNOTES);
+		}
+		
+		public function createNote(userId:String,type:String,title:String,content:String):void{
+			var params:Array = [{name:"type",value:type}];
+			params.push({name:"title",value:title});
+			params.push({name:"content",value:content});
+			addHttpTask(params, ApiMethods.ADDNOTE);
+		}
+		
+		public function deleteNoteBy(noteId:String):void{
+			var params:Array = [{name:"noteId",value:noteId}];
+			addHttpTask(params, ApiMethods.DELETENOTE);
+		}
+		
+		public function updateNoteBy(noteId:String, type:String, title:String, content:String):void{
+			var params:Array = [{name:"noteId",value:noteId}];
+			params.push({name:"type",value:type});
+			params.push({name:"title",value:title});
+			params.push({name:"content",value:content});
+			addHttpTask(params, ApiMethods.UPDATENOTE);
+		}
+		
+		public function addAttentionBy(noteId:String, count:String):void{
+			var params:Array = [{name:"noteId",value:noteId},{name:"count",value:1}];
+			addHttpTask(params, ApiMethods.ADDATTENTION);
+		}
+		
+		public function addInterestBy(noteId:String, count:String):void{
+			var params:Array = [{name:"noteId",value:noteId},{name:"count",value:1}];
+			addHttpTask(params, ApiMethods.ADDINTEREST);
+		}
+		
+		public function getUserNotesBy(userId:String):void{
+			addHttpTask([], ApiMethods.GETUSERNOTES);
+		}
+		
+		
+		//------------- 市场模块使用的方法 ------------------------------			
+		
+		
+		
+		//------------- 与业务无关的方法 -------------------------------------
 		
 		/**
 		 * 必须加个事件监听阻止方法，放置重复对模型添加事件监听

@@ -25,7 +25,7 @@ package com.pintu.controller{
 		public static var account:String;
 		
 		//FIXME, 是否为调试模式
-		public static const isDebug:Boolean = false;
+		public static const isDebug:Boolean = true;
 		
 		//爱品图账号，用于转发微博到爱品图
 		//2012/05/04

@@ -47,6 +47,12 @@ package com.pintu.window{
 		 */ 
 		private var _showProgressbar:Boolean = true;
 		
+		/**
+		 * 默认都是显示提交按钮，所以都是true<br/>
+		 * 如果不需要提交按钮，就设为false
+		 */
+		private var _showSubmitBtn:Boolean = true;
+		
 		
 		protected var _elementStartX:Number = 6;
 		protected var _elementStartY:Number = 30;
@@ -68,9 +74,10 @@ package com.pintu.window{
 		
 		private var _headerHeight:Number = 24;
 		
+		private var _owner:CasaSprite;
 
 		
-		public function EditWinBase(ctxt:Stage, w:Number=320, h:Number=400, title:String=""){
+		public function EditWinBase(ctxt:Stage, w:Number=320, h:Number=400, title:String="", showBtn:Boolean=true){
 			super();
 			//得到父容器，用来关闭自己
 			_context = ctxt;
@@ -80,11 +87,14 @@ package com.pintu.window{
 			_loadingX = _width-110;
 			_loadingY = _height-36;
 			
+			_showSubmitBtn = showBtn;
+			
 			//大小固定了，子类就不用设置了
 			drawBackground();
 			
 			createWinTitle(title);
-			createCloseBtn();		
+			createCloseBtn();
+			addTitleBtn();
 			createSubmitBtn();			
 			createErrorHint();
 			
@@ -93,6 +103,19 @@ package com.pintu.window{
 			this.addEventListener(Event.ADDED_TO_STAGE,createModalLayer);
 			//隐藏时自动销毁	
 			this.addEventListener(Event.REMOVED_FROM_STAGE, removeModalLayer);
+		}
+		
+		/**
+		 * 在哪个模块弹出的
+		 */ 
+		public function set owner(o:CasaSprite):void{
+			_owner = o;
+		}
+		/**
+		 * 在哪个模块弹出的
+		 */ 
+		public function get owner():CasaSprite{
+			return _owner;
 		}
 		
 		protected function drawBackground():void{
@@ -114,12 +137,17 @@ package com.pintu.window{
 			this.filters = [new DropShadowFilter(4,45,0x666666,0.8)];
 		}
 		
+		protected function updateTitle(title:String):void{
+			_title.text = title;
+		}
+		
 		private function createWinTitle(title:String):void{
+			if(title==null) return;
 			_title = new SimpleText(title, 0xFFFFFF);
 			_title.x = 6;
 			_title.y = 4;
 			this.addChild(_title);
-		}	
+		}
 		
 		private function createCloseBtn():void{
 			var closeIconPath:String = "assets/closeme.png";
@@ -129,6 +157,10 @@ package com.pintu.window{
 			_closemeBtn.y = 0;
 			_closemeBtn.addEventListener(MouseEvent.CLICK, closeMe);
 			this.addChild(_closemeBtn);
+		}
+		
+		protected function addTitleBtn():void{
+			
 		}
 		
 		//处理两个对象的事件：
@@ -152,7 +184,8 @@ package com.pintu.window{
 			
 			//清除错误提示
 			_errorHint.text = "";
-			_sendBtn.enabled = true;			
+			
+			if(_sendBtn) _sendBtn.enabled = true;			
 		}
 		
 		private function createErrorHint():void{			
@@ -164,6 +197,8 @@ package com.pintu.window{
 		}
 		
 		private function createSubmitBtn():void{
+			if(!_showSubmitBtn) return;
+			
 			_sendBtn = new GreenButton();
 			_sendBtn.label = submitLabel;
 			//这个尺寸跟登陆按钮大小一致
@@ -174,6 +209,11 @@ package com.pintu.window{
 			_sendBtn.addEventListener(ButtonEvent.CLICK, submit);
 			
 			this.addChild(_sendBtn);
+		}
+		
+		protected function offsetSubmitBtn(diffX:Number, diffY:Number):void{
+			_sendBtn.x += diffX;
+			_sendBtn.y += diffY;
 		}
 		
 		protected function get submitLabel():String{
@@ -194,7 +234,7 @@ package com.pintu.window{
 				return;
 			}
 			
-			if(!_loading) _loading = new BusyIndicator(24);
+			if(!_loading) _loading = new BusyIndicator(24,0x666666);
 			_loading.x = _loadingX;
 			_loading.y = _loadingY;
 			this.addChild(_loading);
@@ -203,10 +243,28 @@ package com.pintu.window{
 			_sendBtn.enabled = false;
 		}
 		
-		private function createModalLayer(evt:Event):void{
-			if(!_modalOverlay)
-				_modalOverlay = new CasaSprite();
+		protected function showLoading(x:Number, y:Number):void{
+			if(!_loading) _loading = new BusyIndicator(24);
+			_loading.x = x;
+			_loading.y = y;
+			this.addChild(_loading);
+		}
+		
+		protected function offsetLoading(offX:Number, offY:Number):void{
+			if(!_loading) return;
 			
+			_loading.x = _loadingX+offX;
+			_loading.y = _loadingY+offY;
+		}
+		
+		protected function offsetErrorTxt(offX:Number, offY:Number):void{
+			_errorHint.x = 6+offX;
+			_errorHint.y = _loadingY+offY;
+		}
+		
+		private function createModalLayer(evt:Event):void{
+			
+			if(!_modalOverlay) _modalOverlay = new CasaSprite();
 			_modalOverlay.graphics.beginFill(0x999999,0.1);			
 			_modalOverlay.graphics.drawRect(0,0,InitParams.appWidth,InitParams.appHeight);
 			_modalOverlay.graphics.endFill();
@@ -214,9 +272,29 @@ package com.pintu.window{
 			//注意：置于窗口的下面
 			_context.swapChildren(_modalOverlay,this);
 			
-		}		
+			//子类使用负责初始化
+			onStageHandler();
+		}
+		/**
+		 * 到舞台后初始化
+		 */ 
+		protected function onStageHandler():void{
+			
+		}
+		
 		private function removeModalLayer(evt:Event):void{
 			_context.removeChild(_modalOverlay);
+			//子类做资源清理
+			offStageHandler();
+			if(_loading && this.contains(_loading)){
+				this.removeChild(_loading);
+			}
+		}
+		/**
+		 * 离开舞台后清理资源
+		 */ 
+		protected function offStageHandler():void{
+			
 		}
 		
 		protected function updateSuggest(hint:String):void{
@@ -247,6 +325,16 @@ package com.pintu.window{
 			return _clonedModel;
 		}
 		
+		/**
+		 * 是否使用提交按钮
+		 */ 
+		public function set showSubmitBtn(v:Boolean):void{
+			
+		}
+		
+		/**
+		 * 点击按钮直接关闭的窗口，需要设置此为false
+		 */ 
 		public function set showProgressbar(s:Boolean):void{
 			_showProgressbar = s;
 		}

@@ -3,6 +3,7 @@ package com.pintu.common{
 	import com.greensock.TweenLite;
 	
 	import flash.display.Sprite;
+	import flash.display.Stage;
 	import flash.events.Event;
 	import flash.events.TimerEvent;
 	import flash.filters.DropShadowFilter;
@@ -15,9 +16,8 @@ package com.pintu.common{
 	/**
 	 * 该提示对象，只能放在一个不会被被动销毁和移除的容器中
 	 * 也就是说，该对象，只能是主动触发show并自动消失来移除
-	 * 不能被其所在容器在销毁子对象的同时来移除它
-	 * 因此，本对象最好放在单独的tooltip层，或者主应用层
-	 * 这样其他对象的移除不会影响到它
+	 * 不能被其所在容器在销毁子对象的同时来移除它<br/>
+	 * 因此，本对象最好放在顶级的容器中，这样其他对象的移除不会影响到它
 	 * 
 	 * 2011/12/4
 	 */ 
@@ -25,7 +25,9 @@ package com.pintu.common{
 		
 		private static var _instance:Toast;
 		private static var _text:SimpleText;
-		private static var _parent:Sprite;
+		//FIXME, 为了能在弹出窗口时也能使用该组件，修改容器为舞台
+		//2012/05/18
+		private static var _parent:Stage;
 		private static var _timer:Timer;
 		
 		public function Toast(lokr:Locker){			
@@ -65,7 +67,7 @@ package com.pintu.common{
 		}
 
 		
-		public static function getInstance(context:Sprite):Toast{			
+		public static function getInstance(context:Stage):Toast{			
 			if(!_instance){
 				_instance = new Toast(new Locker());				
 			}
