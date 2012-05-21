@@ -63,6 +63,9 @@ package com.pintu.window{
 			closeMe(null);
 			
 			this.hintToUser("条子发送成功！");
+			
+			//通知社区刷新条子显示
+			this.dispatchEvent(new Event("complete"));
 		}
 		
 		override protected function submit(evt:ButtonEvent):void{	

@@ -143,7 +143,9 @@ package com.pintu.window{
 		
 		private function createWinTitle(title:String):void{
 			if(title==null) return;
-			_title = new SimpleText(title, 0xFFFFFF);
+			//FIXME, 标题不能换行
+			//2012/05/21
+			_title = new SimpleText(title, 0xFFFFFF,12,false,false);
 			_title.x = 6;
 			_title.y = 4;
 			this.addChild(_title);

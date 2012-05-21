@@ -273,7 +273,7 @@ package com.pintu.widgets
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR);
-			marketMenu.label = "市场";
+			marketMenu.label = "画展";
 			marketMenu.x = communityMenu.x+InitParams.HEADERMENU_BG_WIDTH+menuGap;
 			marketMenu.y = 0;
 			marketMenu.enabled = false;

@@ -201,13 +201,13 @@ package com.pintu.window{
 			//FIXME, 限制可展示文字长度：240，是小条子的3倍
 			var contentStr:String = PintuUtils.truncateStr(_data.content, 240);
 			if(!_contentTxt){
-				_contentTxt = new SimpleText(contentStr,0,12,false,true,false,true);
+				_contentTxt = new SimpleText(contentStr,0,12,false,true,true,true);
 				_contentTxt.x = _elementStartX+4;
 				_contentTxt.y = _elementStartY+4;
 				_contentTxt.width = 300;
 				this.addChild(_contentTxt);				
-			}else{
-				_contentTxt.text = contentStr;
+			}else{//必须是HTML格式
+				_contentTxt.htmlText = contentStr;
 			}
 			
 			var atNum:String = "0";

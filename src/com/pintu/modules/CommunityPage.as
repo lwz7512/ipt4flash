@@ -59,9 +59,11 @@ package com.pintu.modules{
 			if(!_postNoteWin){
 				_postNoteWin = new NoteEditWin(this.stage);
 				_postNoteWin.sourceModel = _model;
+				_postNoteWin.addEventListener("complete",onNoteDeleted);
 			}
 			dropCenterWindow(_postNoteWin);
-		}
+		}		
+		
 		
 		//open window...
 		private function onSmallClicked(evt:PintuEvent):void{

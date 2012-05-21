@@ -118,6 +118,7 @@ package com.pintu.widgets{
 			
 			if(evt is ResponseEvent){				
 				var notesStr:String = ResponseEvent(evt).data;
+				//FIXME, 看看粗体那个文字怎么回事？？
 //				Logger.debug("comunity notes: "+notesStr);
 				//创建条子
 				var jsonNotes:Array = JSON.decode(notesStr);

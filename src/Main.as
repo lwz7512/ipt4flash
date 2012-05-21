@@ -142,7 +142,7 @@ package{
 			if(ExternalInterface.available){
 				ExternalInterface.call("removeLogo");
 				Logger.debug("logo div removed!");
-			}			
+			}
 			//app construction completed...
 			Logger.debug("... app construction completed...");
 		}
