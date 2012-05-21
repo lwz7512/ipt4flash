@@ -65,12 +65,19 @@ package com.pintu.events
 		public static const VIEW_NOTE:String = "viewNote";
 		
 		
-		//通常带的参数
+		/**
+		 * 通常带的参数
+		 */ 
 		public var data:String;
-		//第二参数
+		/**
+		 * 第二参数
+		 */ 
 		public var extra:String;
-		
-		
+		/**
+		 * 第三个参数，真多余啊，没办法，恢复条子的私信时，要传递reference<br/>
+		 * 2012/05/21
+		 */ 
+		public var third:String;
 		
 		
 		public function PintuEvent(type:String, context:String){

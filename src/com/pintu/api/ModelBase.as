@@ -42,7 +42,7 @@ package com.pintu.api{
 		private var taskQueue:ArrayList;
 		private var taskTimer:Timer;
 				
-		private var debugService:String = "http://192.168.11.23:8080/ipintu/pintuapi";
+		private var debugService:String = "http://192.168.11.11:8080/ipintu/pintuapi";
 		private var remoteService:String = "http://ipintu.com/ipintu/pintuapi";
 		
 		/**

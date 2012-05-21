@@ -120,12 +120,10 @@ package{
 			navigator = new GlobalNavigator(this,model);
 			//展示首页
 			if(isLogged){
-				//FIXME, 调试社区模块
-				_currentModule = navigator.switchTo(GlobalNavigator.COMMUNITY);				
-//				_currentModule = navigator.switchTo(GlobalNavigator.HOMPAGE);				
+				_currentModule = navigator.switchTo(GlobalNavigator.HOMPAGE);				
 			}else{
 				_currentModule = navigator.switchTo(GlobalNavigator.UNLOGGED);		
-			}			
+			}
 			
 			//主菜单栏再顶部，好让菜单浮在画廊上面
 			moveHeaderBarTop();	

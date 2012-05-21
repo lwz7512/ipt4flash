@@ -12,6 +12,7 @@ package com.pintu.modules{
 	import com.pintu.widgets.ComuPostBlock;
 	import com.pintu.window.BigNoteWin;
 	import com.pintu.window.EditWinBase;
+	import com.pintu.window.MsgEditWin;
 	import com.pintu.window.NoteEditWin;
 	
 	import flash.display.Sprite;
@@ -31,7 +32,7 @@ package com.pintu.modules{
 		
 		private var _noteDetails:BigNoteWin;
 		private var _postNoteWin:NoteEditWin;
-				
+		private var msgEditWin:MsgEditWin;
 		
 		public function CommunityPage(model:IPintu){
 			super();
@@ -73,6 +74,8 @@ package com.pintu.modules{
 				_noteDetails.sourceModel = _model;
 				_noteDetails.owner = this;
 				_noteDetails.addEventListener(ApiMethods.DELETENOTE, onNoteDeleted);
+				//当前窗口打开另一个窗口
+				_noteDetails.addEventListener(PintuEvent.POST_MSG, openMsgWin);
 			}
 			//重新赋值
 			_noteDetails.data = note;
@@ -117,6 +120,27 @@ package com.pintu.modules{
 			return note;
 		}
 		
+		private function openMsgWin(evt:PintuEvent):void{
+			if(!msgEditWin){
+				msgEditWin = new MsgEditWin(this.stage);
+				msgEditWin.sourceModel = _model;
+				msgEditWin.addEventListener(PintuEvent.HINT_USER,sendSuccessHandler);
+			}
+			//回复消息需要这两个参数
+			var receiverId:String = evt.data;
+			var receiverName:String = evt.extra;
+			if(receiverId) msgEditWin.receiverId = receiverId;
+			if(receiverName) msgEditWin.receiverName = receiverName;
+			//添加引用条子ID
+			msgEditWin.reference = evt.third;
+			
+			dropCenterWindow(msgEditWin);
+		}
+		
+		//Main来监听此事件，弹出提示
+		private function sendSuccessHandler(evt:PintuEvent):void{			
+			this.dispatchEvent(evt);
+		}
 		
 		/**
 		 * 向下滑出窗口

@@ -42,8 +42,8 @@ package com.pintu.window{
 		
 		private function initPostTypes():void{
 			items = [];
-			items.push({label:"发活儿",value:"AsmtRelease"});
-			items.push({label:"接活儿",value:"AsmtReceive"});
+			items.push({label:"发布外包",value:"AsmtRelease"});
+			items.push({label:"发布承接",value:"AsmtReceive"});
 			items.push({label:"作品买卖",value:"AtwkBargain"});
 			items.push({label:"作品推广",value:"AtwkPopularize"});
 			items.push({label:"求职信息",value:"JobHunting"});

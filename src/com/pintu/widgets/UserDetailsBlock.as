@@ -33,7 +33,6 @@ package com.pintu.widgets{
 		private var blockWidth:Number;
 		private var blockHeight:Number;
 		
-		private var userDetailFetched:Boolean;
 		private var userInfoContainer:CasaSprite;
 		private var wealthContainer:CasaSprite;
 		private var wealthSwitcher:CasaSprite;

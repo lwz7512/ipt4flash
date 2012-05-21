@@ -79,7 +79,7 @@ package com.pintu.widgets{
 			var bg:Bitmap = new NoteBG() as Bitmap;
 			this.addChild(bg);
 			
-			var stickPath:String = "assets/community/sticker_"+Math.floor(Math.random()*6)+".png";
+			var stickPath:String = "assets/community/"+_data.type+".png";
 			var sticker:LazyImage = new LazyImage(stickPath);
 			sticker.x = -20;
 			sticker.y = -20;

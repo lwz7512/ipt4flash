@@ -185,8 +185,9 @@ package com.pintu.api
 			addHttpTask(params, ApiMethods.GETUSERESTATE);
 		}
 		
-		public function postMsg(receiver:String, content:String):void{
+		public function postMsg(receiver:String, content:String, reference:String):void{
 			var params:Array = [{name:"receiver",value:receiver}, {name:"content",value:content}];
+			params.push({name:"reference",value:reference});
 			addHttpTask(params, ApiMethods.SENDMSG);
 		}
 		

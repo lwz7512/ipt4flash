@@ -168,9 +168,16 @@ package com.pintu.window{
 			
 		}
 		
-		//TODO, OPEN MESSAGE EDIT WINDOW, AND DILIVER USER ID
+		/**
+		 * 关闭当前窗口，打开发私信窗口
+		 */ 
 		private function onPMClicked(evt:MouseEvent):void{
 			closeMe(null);
+			//发私信
+			var msg:PintuEvent = new PintuEvent(PintuEvent.POST_MSG,_data.publisherId);
+			msg.extra = _data.publiserName;
+			msg.third = _data.id;
+			dispatchEvent(msg);
 		}
 		//提交关注
 		private function onATClicked(evt:MouseEvent):void{

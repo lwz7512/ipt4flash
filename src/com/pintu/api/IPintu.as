@@ -55,7 +55,7 @@ package com.pintu.api
 		function getUserDetail(userId:String):void;
 		function getUserEstate(userId:String):void;
 		
-		function postMsg(receiverId:String, content:String):void;
+		function postMsg(receiverId:String, content:String, reference:String):void;
 		function getUserMsgs():void;
 		function markMsgReaded(msgIds:String):void;
 		

@@ -24,6 +24,9 @@ package com.pintu.window{
 		private var _receiverId:String = GlobalController.KEFU_ID;
 		private var _receiverName:String = GlobalController.KEFU_NAME;
 		
+		private var _refecence:String = "";
+		
+		
 		public function MsgEditWin(ctxt:Stage, w:Number=320, h:Number=350){
 			super(ctxt, w, h, "编辑消息");
 			
@@ -36,12 +39,23 @@ package com.pintu.window{
 				receiverInpt.defaultText = _receiverName;
 			});
 		}
-		
+		/**
+		 * 接收人ID
+		 */ 
 		public function set receiverId(userId:String):void{
 			if(userId) _receiverId = userId;
 		}
+		/**
+		 * 接收人昵称
+		 */ 
 		public function set receiverName(userName:String):void{
 			if(userName) _receiverName = userName;
+		}
+		/**
+		 * 引用内容ID，比如条子、图片id
+		 */ 
+		public function set reference(ref:String):void{
+			_refecence = ref;
 		}
 		
 		//对克隆的模型进行事件监听
@@ -62,7 +76,7 @@ package com.pintu.window{
 			
 			//调用模型方法提交
 			Logger.debug("to send msg...");
-			this.cloneModel.postMsg(_receiverId,msgContent.text);
+			this.cloneModel.postMsg(_receiverId,msgContent.text,_refecence);
 			
 		}
 		//关闭时清理输入框，恢复初始值

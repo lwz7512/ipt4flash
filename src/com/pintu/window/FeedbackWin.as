@@ -63,7 +63,7 @@ package com.pintu.window{
 			Logger.debug("to send msg...");
 			
 			if(this.cloneModel)
-				this.cloneModel.postMsg(_receiverId,msgContent.text);
+				this.cloneModel.postMsg(_receiverId,msgContent.text,"");
 			
 		}
 

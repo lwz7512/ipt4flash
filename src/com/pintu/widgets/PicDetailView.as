@@ -340,7 +340,7 @@ package com.pintu.widgets{
 			Logger.debug("to report pic: "+_data.id);
 			var receiver:String = GlobalController.KEFU_ID;
 			var reportContent:String = "I think the picture: "+_data.id+" is illegal, isn't it?";
-			_clonedModel.postMsg(receiver,reportContent);
+			_clonedModel.postMsg(receiver,reportContent,"");
 		}
 		
 		//FIXME, 暂时先用爱品图账号转发

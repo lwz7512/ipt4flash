@@ -77,18 +77,13 @@ package com.pintu.widgets{
 			if(evt is ResponseEvent){
 				var notes:String = ResponseEvent(evt).data;
 				if(!notes) return;
-//				Logger.debug("notes: \n"+notes);
+//				Logger.debug("my notes: \n"+notes);
 				
 				noteObjs = JSON.decode(notes);
 				if(!noteObjs) {
 					Logger.error("noteObjs is null !");
 					return;
 				}
-				if(noteObjs.length==0) {
-					Logger.error("notes length is 0 !");
-					return;
-				}
-				
 				buildMyNotes();
 				updateTitle(noteObjs.length.toString());
 			}
@@ -107,7 +102,7 @@ package com.pintu.widgets{
 			
 			var noteLength:int = noteObjs.length;
 			//最多放10个
-			if(noteLength>10) noteLength = 10;
+			if(noteLength>10) noteLength = 10;					
 			
 			//只放10个
 			for(var i:int=0; i<noteLength; i++){
