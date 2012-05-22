@@ -326,7 +326,10 @@ package com.pintu.controller
 			for(var i:int = 0; i<msgVOs.length; i++){
 				var msgView:MessageItem = new MessageItem(msgVOs[i]);
 				msgView.x = msgStartX;
-				msgView.y = msgStartY;				
+				msgView.y = msgStartY;
+				//添加模型，好获取信息内引用数据
+				//2012/05/22
+				msgView.model = _model;
 				_context.addChild(msgView);				
 				msgStartY += msgView.height;
 			}

@@ -76,6 +76,7 @@ package com.pintu.api
 			//---------- 社区方法 -------------------------
 			addClientListener(ApiMethods.GETCOMMUNITYNOTES);	
 			addClientListener(ApiMethods.GETUSERNOTES);	
+			addClientListener(ApiMethods.GETNOTEBYID);				
 			addClientListener(ApiMethods.ADDNOTE,false);	
 			addClientListener(ApiMethods.DELETENOTE,false);	
 			addClientListener(ApiMethods.UPDATENOTE,false);	
@@ -284,6 +285,11 @@ package com.pintu.api
 		
 		public function getUserNotesBy(userId:String):void{
 			addHttpTask([], ApiMethods.GETUSERNOTES);
+		}
+		
+		public function getNoteById(noteId:String):void{
+			var params:Array = [{name:"noteId",value:noteId}];
+			addHttpTask(params, ApiMethods.GETNOTEBYID);
 		}
 		
 		

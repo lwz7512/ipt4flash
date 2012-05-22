@@ -1,13 +1,24 @@
 package com.pintu.widgets{
+	
+	import com.adobe.serialization.json.JSON;
 	import com.cartogrammar.drawing.DashedLine;
+	import com.pintu.api.ApiMethods;
+	import com.pintu.api.IPintu;
+	import com.pintu.api.PintuImpl;
+	import com.pintu.common.FloatTip;
 	import com.pintu.common.LazyImage;
+	import com.pintu.common.RestrictLengthText;
 	import com.pintu.common.SimpleLinkTxt;
 	import com.pintu.common.SimpleText;
 	import com.pintu.config.InitParams;
 	import com.pintu.config.StyleParams;
+	import com.pintu.events.PTErrorEvent;
 	import com.pintu.events.PintuEvent;
+	import com.pintu.events.ResponseEvent;
+	import com.pintu.utils.Logger;
 	import com.pintu.vos.TPMessage;
 	
+	import flash.events.Event;
 	import flash.events.MouseEvent;
 	
 	import org.casalib.display.CasaSprite;
@@ -28,16 +39,39 @@ package com.pintu.widgets{
 		//回复链接
 		private var reply:SimpleLinkTxt;
 		
+		//关于条子标题
+		private var refeNote:RestrictLengthText;
+		
+		
 		private var drawStartX:Number = 4;
 		private var drawStartY:Number = 4;
+
+		private var textHGap:Number = 4;
+		private var textVGap:Number = 26;
+		private var rightMarging:Number = 4;
+
+		
+		private var _model:IPintu;
+		
+		private var note:Object;
+		
+		private var tip:FloatTip;
+		
 		
 		public function MessageItem(msg:TPMessage){
 			this._msg = msg;
 			
-			var textHGap:Number = 4;
-			var textVGap:Number = 26;
-			var rightMarging:Number = 4;
+			createContent();
 			
+			this.addEventListener(Event.ADDED_TO_STAGE, onStage);
+			this.addEventListener(Event.REMOVED_FROM_STAGE, offStage);
+		}
+		
+		public function set model(model:IPintu):void{
+			_model = model;
+		}
+		
+		private function createContent():void{
 			avatar = new LazyImage(_msg.senderAvatarUrl);
 			avatar.x = drawStartX;
 			avatar.y = 2*drawStartY;
@@ -75,15 +109,75 @@ package com.pintu.widgets{
 			msgContent.width = InitParams.GALLERY_WIDTH-sender.x-rightMarging;
 			this.addChild(msgContent);
 			
+			//加一个引用文字，为条子的私信联系加条子标题
+			if(_msg.msgType=="contact"){
+				refeNote = new RestrictLengthText("...",txtColor,16,false,true);
+				refeNote.width = 160;
+				refeNote.x = InitParams.GALLERY_WIDTH-20;
+				refeNote.y = msgContent.y+msgContent.height+textVGap;	
+				refeNote.addEventListener(MouseEvent.MOUSE_OVER,showTooltip);
+				refeNote.addEventListener(MouseEvent.MOUSE_OUT,hideTooltip);
+				this.addChild(refeNote);
+			}
+			
 			//底部虚线分割
 			var lineStartX:Number = drawStartX;
 			var lineStartY:Number = msgContent.y+msgContent.height+textVGap;
+			if(refeNote){
+				lineStartY += 20;
+			}
 			var bottomLine:DashedLine = new DashedLine(1,StyleParams.DEFAULT_BORDER_COLOR,[2,1,2,1]);
 			bottomLine.moveTo(lineStartX, lineStartY);
 			bottomLine.lineTo(InitParams.GALLERY_WIDTH-rightMarging, lineStartY);
 			this.addChild(bottomLine);
-			
+
 		}
+		
+		private function showTooltip(evt:MouseEvent):void{
+			if(!note) return;
+			
+			if(!tip){
+				tip = new FloatTip(200);
+			}
+			tip.x = evt.stageX-160;
+			tip.y = evt.stageY;
+			tip.content = note["content"];
+			this.stage.addChild(tip);
+		}
+		private function hideTooltip(evt:MouseEvent):void{
+			if(tip && this.stage.contains(tip))
+				this.stage.removeChild(tip);
+		}
+		
+		private function onStage(evt:Event):void{
+			this.removeEventListener(evt.type, arguments.callee);
+			PintuImpl(_model).addEventListener(ApiMethods.GETNOTEBYID, onNoteHandler);
+			if(_msg.msgType=="contact"){
+				_model.getNoteById(_msg.reference);
+				Logger.debug("query note...");
+			}
+		}
+		private function offStage(evt:Event):void{
+			this.removeEventListener(evt.type, arguments.callee);
+			PintuImpl(_model).removeEventListener(ApiMethods.GETNOTEBYID, onNoteHandler);
+		}		
+		
+		private function onNoteHandler(evt:Event):void{
+			if(evt is ResponseEvent){				
+				var notesStr:String = ResponseEvent(evt).data;				
+//				Logger.debug("note in msg: "+notesStr);							
+				
+				//创建条子
+				note = JSON.decode(notesStr);
+				refeNote.text = ">> "+note["title"];
+				refeNote.x = InitParams.GALLERY_WIDTH-180;
+			}
+			if(evt is PTErrorEvent){
+				Logger.error("Error in calling: "+ApiMethods.GETNOTEBYID);
+			}
+		}
+		
+
 		
 		private function notifyHomePageToWriteMsg(evt:MouseEvent):void{
 			var receiverId:String = _msg.sender;
@@ -91,6 +185,8 @@ package com.pintu.widgets{
 			postMsgEvt.extra = _msg.senderName;
 			dispatchEvent(postMsgEvt);
 		}
+		
+		
 		
 	} //end of class
 }

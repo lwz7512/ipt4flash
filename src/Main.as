@@ -101,7 +101,7 @@ package{
 			var currentUser:String = GlobalController.loggedUser;
 			
 			//FIXME, JUST FOR DEBUG...
-			Logger.debug("currentUser: "+currentUser);			
+//			Logger.debug("currentUser: "+currentUser);			
 			
 			//初始化模型
 			model = new PintuImpl(currentUser);

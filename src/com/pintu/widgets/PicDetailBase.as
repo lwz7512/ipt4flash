@@ -28,7 +28,7 @@ package com.pintu.widgets{
 		protected var _data:TPicDetails;
 		//图片未展示前出现
 		protected var mobImgPlaceHolder:CasaShape;
-		protected var imgLoading:CasaTextField;		
+//		protected var imgLoading:CasaTextField;		
 		//看查看缩略图详情的返回按钮让位
 		//正常的大图列表是不需要此设置的
 		protected var _showBackBtn:Boolean = false;		
@@ -83,7 +83,7 @@ package com.pintu.widgets{
 			//draw image place hoder
 			drawImgePlaceHolder();			
 			//loading image...
-			drawLoadingText();
+//			drawLoadingText();
 								
 			//先生成图片，等图片加载完成后，再生成其他内容
 			mobImage = new LazyImage(data.mobImgUrl);
@@ -118,7 +118,7 @@ package com.pintu.widgets{
 			//先都移除掉，重新绘制重新排列层级关系
 			removeChild(mobImage);
 			removeChild(mobImgPlaceHolder);
-			removeChild(imgLoading);
+//			removeChild(imgLoading);
 			
 			//固定图片宽度为默认宽度让文字都能对齐
 			//这个数据是绘制其他内容的依据
@@ -185,16 +185,16 @@ package com.pintu.widgets{
 		}
 		
 		
-		private function drawLoadingText():void{
-			imgLoading = new CasaTextField();			
-			imgLoading.autoSize = "left";
-			imgLoading.defaultTextFormat = new TextFormat(null,14);
-			
-			imgLoading.text = "loading...";
-			imgLoading.x = _xStartOffset+180;
-			imgLoading.y = _yStartOffset+220;
-			this.addChild(imgLoading);
-		}
+//		private function drawLoadingText():void{
+//			imgLoading = new CasaTextField();			
+//			imgLoading.autoSize = "left";
+//			imgLoading.defaultTextFormat = new TextFormat(null,14);
+//			
+//			imgLoading.text = "loading...";
+//			imgLoading.x = _xStartOffset+180;
+//			imgLoading.y = _yStartOffset+220;
+//			this.addChild(imgLoading);
+//		}
 		
 		
 		private function displayHidePart(evt:MouseEvent):void{

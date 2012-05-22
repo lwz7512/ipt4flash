@@ -128,7 +128,7 @@ package com.pintu.widgets{
 				if(msgList.length==0) return;
 				
 				//显示带圈数目在消息文字后面
-				Logger.debug("user msgs: \n"+msgs);
+//				Logger.debug("user msgs: \n"+msgs);
 				msgNum = new CircleNumText(msgList.length.toString());
 				msgNum.x = myMsgs.x+myMsgs.width - 20;
 				msgNum.y = myMsgs.y+3;
@@ -243,7 +243,6 @@ package com.pintu.widgets{
 				var showMsg:PintuEvent = new PintuEvent(PintuEvent.SHOW_MSGS,null);
 				this.dispatchEvent(showMsg);
 				
-				//通知后台，消息已读
 				msgReaded();
 			}
 		}

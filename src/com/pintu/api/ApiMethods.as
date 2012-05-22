@@ -91,8 +91,12 @@ package com.pintu.api
 		public static const ADDINTEREST:String = "addInterestById";
 		//获取自己所发的条子
 		public static const GETUSERNOTES:String = "getUserNotes";
+		//获取某一个条子，放在私信中
+		public static const GETNOTEBYID:String = "getNoteById";
 		
+				
 		//----------------市场相关API--------------------------
+		
 		//TODO, COMING SOON....
 		
 		

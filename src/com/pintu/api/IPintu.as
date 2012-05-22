@@ -85,7 +85,7 @@ package com.pintu.api
 		function addAttentionBy(noteId:String, count:String):void;
 		function addInterestBy(noteId:String, count:String):void;
 		function getUserNotesBy(userId:String):void;
-		
+		function getNoteById(noteId:String):void;
 		
 		//--------------- 市场模块使用的方法 -------------------
 		

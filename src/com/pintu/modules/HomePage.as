@@ -34,13 +34,12 @@ package com.pintu.modules{
 		private var picEditWin:PicEditWin;
 		private var msgEditWin:MsgEditWin;
 		private var userEditWin:UserEditWin;
+	
 		
 		public function HomePage(model:IPintu){
 			super();
 			_model = model;	
 			_fileManager = new FileManager(_model);
-			//监听我的资产和消息回复动作派发的事件
-			this.addEventListener(PintuEvent.POST_MSG, editMsg);
 			
 			buildMainDisplayArea();
 			buildSlideToolBar();
@@ -48,6 +47,9 @@ package com.pintu.modules{
 			buildAndiMenu();
 			buildHotTags();
 
+			//监听我的资产和消息回复动作派发的事件
+			this.addEventListener(PintuEvent.POST_MSG, editMsg);
+			
 		}
 		
 		private function buildMainDisplayArea():void{

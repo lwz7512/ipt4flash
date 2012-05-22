@@ -58,7 +58,7 @@ package com.pintu.widgets{
 			var topic:SimpleText = new SimpleText(_data.title,0,12,true,false);
 			topic.width = 150;
 			topic.height = 16;
-			topic.x = 50;
+			topic.x = (_width-getTextVisualLength(_data.title))/2;
 			topic.y = 40;
 			this.addChild(topic);
 			
@@ -73,6 +73,14 @@ package com.pintu.widgets{
 			contentTxt.x = 10;
 			contentTxt.y = 60;
 			this.addChild(contentTxt);
+		}
+		
+		private function getTextVisualLength(str:String):Number{
+			var tf:TextField = new TextField();
+			tf.autoSize = "left";
+			tf.text = str;
+			
+			return tf.textWidth;
 		}
 		
 		private function createSkin():void{
