@@ -170,8 +170,7 @@ package com.pintu.window{
 		//所以用Event类型事件
 		protected function closeMe(evt:Event):void{
 			//清除发送进度条
-			if(_loading && this.contains(_loading))
-				this.removeChild(_loading);
+			hideLoading();
 			//滑出舞台
 			var initY:Number = -_height;
 			TweenLite.to(this, 0.4, {y:initY, onComplete:reset});
@@ -252,6 +251,12 @@ package com.pintu.window{
 			this.addChild(_loading);
 		}
 		
+		protected function hideLoading():void{
+			if(_loading && this.contains(_loading)){
+				this.removeChild(_loading);
+			}
+		}
+		
 		protected function offsetLoading(offX:Number, offY:Number):void{
 			if(!_loading) return;
 			
@@ -288,9 +293,7 @@ package com.pintu.window{
 			_context.removeChild(_modalOverlay);
 			//子类做资源清理
 			offStageHandler();
-			if(_loading && this.contains(_loading)){
-				this.removeChild(_loading);
-			}
+			hideLoading();
 		}
 		/**
 		 * 离开舞台后清理资源

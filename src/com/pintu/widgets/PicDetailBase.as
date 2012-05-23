@@ -126,8 +126,8 @@ package com.pintu.widgets{
 			//FIXME, 图片高度有时候很小，需要保证一个最小高度，否则文字没法显示了
 			//2012/05/17
 			_mobImgHeight = mobImage.bitmap.height;
-			if(_mobImgHeight<200){
-				_mobImgHeight = 200;
+			if(_mobImgHeight<300){
+				_mobImgHeight = 300;
 			}
 			
 			//----------- imgInfoHolder ----------------

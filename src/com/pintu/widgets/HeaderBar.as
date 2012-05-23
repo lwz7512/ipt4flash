@@ -36,13 +36,16 @@ package com.pintu.widgets
 		//置于顶层
 		private var mainMenuContainer:CasaSprite;	
 		
-		//当前被选中的菜单，方便做切换状态
-		private var selectedMenu:TextMenu;
 		
 		//主菜单
 		private var homeMenu:TextMenu;
 		private var communityMenu:TextMenu;
-		private var marketMenu:TextMenu;
+		//FIXME, 从市场-->到艺术星球的跨越
+		//2012/05/23
+		private var artPlanet:TextMenu;
+		//当前被选中的菜单，方便做切换状态
+		private var selectedMenu:TextMenu;
+		
 		private var settingMenu:TextMenu;
 		private var aboutMenu:TextMenu;
 		private var feedbackMenu:TextMenu;
@@ -59,7 +62,7 @@ package com.pintu.widgets
 		private var versionText:String = "爱品图 v1.0";		
 		private var logoVersionGap:Number = 36;
 		private var versionHomeGap:Number = 100;
-		private var menuGap:Number = 2;		
+		private var menuGap:Number = 32;		
 		
 		private var searchInput:TextInput;
 		private var searchIcon:SimpleIcon;
@@ -259,25 +262,23 @@ package com.pintu.widgets
 				StyleParams.HEADER_MENU_COLOR);
 			communityMenu.label = "社区";
 			communityMenu.x = homeMenu.x+InitParams.HEADERMENU_BG_WIDTH+menuGap;
-			communityMenu.y = 0;
-			//TODO, TO USE THIE MENU...
-//			communityMenu.enabled = false;
+			communityMenu.y = 0;			
 			communityMenu.addEventListener(MouseEvent.CLICK, onSwitchToCommunity);
 			mainMenuContainer.addChild(communityMenu);
 			
 			//夜市模块，对应市场模块
-			marketMenu = new TextMenu(InitParams.HEADERMENU_BG_WIDTH,InitParams.HEADER_HEIGHT);
-			marketMenu.setSkinStyle(upColors,overColors,downColors);
-			marketMenu.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
+			artPlanet = new TextMenu(InitParams.HEADERMENU_BG_WIDTH+20,InitParams.HEADER_HEIGHT);
+			artPlanet.setSkinStyle(upColors,overColors,downColors);
+			artPlanet.setLabelStyle(StyleParams.DEFAULT_TEXT_FONTNAME,
 				StyleParams.HEADER_MENU_FONTSIZE,
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR);
-			marketMenu.label = "画展";
-			marketMenu.x = communityMenu.x+InitParams.HEADERMENU_BG_WIDTH+menuGap;
-			marketMenu.y = 0;
-			marketMenu.enabled = false;
-			mainMenuContainer.addChild(marketMenu);
+			artPlanet.label = "艺术星球";
+			artPlanet.x = communityMenu.x+InitParams.HEADERMENU_BG_WIDTH+menuGap;
+			artPlanet.y = 0;
+			artPlanet.addEventListener(MouseEvent.CLICK, onSwitchToArtPlanet);
+			mainMenuContainer.addChild(artPlanet);
 			
 			//	设置菜单，点击打开窗口
 			settingMenu = new TextMenu(InitParams.HEADERMENU_BG_WIDTH,InitParams.HEADER_HEIGHT);
@@ -288,7 +289,7 @@ package com.pintu.widgets
 				StyleParams.HEADER_MENU_COLOR,
 				StyleParams.HEADER_MENU_COLOR);
 			settingMenu.label = "设置";
-			settingMenu.x = marketMenu.x+InitParams.HEADERMENU_BG_WIDTH+menuGap;
+			settingMenu.x = artPlanet.x+InitParams.HEADERMENU_BG_WIDTH+menuGap+200;
 			settingMenu.y = 0;
 			settingMenu.addEventListener(MouseEvent.CLICK, openSettingWin);
 			mainMenuContainer.addChild(settingMenu);
@@ -423,7 +424,7 @@ package com.pintu.widgets
 		 * 只有主菜单未选中时，才展现子菜单
 		 */ 
 		private function onHomeMenuClick(evt:MouseEvent):void{
-			if(homeMenu.selected) return;
+			if(TextMenu(evt.currentTarget).selected) return;
 			//展开子菜单，以及切换模块
 			switchTo(GlobalNavigator.HOMPAGE, homeMenu);
 		}
@@ -433,8 +434,16 @@ package com.pintu.widgets
 		 * 打开社区模块
 		 */ 
 		private function onSwitchToCommunity(evt:MouseEvent):void{
-			if(communityMenu.selected) return;
+			if(TextMenu(evt.currentTarget).selected) return;
 			switchTo(GlobalNavigator.COMMUNITY, communityMenu);
+		}
+		
+		/**
+		 * 打开星球模块
+		 */ 
+		private function onSwitchToArtPlanet(evt:MouseEvent):void{
+			if(TextMenu(evt.currentTarget).selected) return;
+			switchTo(GlobalNavigator.ARTPLANET, artPlanet);
 		}
 		
 		/**

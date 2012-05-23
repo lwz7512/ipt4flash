@@ -34,7 +34,7 @@ package com.pintu.widgets
 			this.graphics.beginFill(StyleParams.FOOTER_SOLID_GRAY);
 			//FIXME, 好像底部栏与上面没对齐，有点宽，弄小点
 			//2012/05/17
-			this.graphics.drawRect(footerX,footerY,InitParams.MINAPP_WIDTH-2,InitParams.FOOTER_HEIGHT);
+			this.graphics.drawRect(footerX,footerY,InitParams.MINAPP_WIDTH,InitParams.FOOTER_HEIGHT);
 			this.graphics.endFill();
 		}
 		

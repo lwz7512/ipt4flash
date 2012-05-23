@@ -130,6 +130,7 @@ package com.pintu.window{
 		private function uploadError(evt:Event):void{
 			if(!shouldDo()) return;
 			updateSuggest("上传失败");
+			hideLoading();
 		}
 		
 

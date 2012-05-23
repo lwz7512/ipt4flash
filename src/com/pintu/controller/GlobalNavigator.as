@@ -22,7 +22,8 @@ package com.pintu.controller{
 		public static const HOMPAGE:String = "homepage";
 		public static const UNLOGGED:String = "unloggedin";
 		public static const COMMUNITY:String = "community";
-		public static const MARKET:String = "market";
+		//2012/05/23，构思改名，不再使用Market这种没有想象力的词
+		public static const ARTPLANET:String = "artPlanet";
 				
 		/**
 		 * 保存当前模块，好移除
@@ -76,12 +77,12 @@ package com.pintu.controller{
 					transition(_currentModule,community);					
 					break;
 				
-				case MARKET:								
-					var market:CasaSprite = new MarketPage(_model);
-					nextModule = IMenuClickResponder(market);
-					transition(_currentModule,market);					
+				case ARTPLANET:								
+					var planet:CasaSprite = new PlanetPage(_model);
+					nextModule = IMenuClickResponder(planet);
+					transition(_currentModule,planet);					
 					break;				
-				
+
 			}
 			
 			//保存新建模块名称

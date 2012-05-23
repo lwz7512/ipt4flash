@@ -17,7 +17,7 @@ package com.pintu.config
 		public static const MINAPP_HEIGHT:Number = 640;
 		
 		//App section gap
-		public static const TOP_BOTTOM_GAP:Number = 4;
+		public static const TOP_BOTTOM_GAP:Number = 2;
 		public static const DEFAULT_GAP:Number = 4;
 		
 		//Header footer height
@@ -48,17 +48,17 @@ package com.pintu.config
 		public static const LEFTCOLUMN_HEIGHT:Number = 478;
 		
 		//Log in form width
-		public static const LOGIN_FORM_WIDTH:Number = 200;
+		public static const LOGIN_FORM_WIDTH:Number = 202;
 		//Log in form height
 		public static const LOGIN_FORM_HEIGHT:Number = 160;
 		
 		//user details width
-		public static const USER_DETAIL_WIDTH:Number = 200;
+		public static const USER_DETAIL_WIDTH:Number = 202;
 		//user details height
 		public static const USER_DETAIL_HEIGHT:Number = 160;
 		
 		//andi assets width
-		public static const ANDI_ASSETS_WIDTH:Number = 200;
+		public static const ANDI_ASSETS_WIDTH:Number = 202;
 		//andi assets height
 		public static const ANDI_ASSETS_HEIGHT:Number = 110;
 		//title height
