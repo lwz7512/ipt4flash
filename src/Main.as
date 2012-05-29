@@ -101,7 +101,7 @@ package{
 			var currentUser:String = GlobalController.loggedUser;
 			
 			//FIXME, JUST FOR DEBUG...
-//			Logger.debug("currentUser: "+currentUser);			
+			Logger.debug("currentUser: "+currentUser);			
 			
 			//初始化模型
 			model = new PintuImpl(currentUser);
@@ -114,7 +114,7 @@ package{
 			var isLogged:Boolean = GlobalController.isLogged;
 			//全局模块固定不变
 			buildHeaderBar(isLogged);			
-			buildFooterContent();			
+			buildFooterContent();
 			
 			//初始化导航器
 			navigator = new GlobalNavigator(this,model);

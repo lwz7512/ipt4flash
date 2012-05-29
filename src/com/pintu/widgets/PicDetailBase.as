@@ -348,6 +348,8 @@ package com.pintu.widgets{
 			avatarImg.x = startX;
 			avatarImg.y = startY;	
 			avatarImg.maxSize = 64;
+			avatarImg.visibleHeight = 64;
+			avatarImg.visibleWidth = 64;
 			imgInfoHolder.addChild(avatarImg);
 			
 			
@@ -558,19 +560,19 @@ package com.pintu.widgets{
 			toolHolder.addChild(save);
 			
 			//TODO, FORWAR TO WEIBO BUTTON
-			var forward:IconButton = new IconButton(toolbarHeight,toolbarHeight);
-			forward.iconPath = "assets/forward.png";
+			var forward:IconButton = new IconButton(106,toolbarHeight);
+			forward.iconPath = "assets/publish_button_24.gif";
 			forward.addEventListener(MouseEvent.CLICK, sendToWeibo);
 			forward.x = save.x +iconHGap;
 			forward.y = iconYOffset;
 			forward.textOnRight = true;
-			forward.label = "转发";
-			//FIXME, 如果是管理员，就放开
-			//2011/05/04
-			if(GlobalController.isAdmin()){
-				forward.enabled = true;				
+			forward.moveIcon(0,-1);
+			//FIXME, 如果是来宾用户，就禁止转发
+			//2011/05/29
+			if(GlobalController.isGuest()){
+				forward.enabled = false;				
 			}else{
-				forward.enabled = false;
+				forward.enabled = true;
 			}
 			forward.setSkinStyle(null,overColors,downColors);	
 			toolHolder.addChild(forward);
@@ -579,7 +581,7 @@ package com.pintu.widgets{
 			var report:IconButton = new IconButton(toolbarHeight,toolbarHeight);
 			report.iconPath = "assets/report.png";
 			report.addEventListener(MouseEvent.CLICK, reportIt);
-			report.x = forward.x +iconHGap;
+			report.x = forward.x +116;
 			report.y = iconYOffset;
 			report.textOnRight = true;
 			report.label = "举报";			
@@ -608,10 +610,12 @@ package com.pintu.widgets{
 			//do nothing here, for sub class to implementation
 		}
 		
+		/**
+		 * 子类派发事件，完成后台方法的调用
+		 */ 
 		protected function sendToWeibo(evt:MouseEvent):void{
 			//点一次，就禁用掉，不管成功与否
-			TextMenu(evt.currentTarget).enabled = false;
-			
+			TextMenu(evt.currentTarget).enabled = false;			
 		}
 		
 		

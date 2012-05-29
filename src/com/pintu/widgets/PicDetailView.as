@@ -14,7 +14,10 @@ package com.pintu.widgets{
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.external.ExternalInterface;
 	import flash.geom.Point;
+	import flash.net.URLRequest;
+	import flash.net.navigateToURL;
 	
 	import org.casalib.display.CasaSprite;
 	
@@ -169,9 +172,9 @@ package com.pintu.widgets{
 				if(result=="true"){
 					//在主显示区弹出提示
 					this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "转发成功！"));
-				}else{
-					//在主显示区弹出提示
-					this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "转发失败！"));
+				}else{					
+					//FIXME, 导航到授权页面，2012/05/29
+					forwardToAuthPage();
 				}
 			}
 			if(evt is PTErrorEvent){
@@ -180,6 +183,13 @@ package com.pintu.widgets{
 			//FIXME, HIDE PROGRESS...
 			//2012/05/07
 			this.dispatchEvent(new PintuEvent(PintuEvent.HIDE_PROGRESS,null));	
+		}
+		
+		private function forwardToAuthPage():void{
+			var authUrl:String = ExternalInterface.call("getWeiboAuthUrl");
+			if(!authUrl) return;
+			
+			navigateToURL(new URLRequest(authUrl),"_self");
 		}
 	
 
@@ -347,8 +357,7 @@ package com.pintu.widgets{
 		//2012/05/04
 		override protected function sendToWeibo(evt:MouseEvent):void{
 			super.sendToWeibo(evt);
-			var userId:String = GlobalController.IPINTU_ID;
-			_clonedModel.forwardToWeibo(userId, _data.id);
+			_clonedModel.forwardToWeibo(null, _data.id);
 			//FIXME, ADD PROGRESS...
 			//2012/05/07
 			this.dispatchEvent(new PintuEvent(PintuEvent.SHOW_PROGRESS,null));

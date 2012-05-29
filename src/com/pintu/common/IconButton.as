@@ -27,6 +27,11 @@ package com.pintu.common
 		
 		private var _textOnRight:Boolean = false;
 		
+		private var _offsetX:Number = 0;
+		private var _offsetY:Number = 0;
+		
+		
+		
 		public function IconButton(w:Number, h:Number)
 		{
 			super(w,h);			
@@ -74,7 +79,17 @@ package com.pintu.common
 			if(!this.enabled){
 				icon.alpha = 0.6;
 			}
-						
+			
+			//FIXME, 做位置调整
+			//2012/05/29
+			icon.x += _offsetX;
+			icon.y += _offsetY;
+			
+		}
+		
+		public function moveIcon(offsetX:Number, offsetY:Number):void{
+			_offsetX = offsetX;
+			_offsetY = offsetY;
 		}
 		
 		private function onError(event:IOErrorEvent):void{

@@ -201,7 +201,10 @@ package com.pintu.widgets{
 						
 			
 			//头像
-			var avatarUrl:String = _clonedModel.composeImgUrlByPath(userObj["avatar"]);
+			var avatarUrl:String = userObj["avatar"];
+			if(avatarUrl.indexOf("http")==-1){
+				avatarUrl =  _clonedModel.composeImgUrlByPath(userObj["avatar"]);
+			}		
 			var avatarImg:LazyImage = new LazyImage(avatarUrl);
 			avatarImg.x = startX;
 			avatarImg.y = startY;	

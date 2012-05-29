@@ -243,7 +243,7 @@ package com.pintu.api
 		}
 		
 		public function forwardToWeibo(userId:String, picId:String):void{
-			var params:Array = [{name:"userId",value:userId}, {name:"picId", value:picId}];
+			var params:Array = [{name:"picId", value:picId}];
 			addHttpTask(params, ApiMethods.FORWARDTOWEIBO);
 		}
 		

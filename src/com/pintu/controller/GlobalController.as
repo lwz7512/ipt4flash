@@ -88,9 +88,18 @@ package com.pintu.controller{
 			if(cs.data["browseType"]) _browseType = cs.data["browseType"];
 			
 		}
-		
+		/**
+		 * 登录时用到
+		 */ 
 		public static function isGuestLogin(user:String):Boolean{
 			if(user==GUEST_USER_ACCOUNT) return true;
+			return false;
+		}
+		/**
+		 * 转发时判断是否是GUEST用户登录了
+		 */ 
+		public static function isGuest():Boolean{
+			if(userId==GUEST_USER_ACCOUNT) return true;
 			return false;
 		}
 		
@@ -165,6 +174,7 @@ package com.pintu.controller{
 			if(roleName=="admin") return true;
 			return false;
 		}
+				
 		
 		
 	}

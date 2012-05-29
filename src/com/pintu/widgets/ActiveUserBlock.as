@@ -113,7 +113,7 @@ package com.pintu.widgets{
 		
 		private function buildTitle():void{
 			//标题
-			var title:SimpleText = new SimpleText("活跃用户排行榜",0xFFFFFF,12);
+			var title:SimpleText = new SimpleText("活跃用户_TOP12",0xFFFFFF,12);
 			//居中
 			title.x = drawStartX+InitParams.LOGIN_FORM_WIDTH/2-title.textWidth/2;
 			title.y = drawStartY+2;
