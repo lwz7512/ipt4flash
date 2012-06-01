@@ -9,6 +9,7 @@ package com.pintu.common{
 	import flash.events.Event;
 	import flash.events.IOErrorEvent;
 	import flash.events.MouseEvent;
+	import flash.system.LoaderContext;
 	
 	import org.casalib.display.CasaSprite;
 	import org.casalib.events.LoadEvent;
@@ -34,12 +35,14 @@ package com.pintu.common{
 		private var _visibleHeight:Number;
 		
 		private var _loading:BusyIndicator;
+		private var _context:LoaderContext;
 		
-		public function LazyImage(path:String){
+		public function LazyImage(path:String, context:LoaderContext=null){
 			_iconPath = path;
+			_context = context;
 			//路径有可能为空，后指定
 			if(path){
-				_imgLoader = new ImageLoad(path);
+				_imgLoader = new ImageLoad(path,_context);
 				_imgLoader.addEventListener(LoadEvent.COMPLETE,onLoaded);
 				_imgLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);				
 			}
@@ -52,7 +55,7 @@ package com.pintu.common{
 			
 			//第二次机会来创建图片加载器
 			if(!_imgLoader && _iconPath){
-				_imgLoader = new ImageLoad(_iconPath);
+				_imgLoader = new ImageLoad(_iconPath,_context);
 				_imgLoader.addEventListener(LoadEvent.COMPLETE,onLoaded);
 				_imgLoader.loaderInfo.addEventListener(IOErrorEvent.IO_ERROR,onError);
 			}
@@ -109,16 +112,17 @@ package com.pintu.common{
 			
 			if(this.contains(_loading)){
 				this.removeChild(_loading);
-			}
+			}			
 			
 			_bitmap = this._imgLoader.contentAsBitmap;
 			_bitmap.x = 2;
 			_bitmap.y = 2;
 			var ratio:Number = _bitmap.width/_bitmap.height;
-			
+			//FIXME, 按比例缩放头像
+			//2012/06/01
 			if(_maxsize>0 && _bitmap.height>_maxsize){
-				_bitmap.height = _maxsize;
-				_bitmap.width = _maxsize*ratio;
+				_bitmap.scaleX = _maxsize/_bitmap.height;
+				_bitmap.scaleY = _maxsize/_bitmap.height;				
 			}
 			this.addChild(_bitmap);	
 						

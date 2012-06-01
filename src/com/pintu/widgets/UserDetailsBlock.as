@@ -1,10 +1,8 @@
 package com.pintu.widgets{
 	
 	import com.adobe.serialization.json.JSON;
-	
 	import com.greensock.TimelineLite;
 	import com.greensock.TweenLite;
-	
 	import com.pintu.api.*;
 	import com.pintu.common.*;
 	import com.pintu.config.*;
@@ -15,6 +13,7 @@ package com.pintu.widgets{
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.MouseEvent;
+	import flash.system.LoaderContext;
 	
 	import org.casalib.display.CasaShape;
 	import org.casalib.display.CasaSprite;
@@ -172,8 +171,10 @@ package com.pintu.widgets{
 			
 			if(evt is ResponseEvent){
 				var jsUser:String = ResponseEvent(evt).data;
-//				Logger.debug("user info: \n"+jsUser);				
+//				Logger.debug("user info: \n"+jsUser);	
 				var objUser:Object = JSON.decode(jsUser);
+				Logger.debug("avatar: "+objUser.avatar);
+				
 				buildUserDetails(objUser);				
 			}
 			
@@ -202,13 +203,21 @@ package com.pintu.widgets{
 			
 			//头像
 			var avatarUrl:String = userObj["avatar"];
+			//FIXME, ADD CONTEXT FOR CROSSDOMAIN IMAGE REQUEST...
+			//2012/06/01
+			var context:LoaderContext;
 			if(avatarUrl.indexOf("http")==-1){
 				avatarUrl =  _clonedModel.composeImgUrlByPath(userObj["avatar"]);
-			}		
-			var avatarImg:LazyImage = new LazyImage(avatarUrl);
+			}else{
+				context = new LoaderContext(true);
+				Logger.debug("weibo avatar: "+avatarUrl);
+			}
+			var avatarImg:LazyImage = new LazyImage(avatarUrl,context);
 			avatarImg.x = startX;
 			avatarImg.y = startY;	
 			avatarImg.maxSize = 64;
+			avatarImg.visibleHeight = 64;
+			avatarImg.visibleWidth = 64;
 			userInfoContainer.addChild(avatarImg);
 			
 			//用户名
@@ -216,7 +225,7 @@ package com.pintu.widgets{
 			var userNameStr:String = userObj["nickName"];
 			if(userNameStr==null || userNameStr=="")
 				userNameStr = accountStr;
-			var userNameTF:SimpleText = new SimpleText(userNameStr,dark,bigTXTSize,true);
+			var userNameTF:SimpleText = new SimpleText(userNameStr,dark,bigTXTSize,true,false);
 			userNameTF.x = startX+xOffset;
 			userNameTF.y = startY+yOffset+avatarImg.maxSize;
 			userInfoContainer.addChild(userNameTF);
