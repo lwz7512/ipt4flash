@@ -173,8 +173,7 @@ package com.pintu.widgets{
 					//在主显示区弹出提示
 					this.dispatchEvent(new PintuEvent(PintuEvent.HINT_USER, "转发成功！"));
 				}else{					
-					//FIXME, 导航到授权页面，2012/05/29
-					forwardToAuthPage();
+					
 				}
 			}
 			if(evt is PTErrorEvent){
@@ -357,10 +356,17 @@ package com.pintu.widgets{
 		//2012/05/04
 		override protected function sendToWeibo(evt:MouseEvent):void{
 			super.sendToWeibo(evt);
-			_clonedModel.forwardToWeibo(null, _data.id);
-			//FIXME, ADD PROGRESS...
-			//2012/05/07
-			this.dispatchEvent(new PintuEvent(PintuEvent.SHOW_PROGRESS,null));
+			var now:Date = new Date();
+			//如果没有过期就可以转发
+			if(GlobalController.weiboExpireTime>now.getTime()){
+				//调用后台方法进行转发
+				_clonedModel.forwardToWeibo(null, _data.id);
+				//进度条
+				this.dispatchEvent(new PintuEvent(PintuEvent.SHOW_PROGRESS,null));				
+			}else{
+				//FIXME, 导航到授权页面，2012/05/29
+				forwardToAuthPage();
+			}
 		}
 		
 		

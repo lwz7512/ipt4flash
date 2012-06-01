@@ -87,6 +87,18 @@ package com.pintu.controller{
 			//初始化保存过的浏览方式
 			if(cs.data["browseType"]) _browseType = cs.data["browseType"];
 			
+			//观察微博授权日期
+			//2012/06/01
+			var expireTime:String = cs.data["expireTime"];
+			if(expireTime && Number(expireTime)){
+				var expireMilisecs:Number = Number(expireTime);
+				var future:Date = new Date();
+				future.time = expireMilisecs;
+				Logger.debug("expireTime is: "+future.fullYear+"/"+(future.month+1)+"/"+future.date);
+			}else{
+				Logger.debug("NO EXPIRE TIME VALUE FOR WEIBO ...");
+			}
+			
 		}
 		/**
 		 * 登录时用到
@@ -103,6 +115,9 @@ package com.pintu.controller{
 			return false;
 		}
 		
+		/**
+		 * 通过用户名密码登陆成功后，缓存用户信息
+		 */ 
 		public static function rememberUser(user:String, role:String):void{			
 			//当前应用要保存下来
 			userId = user;
@@ -175,6 +190,20 @@ package com.pintu.controller{
 			return false;
 		}
 				
+		/**
+		 * 获得用户微博授权时间，如果为空表示未授权用户<br/>
+		 * 判断这个值，如果为0，点击转发至微博时，就跳到授权页面<br/>
+		 * 
+		 * 2012/06/01
+		 */ 
+		public static function get weiboExpireTime():Number{
+			cs = SharedObject.getLocal("ipintu", "/");
+			var expireTime:String = cs.data["expireTime"];
+			if(expireTime && expireTime.length){
+				return Number(expireTime);
+			}
+			return 0;
+		}
 		
 		
 	}
