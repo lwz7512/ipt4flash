@@ -13,6 +13,7 @@ package com.pintu.widgets{
 	import flash.events.MouseEvent;
 	import flash.external.ExternalInterface;
 	import flash.geom.Point;
+	import flash.system.LoaderContext;
 	import flash.text.TextFormat;
 	
 	import org.casalib.display.CasaShape;
@@ -344,7 +345,7 @@ package com.pintu.widgets{
 			var bigTXTSize:int = 16;
 			
 			//头像
-			var avatarImg:LazyImage = new LazyImage(_data.avatarUrl);
+			var avatarImg:LazyImage = new LazyImage(_data.avatarUrl,new LoaderContext(true));
 			avatarImg.x = startX;
 			avatarImg.y = startY;	
 			avatarImg.maxSize = 64;
@@ -355,7 +356,7 @@ package com.pintu.widgets{
 			
 			//用户名
 			var userNameStr:String = PintuUtils.getShowUserName(_data.author);
-			var userNameTF:SimpleText = new SimpleText(userNameStr,dark,bigTXTSize,true);
+			var userNameTF:SimpleText = new SimpleText(userNameStr,dark,bigTXTSize,true,false);
 			userNameTF.x = startX+avatarImg.maxSize+avatarToTextGap;
 			userNameTF.y = startY;
 			imgInfoHolder.addChild(userNameTF);

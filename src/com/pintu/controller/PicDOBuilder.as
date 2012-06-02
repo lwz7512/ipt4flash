@@ -555,7 +555,12 @@ package com.pintu.controller
 			pic.picName = details["name"];
 			pic.owner = details["owner"];
 			pic.author = details["author"];
-			pic.avatarUrl = _model.composeImgUrlByPath(details["avatarImgPath"]);
+			//FIXME, LOAD WEIBO AVATAR...
+			var path:String = details["avatarImgPath"];
+			if(path.indexOf("http")==-1){
+				path = _model.composeImgUrlByPath(path);
+			}
+			pic.avatarUrl = path;
 			pic.score = details["score"];
 			pic.level = details["level"];
 			pic.publishTime = details["publishTime"];
